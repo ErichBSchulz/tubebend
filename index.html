@@ -42,10 +42,10 @@
             <canvas id="canvas" width="500" height="500"></canvas>
         </div>
         <div class="right-column">
-            <h2>Parameters</h2>
+    <h2>Parameters</h2>
     <div class="slider-container">
         <label for="tubeAngle">Tube Angle (degrees): </label>
-        <input type="range" id="tubeAngle" min="170" max="270" value="215">
+        <input type="range" id="tubeAngle" min="170" max="250" value="215">
         <span id="tubeAngleValue">0</span>
         <p class="description">This is the angle the tube leaves the upper incisors.</p>
     </div>
@@ -56,20 +56,41 @@
         <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
     </div>
     <div class="slider-container">
+        <label for="glotticPlaneX">Glottic Plane X (mm):</label>
+        <input type="range" id="glotticPlaneX" min="90" max="300" value="250">
+        <span id="glotticPlaneXValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="tubeLength">Tube Length (mm): </label>
+        <input type="range" id="tubeLength" min="90" max="300" value="250">
+        <span id="tubeLengthValue">0</span>
+    </div>
+    <div class="slider-container">
         <label for="tubeRadius">Tube Radius (mm): </label>
         <input type="range" id="tubeRadius" min="50" max="500" value="140">
         <span id="tubeRadiusValue">0</span>
     </div>
-    <h2>Blade params</h2>
-
+    <h2>Laryngoscope Blade</h2>
     <div class="slider-container">
-        <label for="bladeRadius">Blade Radius (mm): </label>
-        <input type="range" id="bladeRadius" min="70" max="140" value="120">
+        <label for="bladeLength">Blade Length (mm): </label>
+        <input type="range" id="bladeLength" min="40" max="150" value="140">
+        <span id="bladeLengthValue">0</span>
+        <p class="description">Macintosh blade #3 and #4 are 101mm and 135mm long respectively.</p>
+    </div>
+    <div class="slider-container">
+        <label for="bladeInsertion">Blade Insertion (%): </label>
+        <input type="range" id="bladeInsertion" min="50" max="100" value="70">
+        <span id="bladeInsertionValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="bladeRadius">Blade Curvature Radius (mm): </label>
+        <input type="range" id="bladeRadius" min="70" max="140" value="136">
         <span id="bladeRadiusValue">0</span>
+        <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
     </div>
     <div class="slider-container">
         <label for="bladeAngle">Blade angle (degrees): </label>
-        <input type="range" id="bladeAngle" min="170" max="240" value="200">
+        <input type="range" id="bladeAngle" min="-20" max="70" value="200">
         <span id="bladeAngleValue">0</span>
     </div>
     <h2>Dentition</h2>
@@ -122,15 +143,14 @@
     <p>This page illustrates the impact of bending an endotracheal tube over the upper incisors while attempting tracheal itubation.</p>
     <p>Notes:</p>
     <ul>
-      <li>A #3 Macintosh blade is 101mm and a #4 is 135mm long with approximate radii of 118mm and 136mm respectively.</li>
       <li>The radius of curviture of standard tracheal tube is 140mm.</li>
       <li>This simulation divides the tube into three. Section 1 is outside the mouth. Secion 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentally off the blade.</li>
     </ul>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const sliders = [ 'tubeAngle', 'incisorBend', 'tubeRadius',
-          'bladeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
+        const sliders = [ 'tubeAngle', 'incisorBend', 'tubeRadius', 'glotticPlaneX', 'tubeLength',
+          'bladeLength', 'bladeInsertion', 'bladeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
           'startAngle', 'endAngle', 'thickness', 'x', 'y']
         // shortcut function
         const e = document.getElementById.bind(document);
@@ -151,33 +171,63 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           const toothX= 300;
           const toothY= 200;
-          const tubeRadius = ev('tubeRadius')
-          const bladeRadius = ev('bladeRadius')
-          const bladeAngle = evd('bladeAngle')
           const lowerIncisorX = ev('lowerIncisorX')
           const lowerIncisorY = ev('lowerIncisorY')
-          const tubeAngle = evd('tubeAngle');
-          const incisorBend = evd('incisorBend');
-
           // draw teeth
           drawTooth({x: toothX,y: toothY, height:15});
           drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15});
 
+
           // draw blade
-          const bladeCentre = translate({x: lowerIncisorX, y: lowerIncisorY, angle: bladeAngle, distance: bladeRadius});
-          drawDot({...bladeCentre, style: 'yellow'});
-          const blade = { ...bladeCentre, startAngle: bladeAngle-1 + Math.PI, endAngle: bladeAngle + 1 + Math.PI, radius: bladeRadius, 
+          const bladeLength = ev('bladeLength')
+          console.log('bladeLength', bladeLength)
+          const bladeInsertion = ev('bladeInsertion')
+          console.log('bladeInsertion', bladeInsertion)
+          const bladeRadius = ev('bladeRadius')
+          console.log('bladeRadius', bladeRadius)
+          const bit = bladeLength/(bladeRadius*2)
+          // const bit = bladeRadius/(bladeLength/2)
+          console.log('bit', bit)
+          const bladeRadians = Math.asin(bit) * 2;
+          console.log('bladeRadians', bladeRadians)
+          const bladeAngle = evd('bladeAngle')
+          const bladeCentre = translate({x: lowerIncisorX, y: lowerIncisorY, angle: bladeAngle + Math.PI, distance: bladeRadius});
+          // drawDot({...bladeCentre, style: 'yellow'});
+          const blade = { ...bladeCentre, 
+            startAngle: bladeAngle-bladeRadians*(1- (bladeInsertion/100)),
+            endAngle: bladeAngle + bladeRadians*((bladeInsertion/100)),
+            radius: bladeRadius, 
             thickness: 3,
             style: "grey"}
+            console.log('blade', blade)
+            console.log('blade angle', blade.startAngle-blade.endAngle)
+          const bladeTip = translate({...bladeCentre, angle: blade.endAngle, distance: blade.radius })
+
           drawArc(blade);
+          drawDot(bladeTip);
+
+          const tubeLength = ev('tubeLength')
+          const tubeRadius = ev('tubeRadius')
+
+          const tubeArcAngle = tubeLength / tubeRadius 
+          // const circ = tubeRadius * 2 * Math.PI;
+          // const fraction = tubeLength / circ; 
+          // const randians = Math.PI * 2 * fraction;
+          const tubeRadians = tubeLength / tubeRadius;
+          const tubeAngle = evd('tubeAngle');
+          const incisorBend = evd('incisorBend');
+
+
+          const glotticPlaneX = ev('glotticPlaneX')
+          drawLine({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
 
           // place three reference dots for tube bending
           const inflection = translate({x: toothX, y: toothY, angle: tubeAngle, distance: tubeRadius})
-          drawDot(inflection);
+          // drawDot(inflection);
           const outerCentre = translate({x: toothX, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
-          drawDot(outerCentre);
+          // drawDot(outerCentre);
           const innerCentre = inflection;
-          drawDot({...innerCentre, style: 'red'});
+          // drawDot({...innerCentre, style: 'red'});
         
           // draw first arc
           const angleToTooth1 = tubeAngle + incisorBend/2 + Math.PI; 
@@ -185,36 +235,50 @@
           // draw second arc
           const angleToTooth2 = tubeAngle + Math.PI; 
           const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, radius: tubeRadius, style: 'red'};
-
+          var drawnTubeRadians = 0;
           // find the intersection of the tube and blade
           const intersection = findIntersection(arcParams2, blade);
-          if (intersection === null) {
-            // no collision
-            arcParams2.style = "green"
-            drawArc(arcParams2);
+          if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
+              arcParams2.style = "blue"
+              // calculate bearing from centre of blade curve to intersection point so can 
+              // calucate the new rotation centre of a tangental tube
+              const tubeBladeAxisBearing = calculateBearing(intersection, blade);
+              // get the anglar location of the tube so we can derive the length of the section 3
+              const tube2AxisBearing = calculateBearing(intersection, arcParams2);
+              arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
+              // todo draw the "ghost" tube
+              const arcParams3 = translate({...intersection, angle: tubeBladeAxisBearing.angle, distance: tubeRadius, style: 'pink' })
+              drawDot(arcParams3)
+              const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
+              arcParams3.startAngle = tangentBearing;
+              arcParams3.radius = tubeRadius;
+
+              // calculate angle to glotticPlaneX
+              const deltaX = glotticPlaneX - arcParams3.x;
+              //const finalAngle = Math.asin(deltaX/arcParams3.radius);
+              const finalAngle = Math.acos(deltaX/arcParams3.radius);
+              arcParams3.endAngle = finalAngle > arcParams3.startAngle ? finalAngle : arcParams3.startAngle;
+              drawArc(arcParams3);
+              drawnTubeRadians += arcRadians(arcParams3);
+              drawDot({...intersection, style: 'red'});
           }
           else {
-            arcParams2.style = "blue"
-            // calculate bearing from centre of blade curve to intersection point so can 
-            // calucate the new rotation centre of a tangental tube
-            const tubeBladeAxisBearing = calculateBearing(intersection, blade);
-            // get the anglar location of the tube so we can derive the length of the section 3
-            const tube2AxisBearing = calculateBearing(intersection, arcParams2);
-            arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
-            // todo draw the "ghost" tube
-            const arcParams3 = translate({...intersection, angle: tubeBladeAxisBearing.angle, distance: tubeRadius, style: 'pink' })
-            drawDot(arcParams3)
-            const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
-            arcParams3.startAngle = tangentBearing;
-            arcParams3.endAngle = tangentBearing + 1;
-            arcParams3.radius = tubeRadius;
-
-            drawArc(arcParams2);
-            drawArc(arcParams3);
-            drawDot({...intersection, style: 'red'});
+            // no collision
+            arcParams2.style = "green"
+            // calculate angle to glotticPlaneX
+            const deltaX = glotticPlaneX - arcParams2.x;
+            //const finalAngle = Math.asin(deltaX/arcParams2.radius);
+            const finalAngle = Math.acos(deltaX/arcParams2.radius);
+            arcParams2.endAngle = finalAngle;
           }
-          
-          drawArc(arcParams1);
+          drawArc(arcParams2);
+          // figure out how much tube has been drawn so far:
+          drawnTubeRadians += arcRadians(arcParams2);
+          const remainingRadians = tubeRadians - drawnTubeRadians;
+          if (remainingRadians > 0) {
+            arcParams1.startAngle = arcParams1.endAngle - remainingRadians;
+            drawArc(arcParams1);
+          }
 
           // reference arc 
           const startAngle = evd("startAngle");
@@ -229,10 +293,20 @@
         }
 
         // cartesian translation
+        function arcRadians(arc) {
+          var r = (arc.endAngle - arc.startAngle) % (2 * Math.PI);
+          if (r<0) {
+            r+=2 * Math.PI;
+          }
+          return r;
+        }
+
+        // cartesian translation
         function translate({x, y, angle, distance}) {
-          console.log('x, y, angle, distance', x, y, angle, distance)
           return {x: x+Math.cos(angle)*distance, y: y+Math.sin(angle)*distance, }
         }
+
+        // given two points calcuate angle and distance between them
         function calculateBearing(point1, point2) {
             const { x: x1, y: y1 } = point1;
             const { x: x2, y: y2 } = point2;
@@ -242,6 +316,11 @@
             // calculate distance between points
             const distance = Math.sqrt(dx * dx + dy * dy);
             return {angle, distance};
+        }
+
+        // get the cordinates of the tip of an arc
+        function arcTip(params) {
+          return translate({...params, angle: params.endAngle})
         }
 
         // Calculate the intersection of two circles and 
@@ -278,6 +357,15 @@
           ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
           ctx.fillStyle = p.style; // Set the fill color to blue
           ctx.fill();
+        }
+
+        function drawLine(params) {
+          const p = {style: 'blue', ...params}
+          ctx.beginPath();
+          ctx.moveTo(p.start.x, p.start.y)
+          ctx.lineTo(p.end.x, p.end.y)
+          ctx.strokeStyle = p.style; 
+          ctx.stroke();
         }
 
         function drawTooth({ x, y, height}) {
