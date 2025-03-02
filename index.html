@@ -36,7 +36,7 @@
   
 </head>
 <body>
-    <h1>Configurable Arc</h1>
+    <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
     <div class="container">
         <div class="left-column">
             <canvas id="canvas" width="500" height="500"></canvas>
@@ -69,6 +69,7 @@
         <label for="tubeRadius">Tube Radius (mm): </label>
         <input type="range" id="tubeRadius" min="50" max="500" value="140">
         <span id="tubeRadiusValue">0</span>
+        <p class="description">The radius of curviture of standard tracheal tube is 140mm.</p>
     </div>
     <h2>Laryngoscope Blade</h2>
     <div class="slider-container">
@@ -96,12 +97,12 @@
     <h2>Dentition</h2>
     <div class="slider-container">
         <label for="lowerIncisorX">Lower Incisor X (mm): </label>
-        <input type="range" id="lowerIncisorX" min="100" max="290" value="180">
+        <input type="range" id="lowerIncisorX" min="-100" max="10" value="-10">
         <span id="lowerIncisorXValue">0</span>
     </div>
     <div class="slider-container">
         <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-        <input type="range" id="lowerIncisorY" min="150" max="390" value="200">
+        <input type="range" id="lowerIncisorY" min="-50" max="50" value="-40">
         <span id="lowerIncisorYValue">0</span>
     </div>
     <h2>Reference params</h2>
@@ -140,11 +141,11 @@
     </div>
         </div>
     </div>
-    <p>This page illustrates the impact of bending an endotracheal tube over the upper incisors while attempting tracheal itubation.</p>
+    <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal itubation.</p>
     <p>Notes:</p>
     <ul>
-      <li>The radius of curviture of standard tracheal tube is 140mm.</li>
       <li>This simulation divides the tube into three. Section 1 is outside the mouth. Secion 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentally off the blade.</li>
+      <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
     </ul>
     <script>
         const canvas = document.getElementById('canvas');
@@ -171,8 +172,8 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           const toothX= 300;
           const toothY= 200;
-          const lowerIncisorX = ev('lowerIncisorX')
-          const lowerIncisorY = ev('lowerIncisorY')
+          const lowerIncisorX = toothX + ev('lowerIncisorX')
+          const lowerIncisorY = toothY + ev('lowerIncisorY')
           // draw teeth
           drawTooth({x: toothX,y: toothY, height:15});
           drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15});
@@ -237,7 +238,9 @@
           const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, radius: tubeRadius, style: 'red'};
           var drawnTubeRadians = 0;
           // find the intersection of the tube and blade
-          const intersection = findIntersection(arcParams2, blade);
+          const intersection = findIntersection(arcParams2, 
+            // modify blade to add thicness
+            {...blade, radius: blade.radius + blade.thickness});
           if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
               arcParams2.style = "blue"
               // calculate bearing from centre of blade curve to intersection point so can 
@@ -370,8 +373,8 @@
 
         function drawTooth({ x, y, height}) {
           const width = height/2;
-          ctx.fillStyle = 'grey'; // Set the fill color to blue
-          ctx.strokeStyle = 'red'; // Set the color 
+          ctx.fillStyle = 'white'; // Set the fill color to blue
+          ctx.strokeStyle = 'grey'; // Set the color 
           ctx.beginPath();
           ctx.moveTo(x,y);
           ctx.lineTo(x+height, y+width);
