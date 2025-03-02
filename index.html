@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurable Arcs</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+        }
+        .slider-container {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Configurable Arc</h1>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <h2>Parameters</h2>
+    <div class="slider-container">
+        <label for="tubeAngle">Tube Angle (degrees): </label>
+        <input type="range" id="tubeAngle" min="170" max="270" value="215">
+        <span id="tubeAngleValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="incisorBend">Incisor Bend (degrees): </label>
+        <input type="range" id="incisorBend" min="0" max="180" value="20">
+        <span id="incisorBendValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="tubeRadius">Tube Radius (mm): </label>
+        <input type="range" id="tubeRadius" min="50" max="500" value="140">
+        <span id="tubeRadiusValue">0</span>
+    </div>
+    <h2>Blade params</h2>
+
+    <div class="slider-container">
+        <label for="bladeRadius">Blade Radius (mm): </label>
+        <input type="range" id="bladeRadius" min="70" max="140" value="120">
+        <span id="bladeRadiusValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="bladeAngle">Blade angle (degrees): </label>
+        <input type="range" id="bladeAngle" min="170" max="240" value="200">
+        <span id="bladeAngleValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="lowerIncisorX">Lower Incisor X (mm): </label>
+        <input type="range" id="lowerIncisorX" min="200" max="390" value="280">
+        <span id="lowerIncisorXValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
+        <input type="range" id="lowerIncisorY" min="200" max="390" value="200">
+        <span id="lowerIncisorYValue">0</span>
+    </div>
+    <h2>Reference params</h2>
+<!-- 
+    <div class="slider-container">
+        <label for="qqq">qqq (degrees): </label>
+        <input type="range" id="qqq" min="0" max="360" value="0">
+        <span id="qqqValue">0</span>
+    </div>
+    -->
+
+    <div class="slider-container">
+        <label for="startAngle">Start Angle (degrees): </label>
+        <input type="range" id="startAngle" min="0" max="360" value="0">
+        <span id="startAngleValue">0</span>
+    </div>
+    <div class="slider-container">
+        <label for="endAngle">End Angle (degrees): </label>
+        <input type="range" id="endAngle" min="0" max="360" value="100">
+        <span id="endAngleValue">90</span>
+    </div>
+    <div class="slider-container">
+        <label for="thickness">Thickness: </label>
+        <input type="range" id="thickness" min="1" max="20" value="5">
+        <span id="thicknessValue">5</span>
+    </div>
+    <div class="slider-container">
+        <label for="x">X Coordinate: </label>
+        <input type="range" id="x" min="0" max="500" value="250">
+        <span id="xValue">250</span>
+    </div>
+    <div class="slider-container">
+        <label for="y">Y Coordinate: </label>
+        <input type="range" id="y" min="0" max="500" value="250">
+        <span id="yValue">250</span>
+    </div>
+    <p>This page illustrates the impact of bending an endotracheal tube over the upper incisors while attempting tracheal itubation.</p>
+    <p>Notes:</p>
+    <ul>
+      <li>A #3 Macintosh blade is 101mm and a #4 is 135mm long with approximate radii of 118mm and 136mm respectively.</li>
+      <li>The radius of curviture of standard tracheal tube is 140mm.</li>
+    </ul>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sliders = [ 'tubeAngle', 'incisorBend', 'tubeRadius',
+          'tubeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
+          'startAngle', 'endAngle', 'thickness', 'x', 'y']
+        // shortcut function
+        const e = document.getElementById.bind(document);
+        // shortcut to read value
+        const ev = id => +e(id).value;
+        // read degrees and convirt to radians
+        const evd = id => (ev(id) * Math.PI) / 180;
+
+        function init() {
+          sliders.forEach(slider => e(slider).addEventListener('input', redraw));
+          redraw()
+        }
+
+        function redraw() {
+            updateValues();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const toothX= 400;
+            const toothY= 200;
+            const lowerIncisorX = ev('lowerIncisorX')
+            const lowerIncisorY = ev('lowerIncisorY')
+            const tubeAngle = evd('tubeAngle');
+            const incisorBend = evd('incisorBend');
+            const tubeRadius = ev('tubeRadius');
+            // draw teeth
+            drawTooth({x: toothX,y: toothY, height:15});
+            drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15});
+            // place three reference dots for tube bending
+            const inflection = translate({x: toothX, y: toothY, angle: tubeAngle, distance: tubeRadius})
+            drawDot(inflection);
+            const outerCentre = translate({x: toothX, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
+            drawDot(outerCentre);
+            const innerCentre = translate({x: toothX, y: toothY, angle: tubeAngle - incisorBend/2, distance: tubeRadius})
+            drawDot({...innerCentre, style: 'red'});
+          
+            // draw first arc
+            const angleToTooth1 = tubeAngle + incisorBend/2 + Math.PI; 
+            const arcParams1 = { ...outerCentre, endAngle: angleToTooth1, startAngle: angleToTooth1 - 1, radius: tubeRadius};
+            drawArc(arcParams1);
+            // draw second arc
+            const angleToTooth2 = tubeAngle - incisorBend/2 + Math.PI; 
+            const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, radius: tubeRadius, style: 'red'};
+            drawArc(arcParams2);
+
+
+            // reference arc 
+            const startAngle = evd("startAngle");
+            const endAngle = evd("endAngle");
+            const thickness = ev("thickness");
+            const x = ev("x");
+            const y = ev("y");
+            const radius = ev("tubeRadius");
+            const style = "pink";
+            const arcParams = { startAngle, endAngle, thickness, x, y, radius, style };
+            drawArc(arcParams);
+        }
+
+        // cartesian translation
+        function translate({x, y, angle, distance}) {
+          return {x: x+Math.cos(angle)*distance, y: y+Math.sin(angle)*distance, }
+        }
+        function drawDot(params) {
+          const p = {style: 'blue', radius: 5, ...params}
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
+          ctx.fillStyle = p.style; // Set the fill color to blue
+          ctx.fill();
+        }
+
+        function drawTooth({ x, y, height}) {
+          const width = height/2;
+          ctx.fillStyle = 'grey'; // Set the fill color to blue
+          ctx.strokeStyle = 'red'; // Set the color 
+          ctx.beginPath();
+          ctx.moveTo(x,y);
+          ctx.lineTo(x+height, y+width);
+          ctx.lineTo(x+height, y-width);
+          ctx.closePath();
+          ctx.fill();
+          ctx.lineWidth = 1; // Set the line width for the triangle 
+          ctx.stroke();
+        }
+  
+        function drawArc(params) {
+            const p = {style: 'blue', radius: 5, thickness:10, ...params}
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, p.startAngle, p.endAngle);
+            ctx.lineWidth = p.thickness;
+            ctx.strokeStyle = p.style; // Set the color for the bounding box
+            ctx.stroke();
+        }
+
+      function updateValues() {
+          sliders.forEach(slider => {
+              e(`${slider}Value`).textContent = e(slider).value;
+          });
+      }
+
+      init();
+
+    </script>
+</body>
+</html>
+      
