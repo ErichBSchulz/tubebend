@@ -68,7 +68,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="tubeAngle">Tube Angle (degrees): </label>
-        <input type="range" id="tubeAngle" min="170" max="250" value="213">
+        <input type="range" id="tubeAngle" min="170" max="250" value="206">
         <span id="tubeAngleValue">0</span>
 </div>
         <p class="description">This is the angle the tube leaves the upper incisors.</p>
@@ -84,7 +84,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="glotticPlaneX">Glottic Plane X (mm):</label>
-        <input type="range" id="glotticPlaneX" min="90" max="300" value="190">
+        <input type="range" id="glotticPlaneX" min="90" max="300" value="165">
         <span id="glotticPlaneXValue">0</span>
 </div>
     </div>
@@ -98,10 +98,11 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="tubeRadius">Tube Radius (mm): </label>
-        <input type="range" id="tubeRadius" min="50" max="500" value="140">
+        <input type="range" id="tubeRadius" min="50" max="500" value="150">
         <span id="tubeRadiusValue">0</span>
 </div>
-        <p class="description">The radius of curvature of standard tracheal tube is 140mm.</p>
+        <p class="description">The radius of curvature of standard tracheal tube is 140mm when it leaves the packet,
+            but bending over the teeth will increase this.</p>
     </div>
     <h2>Laryngoscope Blade</h2>
     <div class="slider-container">
@@ -115,14 +116,14 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="bladeInsertion">Blade Insertion (%): </label>
-        <input type="range" id="bladeInsertion" min="50" max="100" value="70">
+        <input type="range" id="bladeInsertion" min="50" max="100" value="72">
         <span id="bladeInsertionValue">0</span>
 </div>
     </div>
     <div class="slider-container">
 <div class="slider-row">
         <label for="bladeRadius">Blade Curvature Radius (mm): </label>
-        <input type="range" id="bladeRadius" min="70" max="140" value="136">
+        <input type="range" id="bladeRadius" min="70" max="140" value="118">
         <span id="bladeRadiusValue">0</span>
 </div>
         <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
@@ -130,7 +131,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="bladeAngle">Blade angle (degrees): </label>
-        <input type="range" id="bladeAngle" min="-20" max="70" value="28">
+        <input type="range" id="bladeAngle" min="-20" max="70" value="18">
         <span id="bladeAngleValue">0</span>
 </div>
         <p class="description">This is the angle at the incisors.</p>
@@ -203,6 +204,10 @@
     </div>
 
     <h1>Notes:</h1>
+    <p>Tracheal intubation is a vital skill for paramedics and emergency doctors, but training opportunities are scarce.
+      The challenges in gaining experience
+      requires innovative training methods to ensure maximimise the chances healthcare workers can intubate in emergency situations. 
+    </p>
     <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
     <ul>
         <li>This simulation divides the tube into three sections as it bends between the upper incisors and the laryngoscope blade. Section 1 is outside the mouth. Section 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentially off the blade.</li>
@@ -310,13 +315,14 @@
               const tube2AxisBearing = calculateBearing(intersection, arcParams2);
               arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
               // todo draw the "ghost" tube
-            const arcParams3 = {...translate({...intersection, angle: tubeBladeAxisBearing.angle,
-              distance: tubeRadius})}
-              drawDot(arcParams3)
+            const arc3Centre = translate({...intersection, angle: tubeBladeAxisBearing.angle,
+              distance: tubeRadius});
+            const arcParams3 = {...arc3Centre, ...tubeParams}
+              drawDot(arc3Centre)
               const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
               arcParams3.startAngle = tangentBearing;
-              arcParams3.radius = tubeRadius;
-              arcParams3.style = 'tube';
+              // arcParams3.radius = tubeRadius;
+              // arcParams3.style = 'tube';
 
               // calculate angle to glotticPlaneX
               const deltaX = glotticPlaneX - arcParams3.x;
