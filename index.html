@@ -291,18 +291,18 @@
           // drawDot({...innerCentre, style: 'red'});
         
           // draw first arc
+          const tubeParams = {style: "tube", radius: tubeRadius};
           const angleToTooth1 = tubeAngle + incisorBend/2 + Math.PI; 
-          const arcParams1 = { ...outerCentre, endAngle: angleToTooth1, startAngle: angleToTooth1 - 1, radius: tubeRadius};
+          const arcParams1 = { ...outerCentre, endAngle: angleToTooth1, startAngle: angleToTooth1 - 1, ...tubeParams};
           // draw second arc
           const angleToTooth2 = tubeAngle + Math.PI; 
-          const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, radius: tubeRadius, style: 'red'};
+          const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, ...tubeParams};
           var drawnTubeRadians = 0;
           // find the intersection of the tube and blade
           const intersection = findIntersection(arcParams2, 
             // modify blade to add thicness
             {...blade, radius: blade.radius + blade.thickness});
           if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
-              arcParams2.style = "blue"
               // calculate bearing from centre of blade curve to intersection point so can 
               // calucate the new rotation centre of a tangental tube
               const tubeBladeAxisBearing = calculateBearing(intersection, blade);
@@ -310,11 +310,13 @@
               const tube2AxisBearing = calculateBearing(intersection, arcParams2);
               arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
               // todo draw the "ghost" tube
-              const arcParams3 = translate({...intersection, angle: tubeBladeAxisBearing.angle, distance: tubeRadius, style: 'pink' })
+            const arcParams3 = {...translate({...intersection, angle: tubeBladeAxisBearing.angle,
+              distance: tubeRadius})}
               drawDot(arcParams3)
               const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
               arcParams3.startAngle = tangentBearing;
               arcParams3.radius = tubeRadius;
+              arcParams3.style = 'tube';
 
               // calculate angle to glotticPlaneX
               const deltaX = glotticPlaneX - arcParams3.x;
@@ -327,7 +329,7 @@
           }
           else {
             // no collision
-            arcParams2.style = "green"
+            // arcParams2.style = "green"
             // calculate angle to glotticPlaneX
             const deltaX = glotticPlaneX - arcParams2.x;
             //const finalAngle = Math.asin(deltaX/arcParams2.radius);
@@ -441,12 +443,17 @@
           ctx.lineTo(x+height, y-width);
           ctx.closePath();
           ctx.fill();
-          ctx.lineWidth = 1; // Set the line width for the triangle 
+          ctx.lineWidth = 2; // Set the line width for the triangle 
           ctx.stroke();
         }
   
         function drawArc(params) {
             const p = {style: 'blue', radius: 5, thickness:10, ...params}
+            if (p.style === 'tube') {
+              p.style = ctx.createRadialGradient(p.x, p.y, p.radius - p.thickness, p.x, p.y, p.radius + p.thickness);
+              p.style.addColorStop(0, 'rgba(255, 255, 255, 0.5)'); // Inner color (transparent white)
+              p.style.addColorStop(1, 'rgba(0, 0, 255, 0.5)'); // Outer color (transparent blue)
+            }
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, p.startAngle, p.endAngle);
             ctx.lineWidth = p.thickness;
