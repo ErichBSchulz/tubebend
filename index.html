@@ -5,237 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracheal Intubation Geometry Simulation</title>
     <style>
-  .description {
-      font-size: 0.8em;
-      color: #666;
-      display: block; /* Ensure description is on a new line */
-      margin-top: 5px; /* Add some space above the description */
-  }
-  .slider-container {
-      margin: 10px 0;
-      display: flex;
-      flex-direction: column; /* Stack elements vertically */
-  }
-  .slider-row {
-      display: flex;
-      align-items: center;
-  }
-  .slider-container label {
-      width: 200px; /* Adjust width as needed */
-      text-align: right;
-      margin-right: 10px;
-  }
-  .slider-container input[type="range"] {
-      flex: 1;
-      margin: 0 10px;
-  }
-  .slider-container span {
-      width: 50px; /* Adjust width as needed */
-      text-align: left;
-  }
-  html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-  }
-  .container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      height: 100%;
-  }
-  .left-column {
-      flex: 2;
-      padding: 10px;
-      background-color: #f0f0f0;
-      height: 100%;
-  }
-  .right-column {
-      flex: 1;
-      min-width: 300px;
-      padding: 10px;
-      background-color: #f0f0f0;
-      height: 100%;
-  }
-  .canvas-wrapper {
-      position: relative;
-      width: 100%;
-      padding-bottom: 100%; /* 1:1 aspect ratio */
-      height: 0;
-  }
-  #canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-  }
-</style>
+        .description {
+            font-size: 0.8em;
+            color: #666;
+            display: block; /* Ensure description is on a new line */
+            margin-top: 5px; /* Add some space above the description */
+        }
+        .slider-container {
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+        }
+        .slider-container label {
+            width: 200px; /* Adjust width as needed */
+            text-align: right;
+            margin-right: 10px;
+        }
+        .slider-container input[type="range"] {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .slider-container span {
+            width: 50px; /* Adjust width as needed */
+            text-align: left;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+        .left-column {
+            flex: 3;
+            padding: 10px;
+            background-color: #f0f0f0;
+            height: 100%;
+        }
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            height: 100%;
+        }
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* 1:1 aspect ratio */
+            height: 0;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .notes {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+        }
+    </style>
   
 </head>
 <body>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
 
-    <div class="container">
+
+    <div class="main-container">
         <div class="left-column">
             <div class="canvas-wrapper">
                 <canvas id="canvas" width="1500" height="1500"></canvas>
             </div>
         </div>
         <div class="right-column">
-    <h2>Parameters</h2>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="tubeAngle">Tube Angle (degrees): </label>
-        <input type="range" id="tubeAngle" min="170" max="250" value="206">
-        <span id="tubeAngleValue">0</span>
-</div>
-        <p class="description">This is the angle the tube leaves the upper incisors.</p>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="incisorBend">Incisor Bend (degrees): </label>
-        <input type="range" id="incisorBend" min="0" max="180" value="20">
-        <span id="incisorBendValue">0</span>
-</div>
-        <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="glotticPlaneX">Glottic Plane X (mm):</label>
-        <input type="range" id="glotticPlaneX" min="90" max="300" value="165">
-        <span id="glotticPlaneXValue">0</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="tubeLength">Tube Length (mm): </label>
-        <input type="range" id="tubeLength" min="90" max="300" value="280">
-        <span id="tubeLengthValue">0</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="tubeRadius">Tube Radius (mm): </label>
-        <input type="range" id="tubeRadius" min="50" max="500" value="150">
-        <span id="tubeRadiusValue">0</span>
-</div>
-        <p class="description">The radius of curvature of standard tracheal tube is 140mm when it leaves the packet,
-            but bending over the teeth will increase this.</p>
-    </div>
-    <h2>Laryngoscope Blade</h2>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="bladeLength">Blade Length (mm): </label>
-        <input type="range" id="bladeLength" min="40" max="150" value="140">
-        <span id="bladeLengthValue">0</span>
-</div>
-        <p class="description">Macintosh blade #3 and #4 are 101mm and 135mm long respectively.</p>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="bladeInsertion">Blade Insertion (%): </label>
-        <input type="range" id="bladeInsertion" min="50" max="100" value="72">
-        <span id="bladeInsertionValue">0</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="bladeRadius">Blade Curvature Radius (mm): </label>
-        <input type="range" id="bladeRadius" min="70" max="140" value="118">
-        <span id="bladeRadiusValue">0</span>
-</div>
-        <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="bladeAngle">Blade angle (degrees): </label>
-        <input type="range" id="bladeAngle" min="-20" max="70" value="18">
-        <span id="bladeAngleValue">0</span>
-</div>
-        <p class="description">This is the angle at the incisors.</p>
-    </div>
-    <h2>Dentition</h2>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="lowerIncisorX">Lower Incisor X (mm): </label>
-        <input type="range" id="lowerIncisorX" min="-100" max="10" value="-25">
-        <span id="lowerIncisorXValue">0</span>
-</div>
-        <p class="description">Mouth opening as measured horizontally.</p>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-        <input type="range" id="lowerIncisorY" min="-50" max="50" value="0">
-        <span id="lowerIncisorYValue">0</span>
-</div>
-        <p class="description">Under or overbite.</p>
-    </div>
-    <h2>Reference params</h2>
-<!-- 
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="qqq">qqq (degrees): </label>
-        <input type="range" id="qqq" min="0" max="360" value="0">
-        <span id="qqqValue">0</span>
-</div>
-    </div>
-    -->
-
-    <p class="description">This moves a small pink fiducial.</p>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="startAngle">Start Angle (degrees): </label>
-        <input type="range" id="startAngle" min="0" max="360" value="0">
-        <span id="startAngleValue">0</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="endAngle">End Angle (degrees): </label>
-        <input type="range" id="endAngle" min="0" max="360" value="360">
-        <span id="endAngleValue">90</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="thickness">Thickness: </label>
-        <input type="range" id="thickness" min="1" max="20" value="1">
-        <span id="thicknessValue">5</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="x">X Coordinate: </label>
-        <input type="range" id="x" min="0" max="400" value="0">
-        <span id="xValue">250</span>
-</div>
-    </div>
-    <div class="slider-container">
-<div class="slider-row">
-        <label for="y">Y Coordinate: </label>
-        <input type="range" id="y" min="0" max="400" value="0">
-        <span id="yValue">250</span>
-</div>
-    </div>
+            <h2>Parameters</h2>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="tubeAngle">Tube Angle (degrees): </label>
+                    <input type="range" id="tubeAngle" min="170" max="250" value="206">
+                    <span id="tubeAngleValue">0</span>
+                </div>
+                <p class="description">This is the angle the tube leaves the upper incisors.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="incisorBend">Incisor Bend (degrees): </label>
+                    <input type="range" id="incisorBend" min="0" max="180" value="20">
+                    <span id="incisorBendValue">0</span>
+                </div>
+                <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="glotticPlaneX">Glottic Plane X (mm):</label>
+                    <input type="range" id="glotticPlaneX" min="90" max="300" value="165">
+                    <span id="glotticPlaneXValue">0</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="tubeLength">Tube Length (mm): </label>
+                    <input type="range" id="tubeLength" min="90" max="300" value="280">
+                    <span id="tubeLengthValue">0</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="tubeRadius">Tube Radius (mm): </label>
+                    <input type="range" id="tubeRadius" min="50" max="500" value="150">
+                    <span id="tubeRadiusValue">0</span>
+                </div>
+                <p class="description">The radius of curvature of standard tracheal tube is 140mm when it leaves the packet, but bending over the teeth will increase this.</p>
+            </div>
+            <h2>Laryngoscope Blade</h2>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="bladeLength">Blade Length (mm): </label>
+                    <input type="range" id="bladeLength" min="40" max="150" value="140">
+                    <span id="bladeLengthValue">0</span>
+                </div>
+                <p class="description">Macintosh blade #3 and #4 are 101mm and 135mm long respectively.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="bladeInsertion">Blade Insertion (%): </label>
+                    <input type="range" id="bladeInsertion" min="50" max="100" value="72">
+                    <span id="bladeInsertionValue">0</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="bladeRadius">Blade Curvature Radius (mm): </label>
+                    <input type="range" id="bladeRadius" min="70" max="140" value="118">
+                    <span id="bladeRadiusValue">0</span>
+                </div>
+                <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="bladeAngle">Blade angle (degrees): </label>
+                    <input type="range" id="bladeAngle" min="-20" max="70" value="18">
+                    <span id="bladeAngleValue">0</span>
+                </div>
+                <p class="description">This is the angle at the incisors.</p>
+            </div>
+            <h2>Dentition</h2>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="lowerIncisorX">Lower Incisor X (mm): </label>
+                    <input type="range" id="lowerIncisorX" min="-100" max="10" value="-25">
+                    <span id="lowerIncisorXValue">0</span>
+                </div>
+                <p class="description">Mouth opening as measured horizontally.</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
+                    <input type="range" id="lowerIncisorY" min="-50" max="50" value="0">
+                    <span id="lowerIncisorYValue">0</span>
+                </div>
+                <p class="description">Under or overbite.</p>
+            </div>
+            <h2>Reference params</h2>
+            <p class="description">This moves a small pink fiducial.</p>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="startAngle">Start Angle (degrees): </label>
+                    <input type="range" id="startAngle" min="0" max="360" value="0">
+                    <span id="startAngleValue">0</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="endAngle">End Angle (degrees): </label>
+                    <input type="range" id="endAngle" min="0" max="360" value="360">
+                    <span id="endAngleValue">90</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="thickness">Thickness: </label>
+                    <input type="range" id="thickness" min="1" max="20" value="1">
+                    <span id="thicknessValue">5</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="x">X Coordinate: </label>
+                    <input type="range" id="x" min="0" max="400" value="0">
+                    <span id="xValue">250</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="y">Y Coordinate: </label>
+                    <input type="range" id="y" min="0" max="400" value="0">
+                    <span id="yValue">250</span>
+                </div>
+            </div>
         </div>
     </div>
-<div id="notes">
-    <h1>Notes:</h1>
-    <p>This page aims to help those seeking to learn or teach tracheal intubation understand the geometry.</p>
-    <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A blue bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
-    <p>Tracheal intubation is a vital skill for paramedics and emergency doctors, but training opportunities are scarce.
-      The challenges in gaining experience
-      requires innovative training methods to maximimise the chances healthcare workers can intubate in emergency situations. 
-    </p>
-    <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
-    <ul>
-        <li>The adverse impact of bending over the incisors are exaggerated by a small blade radius and increased tube radius. Bending the tube over the teeth leads to a vicious cycle as the tube radius increases (i.e. the tube gets straighter) as the tube is bent over the teeth.</li>
-        <li>This simulation divides the tube into three sections as it bends between the upper incisors and the laryngoscope blade. Section 1 is outside the mouth. Section 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentially off the blade.</li>
-        <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
-    </ul>
-</div>
+    <div id="notes" class="notes">
+        <h1>Notes:</h1>
+        <p>This page aims to help those seeking to learn or teach tracheal intubation understand the geometry.</p>
+        <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A blue bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
+        <p>Tracheal intubation is a vital skill for paramedics and emergency doctors, but training opportunities are scarce.
+            The challenges in gaining experience
+            requires innovative training methods to maximimise the chances healthcare workers can intubate in emergency situations. 
+        </p>
+        <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
+        <ul>
+            <li>The adverse impact of bending over the upper incisors</li>
+            <li>How the blade insertion affects the glottic view</li>
+            <li>How the tube angle affects the intubation process</li>
+        </ul>
+    </div>
+
+
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -250,7 +247,7 @@
         const toRadians = degrees => (degrees * Math.PI) / 180;
         const toDegrees = radians => (radians / Math.PI) * 180;
         const evd = id => toRadians(ev(id));
-        const scale = {f:4, xo: -100, yo: -100} 
+        const scale = {f:5, xo: -100, yo: -100} 
 
         function init() {
           sliders.forEach(slider => e(slider).addEventListener('input', redraw));
@@ -284,11 +281,11 @@
             endAngle: bladeAngle + bladeRadians*((bladeInsertion/100)),
             radius: bladeRadius, 
             thickness: 3,
-            style: "grey"}
+            style: "metal"}
           const bladeTip = translate({...bladeCentre, angle: blade.endAngle, distance: blade.radius })
 
           drawArc(blade);
-          drawDot(bladeTip);
+          drawDot({...bladeTip, style: 'gray'});
 
           const tubeLength = ev('tubeLength')
           const tubeRadius = ev('tubeRadius')
@@ -302,10 +299,12 @@
           const tubeParams = {style: "tube", radius: tubeRadius, thickness: 10};
 
           const glotticPlaneX = ev('glotticPlaneX')
-          drawLine({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
+          drawGlottis({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
 
           // place three reference dots for tube bending
-          const inflection = translate({x: toothX-tubeParams.thickness/2, y: toothY, angle: tubeAngle, distance: tubeRadius})
+          const inflection = translate({
+            x: toothX-tubeParams.thickness/2, 
+            y: toothY, angle: tubeAngle, distance: tubeRadius})
           // drawDot(inflection);
           const outerCentre = translate({x: toothX-tubeParams.thickness/2, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
           // drawDot(outerCentre);
@@ -464,12 +463,17 @@
           ctx.fill();
         }
 
-        function drawLine(params) {
-          const p = rescale({style: 'blue', ...params})
+        function drawGlottis(params) {
+          const p = rescale({lineWidth: 4, ...params})
+          // Create a linear gradient for the glottis line
+          const gradient = ctx.createLinearGradient(p.start.x, p.start.y, p.end.x, p.end.y);
+          gradient.addColorStop(0, '#ff8888'); // Light pink color at the start
+          gradient.addColorStop(1, '#ff3333'); // Darker pink color at the end
           ctx.beginPath();
-          ctx.moveTo(p.start.x, p.start.y)
-          ctx.lineTo(p.end.x, p.end.y)
-          ctx.strokeStyle = p.style; 
+          ctx.moveTo(p.start.x, p.start.y);
+          ctx.lineTo(p.end.x, p.end.y);
+          ctx.strokeStyle = gradient; // Set the stroke color to the gradient
+          ctx.lineWidth = p.lineWidth 
           ctx.stroke();
         }
 
@@ -478,7 +482,12 @@
           const p = rescale({lineWidth: 2, ...params});
           console.log('p', p)
           const width = p.height/3;
-          ctx.fillStyle = 'white'; // Set the fill color to blue
+          const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
+          gradient.addColorStop(0, '#fff'); // White color at the start
+          gradient.addColorStop(0.5, '#ddd'); // Light grey in the middle
+          gradient.addColorStop(1, '#fff'); // White color at the end
+
+          ctx.fillStyle = gradient; // Set the fill color to the gradient
           ctx.strokeStyle = 'grey'; // Set the color 
           ctx.beginPath();
           ctx.moveTo(p.x,p.y);
@@ -496,6 +505,10 @@
               p.style = ctx.createRadialGradient(p.x, p.y, p.radius - p.thickness, p.x, p.y, p.radius + p.thickness);
               p.style.addColorStop(0, 'rgba(255, 255, 255, 0.5)'); // Inner color (transparent white)
               p.style.addColorStop(1, 'rgba(0, 0, 255, 0.5)'); // Outer color (transparent blue)
+            } else if (p.style === 'metal') {
+                p.style = ctx.createRadialGradient(p.x, p.y, p.radius - p.thickness, p.x, p.y, p.radius + p.thickness);
+                p.style.addColorStop(0, 'rgba(192, 192, 192, 0.5)'); // Inner color (light grey)
+                p.style.addColorStop(1, 'rgba(128, 128, 128, 0.5)'); // Outer color (darker grey)
             }
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, p.startAngle, p.endAngle);
