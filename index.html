@@ -4,24 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracheal Intubation Geometry Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .description {
-            font-size: 0.8em;
-            color: #666;
-            display: block; /* Ensure description is on a new line */
-            margin-top: 5px; /* Add some space above the description */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+        }
+        .left-column, .right-column {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
         }
         .slider-container {
-            margin: 10px 0;
-            display: flex;
-            flex-direction: column; /* Stack elements vertically */
-        }
-        .slider-row {
-            display: flex;
-            align-items: center;
+            margin: 20px 0;
         }
         .slider-container label {
-            width: 200px; /* Adjust width as needed */
+            width: 200px;
             text-align: right;
             margin-right: 10px;
         }
@@ -30,50 +43,24 @@
             margin: 0 10px;
         }
         .slider-container span {
-            width: 50px; /* Adjust width as needed */
+            width: 50px;
             text-align: left;
         }
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-container {
-            display: flex;
-            flex: 1;
-        }
-        .left-column {
-            flex: 3;
-            padding: 10px;
-            background-color: #f0f0f0;
-            height: 100%;
-        }
-        .right-column {
-            flex: 1;
-            min-width: 300px;
-            padding: 10px;
-            background-color: #f0f0f0;
-            height: 100%;
-        }
-        .canvas-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 100%; /* 1:1 aspect ratio */
-            height: 0;
-        }
-        #canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .description {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
         }
         .notes {
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+        .slider-container input[type="range"]:hover {
+            cursor: pointer;
         }
     </style>
   
@@ -219,7 +206,7 @@
     <div id="notes" class="notes">
         <h1>Notes:</h1>
         <p>This page aims to help those seeking to learn or teach tracheal intubation understand the geometry.</p>
-        <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A blue bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
+        <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A red bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
         <p>Tracheal intubation is a vital skill for paramedics and emergency doctors, but training opportunities are scarce.
             The challenges in gaining experience
             requires innovative training methods to maximimise the chances healthcare workers can intubate in emergency situations. 
@@ -262,8 +249,8 @@
           const lowerIncisorX = toothX + ev('lowerIncisorX')
           const lowerIncisorY = toothY + ev('lowerIncisorY')
           // draw teeth
-          drawTooth({x: toothX,y: toothY, height:15, lineWidth:1});
-          drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15, lineWidth:1});
+          drawTooth({x: toothX,y: toothY, height:10, lineWidth:1});
+          drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-10, lineWidth:1});
 
 
           // draw blade
