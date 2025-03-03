@@ -304,21 +304,20 @@
           const tubeRadians = tubeLength / tubeRadius;
           const tubeAngle = evd('tubeAngle');
           const incisorBend = evd('incisorBend');
-
+          const tubeParams = {style: "tube", radius: tubeRadius, thickness: 10};
 
           const glotticPlaneX = ev('glotticPlaneX')
           drawLine({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
 
           // place three reference dots for tube bending
-          const inflection = translate({x: toothX, y: toothY, angle: tubeAngle, distance: tubeRadius})
+          const inflection = translate({x: toothX-tubeParams.thickness/2, y: toothY, angle: tubeAngle, distance: tubeRadius})
           // drawDot(inflection);
-          const outerCentre = translate({x: toothX, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
+          const outerCentre = translate({x: toothX-tubeParams.thickness/2, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
           // drawDot(outerCentre);
-          const innerCentre = inflection;
+          const innerCentre = inflection; 
           // drawDot({...innerCentre, style: 'red'});
         
           // draw first arc
-          const tubeParams = {style: "tube", radius: tubeRadius};
           const angleToTooth1 = tubeAngle + incisorBend/2 + Math.PI; 
           const arcParams1 = { ...outerCentre, endAngle: angleToTooth1, startAngle: angleToTooth1 - 1, ...tubeParams};
           // draw second arc
@@ -328,7 +327,7 @@
           // find the intersection of the tube and blade
           const intersection = findIntersection(arcParams2, 
             // modify blade to add thicness
-            {...blade, radius: blade.radius + blade.thickness});
+            {...blade, radius: blade.radius + (blade.thickness+tubeParams.thickness)/2});
           if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
               // calculate bearing from centre of blade curve to intersection point so can 
               // calucate the new rotation centre of a tangental tube
@@ -340,7 +339,7 @@
             const arc3Centre = translate({...intersection, angle: tubeBladeAxisBearing.angle,
               distance: tubeRadius});
             const arcParams3 = {...arc3Centre, ...tubeParams}
-              drawDot(arc3Centre)
+              // drawDot(arc3Centre)
               const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
               arcParams3.startAngle = tangentBearing;
               // arcParams3.radius = tubeRadius;
@@ -476,7 +475,7 @@
         }
   
         function drawArc(params) {
-            const p = {style: 'blue', radius: 5, thickness:10, ...params}
+            const p = {style: 'blue', radius: 5, thickness:4, ...params}
             if (p.style === 'tube') {
               p.style = ctx.createRadialGradient(p.x, p.y, p.radius - p.thickness, p.x, p.y, p.radius + p.thickness);
               p.style.addColorStop(0, 'rgba(255, 255, 255, 0.5)'); // Inner color (transparent white)
