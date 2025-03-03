@@ -68,7 +68,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="tubeAngle">Tube Angle (degrees): </label>
-        <input type="range" id="tubeAngle" min="170" max="250" value="215">
+        <input type="range" id="tubeAngle" min="170" max="250" value="213">
         <span id="tubeAngleValue">0</span>
 </div>
         <p class="description">This is the angle the tube leaves the upper incisors.</p>
@@ -84,14 +84,14 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="glotticPlaneX">Glottic Plane X (mm):</label>
-        <input type="range" id="glotticPlaneX" min="90" max="300" value="250">
+        <input type="range" id="glotticPlaneX" min="90" max="300" value="190">
         <span id="glotticPlaneXValue">0</span>
 </div>
     </div>
     <div class="slider-container">
 <div class="slider-row">
         <label for="tubeLength">Tube Length (mm): </label>
-        <input type="range" id="tubeLength" min="90" max="300" value="250">
+        <input type="range" id="tubeLength" min="90" max="300" value="280">
         <span id="tubeLengthValue">0</span>
 </div>
     </div>
@@ -130,7 +130,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="bladeAngle">Blade angle (degrees): </label>
-        <input type="range" id="bladeAngle" min="-20" max="70" value="0">
+        <input type="range" id="bladeAngle" min="-20" max="70" value="28">
         <span id="bladeAngleValue">0</span>
 </div>
         <p class="description">This is the angle at the incisors.</p>
@@ -139,7 +139,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="lowerIncisorX">Lower Incisor X (mm): </label>
-        <input type="range" id="lowerIncisorX" min="-100" max="10" value="-10">
+        <input type="range" id="lowerIncisorX" min="-100" max="10" value="-25">
         <span id="lowerIncisorXValue">0</span>
 </div>
         <p class="description">Mouth opening as measured horizontally.</p>
@@ -147,7 +147,7 @@
     <div class="slider-container">
 <div class="slider-row">
         <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-        <input type="range" id="lowerIncisorY" min="-50" max="50" value="-0">
+        <input type="range" id="lowerIncisorY" min="-50" max="50" value="0">
         <span id="lowerIncisorYValue">0</span>
 </div>
         <p class="description">Under or overbite.</p>
@@ -201,11 +201,12 @@
     </div>
         </div>
     </div>
+
+    <h1>Notes:</h1>
     <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
-    <p>Notes:</p>
     <ul>
-      <li>This simulation divides the tube into three sections as it bends between the upper incisors and laryngoscope blade. Section 1 is outside the mouth. Secion 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentally off the blade.</li>
-      <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
+        <li>This simulation divides the tube into three sections as it bends between the upper incisors and the laryngoscope blade. Section 1 is outside the mouth. Section 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentially off the blade.</li>
+        <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
     </ul>
     <script>
         const canvas = document.getElementById('canvas');
