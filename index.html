@@ -3,36 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurable Arcs</title>
-
+    <title>Tracheal Intubation Geometry Simulation</title>
     <style>
-        #canvas {
-        }
-        .description {
-            font-size: 0.8em;
-            color: #666;
-        }
-
-            border: 1px solid black;
-            width: 500px;
-            height: 500px;
-        }
-        .slider-container {
-            margin: 10px 0;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-        .left-column, .right-column {
-            flex: 1;
-            padding: 10px;
-            background-color: #f0f0f0;
-        }
-    </style>
+    #canvas {
+        width: 100%;
+        height: auto;
+        max-width: 800px; /* Adjust max-width as needed */
+    }
+    .description {
+        font-size: 0.8em;
+        color: #666;
+        display: block; /* Ensure description is on a new line */
+        margin-top: 5px; /* Add some space above the description */
+    }
+    .slider-container {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+    }
+    .slider-row {
+        display: flex;
+        align-items: center;
+    }
+    .slider-container label {
+        width: 200px; /* Adjust width as needed */
+        text-align: right;
+        margin-right: 10px;
+    }
+    .slider-container input[type="range"] {
+        flex: 1;
+        margin: 0 10px;
+    }
+    .slider-container span {
+        width: 50px; /* Adjust width as needed */
+        text-align: left;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .left-column {
+        flex: 2; /* Make the left column take more space */
+        padding: 10px;
+        background-color: #f0f0f0;
+    }
+    .right-column {
+        flex: 1; /* Make the right column take less space */
+        min-width: 300px; /* Ensure the right column is wide enough */
+        padding: 10px;
+        background-color: #f0f0f0;
+    }
+</style>
   
 </head>
 <body>
@@ -44,107 +66,145 @@
         <div class="right-column">
     <h2>Parameters</h2>
     <div class="slider-container">
+<div class="slider-row">
         <label for="tubeAngle">Tube Angle (degrees): </label>
         <input type="range" id="tubeAngle" min="170" max="250" value="215">
         <span id="tubeAngleValue">0</span>
+</div>
         <p class="description">This is the angle the tube leaves the upper incisors.</p>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="incisorBend">Incisor Bend (degrees): </label>
         <input type="range" id="incisorBend" min="0" max="180" value="20">
         <span id="incisorBendValue">0</span>
+</div>
         <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="glotticPlaneX">Glottic Plane X (mm):</label>
         <input type="range" id="glotticPlaneX" min="90" max="300" value="250">
         <span id="glotticPlaneXValue">0</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="tubeLength">Tube Length (mm): </label>
         <input type="range" id="tubeLength" min="90" max="300" value="250">
         <span id="tubeLengthValue">0</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="tubeRadius">Tube Radius (mm): </label>
         <input type="range" id="tubeRadius" min="50" max="500" value="140">
         <span id="tubeRadiusValue">0</span>
-        <p class="description">The radius of curviture of standard tracheal tube is 140mm.</p>
+</div>
+        <p class="description">The radius of curvature of standard tracheal tube is 140mm.</p>
     </div>
     <h2>Laryngoscope Blade</h2>
     <div class="slider-container">
+<div class="slider-row">
         <label for="bladeLength">Blade Length (mm): </label>
         <input type="range" id="bladeLength" min="40" max="150" value="140">
         <span id="bladeLengthValue">0</span>
+</div>
         <p class="description">Macintosh blade #3 and #4 are 101mm and 135mm long respectively.</p>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="bladeInsertion">Blade Insertion (%): </label>
         <input type="range" id="bladeInsertion" min="50" max="100" value="70">
         <span id="bladeInsertionValue">0</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="bladeRadius">Blade Curvature Radius (mm): </label>
         <input type="range" id="bladeRadius" min="70" max="140" value="136">
         <span id="bladeRadiusValue">0</span>
+</div>
         <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="bladeAngle">Blade angle (degrees): </label>
-        <input type="range" id="bladeAngle" min="-20" max="70" value="200">
+        <input type="range" id="bladeAngle" min="-20" max="70" value="0">
         <span id="bladeAngleValue">0</span>
+</div>
+        <p class="description">This is the angle at the incisors.</p>
     </div>
     <h2>Dentition</h2>
     <div class="slider-container">
+<div class="slider-row">
         <label for="lowerIncisorX">Lower Incisor X (mm): </label>
         <input type="range" id="lowerIncisorX" min="-100" max="10" value="-10">
         <span id="lowerIncisorXValue">0</span>
+</div>
+        <p class="description">Mouth opening as measured horizontally.</p>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-        <input type="range" id="lowerIncisorY" min="-50" max="50" value="-40">
+        <input type="range" id="lowerIncisorY" min="-50" max="50" value="-0">
         <span id="lowerIncisorYValue">0</span>
+</div>
+        <p class="description">Under or overbite.</p>
     </div>
     <h2>Reference params</h2>
 <!-- 
     <div class="slider-container">
+<div class="slider-row">
         <label for="qqq">qqq (degrees): </label>
         <input type="range" id="qqq" min="0" max="360" value="0">
         <span id="qqqValue">0</span>
+</div>
     </div>
     -->
 
+    <p class="description">This moves a small pink fiducial.</p>
     <div class="slider-container">
+<div class="slider-row">
         <label for="startAngle">Start Angle (degrees): </label>
         <input type="range" id="startAngle" min="0" max="360" value="0">
         <span id="startAngleValue">0</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="endAngle">End Angle (degrees): </label>
         <input type="range" id="endAngle" min="0" max="360" value="360">
         <span id="endAngleValue">90</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="thickness">Thickness: </label>
         <input type="range" id="thickness" min="1" max="20" value="1">
         <span id="thicknessValue">5</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="x">X Coordinate: </label>
         <input type="range" id="x" min="0" max="500" value="0">
         <span id="xValue">250</span>
+</div>
     </div>
     <div class="slider-container">
+<div class="slider-row">
         <label for="y">Y Coordinate: </label>
         <input type="range" id="y" min="0" max="500" value="0">
         <span id="yValue">250</span>
+</div>
     </div>
         </div>
     </div>
-    <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal itubation.</p>
+    <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
     <p>Notes:</p>
     <ul>
-      <li>This simulation divides the tube into three. Section 1 is outside the mouth. Secion 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentally off the blade.</li>
+      <li>This simulation divides the tube into three sections as it bends between the upper incisors and laryngoscope blade. Section 1 is outside the mouth. Secion 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentally off the blade.</li>
       <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
     </ul>
     <script>
@@ -213,7 +273,6 @@
           const tubeArcAngle = tubeLength / tubeRadius 
           // const circ = tubeRadius * 2 * Math.PI;
           // const fraction = tubeLength / circ; 
-          // const randians = Math.PI * 2 * fraction;
           const tubeRadians = tubeLength / tubeRadius;
           const tubeAngle = evd('tubeAngle');
           const incisorBend = evd('incisorBend');
