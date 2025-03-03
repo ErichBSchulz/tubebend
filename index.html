@@ -85,6 +85,7 @@
                 </div>
                 <p class="description">This is the angle the tube leaves the upper incisors.</p>
             </div>
+        <!--
             <div class="slider-container">
                 <div class="slider-row">
                     <label for="incisorBend">Incisor Bend (degrees): </label>
@@ -93,6 +94,7 @@
                 </div>
                 <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
             </div>
+        -->
             <div class="slider-container">
                 <div class="slider-row">
                     <label for="glotticPlaneX">Glottic Plane X (mm):</label>
@@ -205,17 +207,35 @@
     </div>
     <div id="notes" class="notes">
         <h1>Notes:</h1>
-        <p>This page aims to help those seeking to learn or teach tracheal intubation understand the geometry.</p>
+      <h2>Why this page?</h2>
+        <p>This page aims to help those seeking to learn or teach tracheal intubation understand some of the geometry.
+        <p>It does this by illustrating the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
+      <h2>What do I do?</h2>
+        <p>Slide the <em>Tube Angle</em> slider back and forth watching the impact on tube tip positions.
+      </p>
+      <h2>What am I looking at?</h2>
         <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A red bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
+      <h2>Why does the tip go backwards when the tube is rotated back?</h2>
+        <p>Ah, this is the interesting point.
+        As the tube is tilted back over the teeth the tube-blade contact point (shown with a red dot) migrates upwards. 
+        Because of the curve of the blade the tube is deflected posteriorly in an unintuitive manner.</p>
+      <h2>But if bending over the teeth is not the answer, what is?</h2>
+      <p>As I showed in <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1">earlier work</a>,
+      optimal tracheal tube orientation is to pull the tube laterally at the level of the mouth (to the right),
+      so that you can rotate the tube backwards without bending it or shifting the blade-tube contact point.
+        Avoid rolling the tube over. It's complicated.
+        You may need to <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1">read the paper</a>.
+      </p>
+      <h2>What is tracheal intubation?</h2>
         <p>Tracheal intubation is a vital skill for paramedics and emergency doctors, but training opportunities are scarce.
             The challenges in gaining experience
             requires innovative training methods to maximimise the chances healthcare workers can intubate in emergency situations. 
         </p>
-        <p>This page illustrates the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
+      <p>In an emergency successful intubation can save a life, prevent brain damage or prevent fatal aspiration of gastric acid into the lungs.</p>
+      <h2>Notes</h2>
         <ul>
-            <li>The adverse impact of bending over the upper incisors</li>
-            <li>How the blade insertion affects the glottic view</li>
-            <li>How the tube angle affects the intubation process</li>
+            <li>The model assumes that the deflection angle when the tube reflects off the teeth will be matched by the deflection angle over the teeth themselves.</li>
+            <li>The model will break if you put in extreme values, eg a tube radius that is less than the blade radius.</li>
         </ul>
     </div>
 
@@ -223,7 +243,9 @@
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const sliders = [ 'tubeAngle', 'incisorBend', 'tubeRadius', 'glotticPlaneX', 'tubeLength',
+        const sliders = [ 'tubeAngle', 
+          // 'incisorBend', 
+          'tubeRadius', 'glotticPlaneX', 'tubeLength',
           'bladeLength', 'bladeInsertion', 'bladeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
           'startAngle', 'endAngle', 'thickness', 'x', 'y']
         // shortcut function
@@ -270,7 +292,6 @@
             thickness: 3,
             style: "metal"}
           const bladeTip = translate({...bladeCentre, angle: blade.endAngle, distance: blade.radius })
-
           drawArc(blade);
           drawDot({...bladeTip, style: 'gray'});
 
@@ -282,34 +303,26 @@
           // const fraction = tubeLength / circ; 
           const tubeRadians = tubeLength / tubeRadius;
           const tubeAngle = evd('tubeAngle');
-          const incisorBend = evd('incisorBend');
           const tubeParams = {style: "tube", radius: tubeRadius, thickness: 10};
 
           const glotticPlaneX = ev('glotticPlaneX')
           drawGlottis({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
 
-          // place three reference dots for tube bending
-          const inflection = translate({
-            x: toothX-tubeParams.thickness/2, 
-            y: toothY, angle: tubeAngle, distance: tubeRadius})
-          // drawDot(inflection);
-          const outerCentre = translate({x: toothX-tubeParams.thickness/2, y: toothY, angle: tubeAngle + incisorBend/2, distance: tubeRadius})
-          // drawDot(outerCentre);
-          const innerCentre = inflection; 
-          // drawDot({...innerCentre, style: 'red'});
+          const toothRotationCentre = {x: toothX-tubeParams.thickness/2, y: toothY-tubeParams.thickness/2}
+          const inflection = translate({...toothRotationCentre, angle: tubeAngle, distance: tubeRadius})
+          // drawDot(inflection)
         
-          // draw first arc
-          const angleToTooth1 = tubeAngle + incisorBend/2 + Math.PI; 
-          const arcParams1 = { ...outerCentre, endAngle: angleToTooth1, startAngle: angleToTooth1 - 1, ...tubeParams};
           // draw second arc
           const angleToTooth2 = tubeAngle + Math.PI; 
-          const arcParams2 = { ...innerCentre, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, ...tubeParams};
+          const arcParams2 = { ...inflection, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, ...tubeParams};
           var drawnTubeRadians = 0;
+          var bend = 0;
           // find the intersection of the tube and blade
           const intersection = findIntersection(arcParams2, 
             // modify blade to add thicness
             {...blade, radius: blade.radius + (blade.thickness+tubeParams.thickness)/2});
           if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
+              // collision!
               // calculate bearing from centre of blade curve to intersection point so can 
               // calucate the new rotation centre of a tangental tube
               const tubeBladeAxisBearing = calculateBearing(intersection, blade);
@@ -317,15 +330,12 @@
               const tube2AxisBearing = calculateBearing(intersection, arcParams2);
               arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
               // todo draw the "ghost" tube
-            const arc3Centre = translate({...intersection, angle: tubeBladeAxisBearing.angle,
+              const arc3Centre = translate({...intersection, angle: tubeBladeAxisBearing.angle,
               distance: tubeRadius});
-            const arcParams3 = {...arc3Centre, ...tubeParams}
-              // drawDot(arc3Centre)
+              const arcParams3 = {...arc3Centre, ...tubeParams}
               const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
               arcParams3.startAngle = tangentBearing;
-              // arcParams3.radius = tubeRadius;
-              // arcParams3.style = 'tube';
-
+              bend = tangentAngle(intersection, arcParams3, arcParams2)
               // calculate angle to glotticPlaneX
               const deltaX = glotticPlaneX - arcParams3.x;
               //const finalAngle = Math.asin(deltaX/arcParams3.radius);
@@ -348,7 +358,12 @@
           // figure out how much tube has been drawn so far:
           drawnTubeRadians += arcRadians(arcParams2);
           const remainingRadians = tubeRadians - drawnTubeRadians;
-          if (remainingRadians > 0) {
+          if (remainingRadians > 0) { // not all th tub is in th mouth. yay!
+            // const incisorBend = bend; //evd('incisorBend');
+            const angleToTooth1 = tubeAngle + bend//2 + Math.PI; 
+            const outerCentre = translate({...toothRotationCentre, angle: tubeAngle + bend, distance: tubeRadius})
+            // drawDot(outerCentre)
+            const arcParams1 = { ...outerCentre, endAngle: angleToTooth1-Math.PI, ...tubeParams} 
             arcParams1.startAngle = arcParams1.endAngle - remainingRadians;
             drawArc(arcParams1);
           }
@@ -422,6 +437,23 @@
             } else {
                 return { x: xs2, y: ys2 };
             }
+        }
+        
+        function tangentAngle(intersection, circle1, circle2) {
+            // Convert points to vectors
+            const u = { x: circle1.x - intersection.x, y: circle1.y - intersection.y };
+            const v = { x: circle2.x - intersection.x, y: circle2.y - intersection.y };
+            // Dot product of u and v
+            const dotProduct = u.x * v.x + u.y * v.y;
+            // Magnitudes of u and v
+            const magnitudeU = Math.sqrt(u.x * u.x + u.y * u.y);
+            const magnitudeV = Math.sqrt(v.x * v.x + v.y * v.y);
+            // Cosine of the angle between u and v
+            const cosTheta = dotProduct / (magnitudeU * magnitudeV);
+            // Angle in radians
+            const theta = Math.acos(cosTheta);
+            // Intersection angle (angle between tangents)
+            return intersectionAngle = theta;
         }
 
         // const scale = {f:4, xo: -100, yo: -100} 
