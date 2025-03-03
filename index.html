@@ -465,9 +465,7 @@
         }
 
         function drawTooth(params) {
-          console.log('params', params)
           const p = rescale({lineWidth: 2, ...params});
-          console.log('p', p)
           const width = p.height/3;
           const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
           gradient.addColorStop(0, '#fff'); // White color at the start

@@ -1,7 +1,9 @@
-This project aims to illustrate the impact of bending a tube over the upper incisors while attempting entrotracheal intubation.
 
-refactor without breaking current functionality so that the the drawarc function is passed an object of parameters 
+# Tracheal Intubation Geometry Simulation
 
+This project aims to illustrate the impact of bending a tube over the upper incisors while attempting tracheal intubation.
 
+## Live Demo
 
+You can see this page live and get more information [here](https://erichbschulz.github.io/tubebend/).
 
