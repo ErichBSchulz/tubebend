@@ -79,7 +79,7 @@
     <div class="container">
         <div class="left-column">
             <div class="canvas-wrapper">
-                <canvas id="canvas" width="400" height="400"></canvas>
+                <canvas id="canvas" width="1500" height="1500"></canvas>
             </div>
         </div>
         <div class="right-column">
@@ -221,7 +221,7 @@
     </div>
         </div>
     </div>
-
+<div id="notes">
     <h1>Notes:</h1>
     <p>This page aims to help those seeking to learn or teach tracheal intubation understand the geometry.</p>
     <p>Above is a simplified diagram showing the upper and lower incisors (white triangles), the laryngoscope blade (grey arc) and a tracheal tube. A blue bar is placed a the level of the blade tip to provide a approximate reference for the glottic opening between the vocal cords.</p>
@@ -235,6 +235,7 @@
         <li>This simulation divides the tube into three sections as it bends between the upper incisors and the laryngoscope blade. Section 1 is outside the mouth. Section 2 is between the incisors and the blade. Section 3 is the section that is deflected tangentially off the blade.</li>
         <li>Giving the tube a tighter radius than the blade breaks the simulation.</li>
     </ul>
+</div>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -249,6 +250,7 @@
         const toRadians = degrees => (degrees * Math.PI) / 180;
         const toDegrees = radians => (radians / Math.PI) * 180;
         const evd = id => toRadians(ev(id));
+        const scale = {f:4, xo: -100, yo: -100} 
 
         function init() {
           sliders.forEach(slider => e(slider).addEventListener('input', redraw));
@@ -263,22 +265,17 @@
           const lowerIncisorX = toothX + ev('lowerIncisorX')
           const lowerIncisorY = toothY + ev('lowerIncisorY')
           // draw teeth
-          drawTooth({x: toothX,y: toothY, height:15});
-          drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15});
+          drawTooth({x: toothX,y: toothY, height:15, lineWidth:1});
+          drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-15, lineWidth:1});
 
 
           // draw blade
           const bladeLength = ev('bladeLength')
-          console.log('bladeLength', bladeLength)
           const bladeInsertion = ev('bladeInsertion')
-          console.log('bladeInsertion', bladeInsertion)
           const bladeRadius = ev('bladeRadius')
-          console.log('bladeRadius', bladeRadius)
           const bit = bladeLength/(bladeRadius*2)
           // const bit = bladeRadius/(bladeLength/2)
-          console.log('bit', bit)
           const bladeRadians = Math.asin(bit) * 2;
-          console.log('bladeRadians', bladeRadians)
           const bladeAngle = evd('bladeAngle')
           const bladeCentre = translate({x: lowerIncisorX, y: lowerIncisorY, angle: bladeAngle + Math.PI, distance: bladeRadius});
           // drawDot({...bladeCentre, style: 'yellow'});
@@ -288,8 +285,6 @@
             radius: bladeRadius, 
             thickness: 3,
             style: "grey"}
-            console.log('blade', blade)
-            console.log('blade angle', blade.startAngle-blade.endAngle)
           const bladeTip = translate({...bladeCentre, angle: blade.endAngle, distance: blade.radius })
 
           drawArc(blade);
@@ -443,8 +438,26 @@
             }
         }
 
+        // const scale = {f:4, xo: -100, yo: -100} 
+        function rescale(o_in) {
+          const o = {...o_in}
+          o.x = (o.x + scale.xo) * scale.f;
+          o.y = (o.y + scale.yo) * scale.f;
+          ['start', 'end'].forEach((v) => {
+            if (o[v]) {
+              o[v] = rescale(o[v])
+            }
+          });
+          ['radius', 'height', 'thickness', 'lineWidth'].forEach((v) => {
+            if (o[v]) {
+              o[v] = o[v] * scale.f
+            }
+          });
+          return o
+        }
+
         function drawDot(params) {
-          const p = {style: 'blue', radius: 2, ...params}
+          const p = rescale({style: 'blue', radius: 2, ...params})
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
           ctx.fillStyle = p.style; // Set the fill color to blue
@@ -452,7 +465,7 @@
         }
 
         function drawLine(params) {
-          const p = {style: 'blue', ...params}
+          const p = rescale({style: 'blue', ...params})
           ctx.beginPath();
           ctx.moveTo(p.start.x, p.start.y)
           ctx.lineTo(p.end.x, p.end.y)
@@ -460,22 +473,25 @@
           ctx.stroke();
         }
 
-        function drawTooth({ x, y, height}) {
-          const width = height/2;
+        function drawTooth(params) {
+          console.log('params', params)
+          const p = rescale({lineWidth: 2, ...params});
+          console.log('p', p)
+          const width = p.height/3;
           ctx.fillStyle = 'white'; // Set the fill color to blue
           ctx.strokeStyle = 'grey'; // Set the color 
           ctx.beginPath();
-          ctx.moveTo(x,y);
-          ctx.lineTo(x+height, y+width);
-          ctx.lineTo(x+height, y-width);
+          ctx.moveTo(p.x,p.y);
+          ctx.lineTo(p.x+p.height, p.y+width);
+          ctx.lineTo(p.x+p.height, p.y-width);
           ctx.closePath();
           ctx.fill();
-          ctx.lineWidth = 2; // Set the line width for the triangle 
+          ctx.lineWidth = p.lineWidth // Set the line width for the triangle 
           ctx.stroke();
         }
   
         function drawArc(params) {
-            const p = {style: 'blue', radius: 5, thickness:4, ...params}
+            const p = rescale({style: 'blue', radius: 5, thickness:4, ...params})
             if (p.style === 'tube') {
               p.style = ctx.createRadialGradient(p.x, p.y, p.radius - p.thickness, p.x, p.y, p.radius + p.thickness);
               p.style.addColorStop(0, 'rgba(255, 255, 255, 0.5)'); // Inner color (transparent white)
