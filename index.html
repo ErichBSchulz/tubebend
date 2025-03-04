@@ -266,6 +266,14 @@
         const scale = {f:5, xo: -100, yo: -100} 
 
         function init() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const layout = urlParams.get('layout');
+
+          if (layout === 'twocol') {
+              alert('ya')
+              document.querySelector('.left-column').style.width = '50%';
+              document.querySelector('.right-column').style.width = '50%';
+          }
           sliders.forEach(slider => e(slider).addEventListener('input', redraw));
           e('showLabels').addEventListener('change', redraw); 
           redraw()
