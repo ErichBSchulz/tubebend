@@ -272,7 +272,10 @@
           if (layout === 'twocol') {
               document.querySelector('.left-column').style.width = '50%';
               document.querySelector('.right-column').style.width = '50%';
+              document.querySelector('#canvas').style.width = '100%';
+              document.querySelector('#canvas').style.height = 'auto';
           }
+
           sliders.forEach(slider => e(slider).addEventListener('input', redraw));
           e('showLabels').addEventListener('change', redraw); 
           redraw()
