@@ -424,45 +424,54 @@
      let isDragging = false;
      let dragStart = { x: 0, y: 0 };
  
-     function onMouseDown(event) {
-          console.log('event', event)
-         const { offsetX, offsetY } = event;
-          console.log(' offsetX, offsetY ',  offsetX, offsetY )
-         console.log('Mouse down at:', offsetX, offsetY);
-         if (isNearLowerIncisor(offsetX, offsetY)) {
-             isDragging = true;
-             dragStart = { x: offsetX, y: offsetY };
-             console.log('Started dragging');
-         }
-     }
- 
      function onMouseUp() {
          if (isDragging) {
              console.log('Stopped dragging');
          }
          isDragging = false;
      }
- 
-     function onMouseMove(event) {
-         if (!isDragging) return;
-         const { offsetX, offsetY } = event;
-         const dx = offsetX - dragStart.x;
-         const dy = offsetY - dragStart.y;
-         console.log('Dragging to:', offsetX, offsetY, 'Delta:', dx, dy);
-         e('lowerIncisorX').value = ev('lowerIncisorX') + dx;
-         e('lowerIncisorY').value = ev('lowerIncisorY') + dy;
-         dragStart = { x: offsetX, y: offsetY };
-         redraw();
-     }
- 
-     function isNearLowerIncisor(x, y) {
-         const lowerIncisorX = 300 + ev('lowerIncisorX');
-         const lowerIncisorY = 200 + ev('lowerIncisorY');
-         const distance = Math.sqrt((x - lowerIncisorX) ** 2 + (y - lowerIncisorY) ** 2);
-         console.log('Distance to lower incisor:', distance);
-         return distance < 1000; // Adjust the threshold as needed
-     }
 
+    function getMousePos(canvas, event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (event.clientX - rect.left) * (canvas.width / rect.width),
+            y: (event.clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    function onMouseDown(event) {
+        const p = getMousePos(canvas, event);
+        //console.log('Mouse down at:', x, y);
+        if (isNearLowerIncisor(p)) {
+            isDragging = true;
+            dragStart = p;
+            //console.log('Started dragging');
+        }
+    }
+
+    function onMouseMove(event) {
+        if (!isDragging) return;
+        const p = getMousePos(canvas, event);
+        const dx = p.x - dragStart.x;
+        const dy = p.y - dragStart.y;
+        console.log('Dragging to:', p.x, p.y, 'Delta:', dx, dy);
+        e('lowerIncisorX').value = ev('lowerIncisorX') + dx / scale.f;
+        e('lowerIncisorY').value = ev('lowerIncisorY') + dy / scale.f;
+        dragStart = p;
+        redraw();
+    }
+
+    function isNearLowerIncisor(p) {
+        // TODO store a tooth centre coord in global space
+        const lowerIncisorX = 300 + ev('lowerIncisorX');
+        const lowerIncisorY = 200 + ev('lowerIncisorY');
+        const t = rescale({ x: lowerIncisorX, y: lowerIncisorY });
+        console.log('Lower Incisor Coordinates:', lowerIncisorX, lowerIncisorY);
+        console.log('Rescaled Coordinates:', t.x, t.y);
+        const distance = Math.sqrt((p.x - t.x) ** 2 + (p.y - t.y) ** 2);
+        console.log('Distance to lower incisor:', distance);
+        return distance < 200; // Adjust the threshold as needed
+    }
         // cartesian translation
         function translate({x, y, angle, distance}) {
           return {x: x+Math.cos(angle)*distance, y: y+Math.sin(angle)*distance, }
@@ -535,6 +544,7 @@
           const o = {...o_in}
           o.x = (o.x + scale.xo) * scale.f;
           o.y = (o.y + scale.yo) * scale.f;
+          // console.log('Rescaling:', o_in.x,o_in.y, 'to', o.x, o.y);
           ['start', 'end'].forEach((v) => {
             if (o[v]) {
               o[v] = rescale(o[v])
@@ -598,7 +608,9 @@
         }
 
         function drawTooth(params) {
+          console.log('tooth pre scale', params)
           const p = rescale({lineWidth: 2, ...params});
+          console.log('tooth p after rescaling', p)
           const width = p.height/3;
           const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
           gradient.addColorStop(0, '#fff'); // White color at the start
