@@ -68,7 +68,6 @@
 <body>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
 
-
     <div class="main-container">
         <div class="left-column">
             <div class="canvas-wrapper">
@@ -203,6 +202,12 @@
                     <span id="yValue">250</span>
                 </div>
             </div>
+            <div class="slider-container">
+                <div class="slider-row">
+                    <label for="showLabels">Show labels: </label>
+                    <input type="checkbox" id="showLabels" checked>
+                </div>
+            </div>
         </div>
     </div>
     <div id="notes" class="notes">
@@ -262,6 +267,7 @@
 
         function init() {
           sliders.forEach(slider => e(slider).addEventListener('input', redraw));
+          e('showLabels').addEventListener('change', redraw); 
           redraw()
         }
 
@@ -319,9 +325,10 @@
           const arcParams2 = { ...inflection, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, ...tubeParams};
           var drawnTubeRadians = 0;
           var bend = 0;
+          var tubeTip; // used for placing final angle
           // find the intersection of the tube and blade
           const intersection = findIntersection(arcParams2, 
-            // modify blade to add thicness
+            // modify blade to add thickness
             {...blade, radius: blade.radius + (blade.thickness+tubeParams.thickness)/2});
           if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
               // collision!
@@ -346,6 +353,7 @@
               drawArc(arcParams3);
               drawnTubeRadians += arcRadians(arcParams3);
               drawDot({...intersection, style: 'red'});
+              tubeTip = translate({...arc3Centre, angle: arcParams3.endAngle, distance: tubeRadius })
           }
           else {
             // no collision
@@ -355,6 +363,7 @@
             //const finalAngle = Math.asin(deltaX/arcParams2.radius);
             const finalAngle = Math.acos(deltaX/arcParams2.radius);
             arcParams2.endAngle = finalAngle;
+            tubeTip = translate({...arcParams2, angle: finalAngle, distance: tubeRadius })
           }
           drawArc(arcParams2);
           // figure out how much tube has been drawn so far:
@@ -380,6 +389,15 @@
           const style = "pink";
           const arcParams = { startAngle, endAngle, thickness, x, y, radius, style };
           drawArc(arcParams);
+
+          // Draw labels if the checkbox is checked
+          if (e('showLabels').checked) {
+              label({ x: lowerIncisorX, y: lowerIncisorY, text: 'Lower Incisor', alignment: 'left' });
+              label({ x: toothX, y: toothY, text: 'Upper Incisor', alignment: 'right' });
+              label({ x: bladeTip.x, y: bladeTip.y, text: 'Blade', alignment: 'above' });
+              label({ x: glotticPlaneX, y: bladeTip.y, text: 'Glottis', alignment: 'above' });
+              label({ x: tubeTip.x, y: tubeTip.y, text: 'Tube', alignment: 'below' });
+          }
         }
 
         // cartesian translation
@@ -468,7 +486,7 @@
               o[v] = rescale(o[v])
             }
           });
-          ['radius', 'height', 'thickness', 'lineWidth'].forEach((v) => {
+          ['radius', 'height', 'thickness', 'lineWidth', 'fontsize', 'offset'].forEach((v) => {
             if (o[v]) {
               o[v] = o[v] * scale.f
             }
@@ -476,6 +494,33 @@
           return o
         }
 
+        function label(p) {
+            const {x, y, text, alignment, fontsize, color, offset}
+                = rescale({alignment: 'left', fontsize: 4, color: 'darkgrey', offset: 15 , ...p});
+            ctx.font = `${fontsize}px Arial`;
+            ctx.fillStyle = color;
+            let textX = x, textY = y;
+            switch (alignment) {
+                case 'right':
+                    textX += offset;
+                    textY += fontsize / 2;
+                    break;
+                case 'above':
+                    textX -= ctx.measureText(text).width / 2;
+                    textY -= offset;
+                    break;
+                case 'below':
+                    textX -= ctx.measureText(text).width / 2;
+                    textY += offset + fontsize;
+                    break;
+                default: // 'left'
+                    textX -= offset + ctx.measureText(text).width;
+                    textY += fontsize / 2;
+                    break;
+            }
+            ctx.fillText(text, textX, textY);
+        }
+        
         function drawDot(params) {
           const p = rescale({style: 'blue', radius: 2, ...params})
           ctx.beginPath();
