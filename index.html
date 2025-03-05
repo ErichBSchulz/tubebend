@@ -247,170 +247,242 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const sliders = [ 'tubeAngle', 
-          // 'incisorBend', 
-          'tubeRadius', 'glotticPlaneX', 'tubeLength',
-          'bladeLength', 'bladeInsertion', 'bladeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
-          'startAngle', 'endAngle', 'thickness', 'x', 'y']
-        // shortcut function
-        const e = document.getElementById.bind(document);
-        // shortcut to read value
-        const ev = id => +e(id).value;
-        // read degrees and convirt to radians
-        const toRadians = degrees => (degrees * Math.PI) / 180;
-        const toDegrees = radians => (radians / Math.PI) * 180;
-        const evd = id => toRadians(ev(id));
-        const scale = {f:5, xo: -100, yo: -100} 
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const sliders = [ 'tubeAngle', 
+      // 'incisorBend', 
+      'tubeRadius', 'glotticPlaneX', 'tubeLength',
+      'bladeLength', 'bladeInsertion', 'bladeRadius', 'bladeAngle', 'lowerIncisorX', 'lowerIncisorY', 
+      'startAngle', 'endAngle', 'thickness', 'x', 'y']
+    // shortcut function
+    const e = document.getElementById.bind(document);
+    // shortcut to read value
+    const ev = id => +e(id).value;
+    // read degrees and convirt to radians
+    const toRadians = degrees => (degrees * Math.PI) / 180;
+    const toDegrees = radians => (radians / Math.PI) * 180;
+    const evd = id => toRadians(ev(id));
+    const scale = {f:5, xo: -100, yo: -100} 
 
-        function init() {
-          const urlParams = new URLSearchParams(window.location.search);
-          const layout = urlParams.get('layout');
+    function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const layout = urlParams.get('layout');
 
-          if (layout === 'twocol') {
-              document.querySelector('.left-column').style.width = '50%';
-              document.querySelector('.right-column').style.width = '50%';
-              document.querySelector('#canvas').style.width = '100%';
-              document.querySelector('#canvas').style.height = 'auto';
-          }
-          canvas.addEventListener('mousedown', onMouseDown);
-          canvas.addEventListener('mouseup', onMouseUp);
-          canvas.addEventListener('mousemove', onMouseMove);
-          sliders.forEach(slider => e(slider).addEventListener('input', redraw));
-          e('showLabels').addEventListener('change', redraw); 
-          redraw()
-        }
+      if (layout === 'twocol') {
+          document.querySelector('.left-column').style.width = '50%';
+          document.querySelector('.right-column').style.width = '50%';
+          document.querySelector('#canvas').style.width = '100%';
+          document.querySelector('#canvas').style.height = 'auto';
+      }
+      canvas.addEventListener('mousedown', onMouseDown);
+      canvas.addEventListener('mouseup', onMouseUp);
+      canvas.addEventListener('mousemove', onMouseMove);
+      sliders.forEach(slider => e(slider).addEventListener('input', redraw));
+      e('showLabels').addEventListener('change', redraw); 
+      redraw()
+    }
 
+    function readParams() {
+        return {
+            toothX: 300,
+            toothY: 200,
+            lowerIncisorX: ev('lowerIncisorX'),
+            lowerIncisorY: ev('lowerIncisorY'),
+            bladeLength: ev('bladeLength'),
+            bladeInsertion: ev('bladeInsertion'),
+            bladeRadius: ev('bladeRadius'),
+            bladeAngle: evd('bladeAngle'),
+            tubeLength: ev('tubeLength'),
+            tubeRadius: ev('tubeRadius'),
+            tubeAngle: evd('tubeAngle'),
+            glotticPlaneX: ev('glotticPlaneX'),
+            startAngle: evd("startAngle"),
+            endAngle: evd("endAngle"),
+            thickness: ev("thickness"),
+            x: ev("x"),
+            y: ev("y"),
+            showLabels: e('showLabels').checked
+        };
+    }
 
-        function redraw() {
-          updateValues();
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const toothX= 300;
-          const toothY= 200;
-          const lowerIncisorX = toothX + ev('lowerIncisorX')
-          const lowerIncisorY = toothY + ev('lowerIncisorY')
-          // draw teeth
-          drawTooth({x: toothX,y: toothY, height:10, lineWidth:1});
-          drawTooth({x: lowerIncisorX, y: lowerIncisorY, height:-10, lineWidth:1});
-
-
-          // draw blade
-          const bladeLength = ev('bladeLength')
-          const bladeInsertion = ev('bladeInsertion')
-          const bladeRadius = ev('bladeRadius')
-          const bit = bladeLength/(bladeRadius*2)
-          // const bit = bladeRadius/(bladeLength/2)
-          const bladeRadians = Math.asin(bit) * 2;
-          const bladeAngle = evd('bladeAngle')
-          const bladeCentre = translate({x: lowerIncisorX, y: lowerIncisorY, angle: bladeAngle + Math.PI, distance: bladeRadius});
-          // drawDot({...bladeCentre, style: 'yellow'});
-          const blade = { ...bladeCentre, 
-            startAngle: bladeAngle-bladeRadians*(1- (bladeInsertion/100)),
-            endAngle: bladeAngle + bladeRadians*((bladeInsertion/100)),
-            radius: bladeRadius, 
-            thickness: 3,
-            style: "metal"}
-          const bladeTip = translate({...bladeCentre, angle: blade.endAngle, distance: blade.radius })
-          drawArc(blade);
-          drawDot({...bladeTip, style: 'gray'});
-
-          const tubeLength = ev('tubeLength')
-          const tubeRadius = ev('tubeRadius')
-
-          const tubeArcAngle = tubeLength / tubeRadius 
-          // const circ = tubeRadius * 2 * Math.PI;
-          // const fraction = tubeLength / circ; 
-          const tubeRadians = tubeLength / tubeRadius;
-          const tubeAngle = evd('tubeAngle');
-          const tubeParams = {style: "tube", radius: tubeRadius, thickness: 10};
-
-          const glotticPlaneX = ev('glotticPlaneX')
-          drawGlottis({start: {x: glotticPlaneX, y: bladeTip.y-10}, end: {x: glotticPlaneX, y: bladeTip.y+10}, })
-
-          const toothRotationCentre = {x: toothX-tubeParams.thickness/2, y: toothY-tubeParams.thickness/2}
-          const inflection = translate({...toothRotationCentre, angle: tubeAngle, distance: tubeRadius})
-          // drawDot(inflection)
+    function calculateGeometry(params) {
+        const state = {};
+        state.lowerIncisorX = params.toothX + params.lowerIncisorX;
+        state.lowerIncisorY = params.toothY + params.lowerIncisorY;
         
-          // draw second arc
-          const angleToTooth2 = tubeAngle + Math.PI; 
-          const arcParams2 = { ...inflection, startAngle: angleToTooth2, endAngle: angleToTooth2 + 1, ...tubeParams};
-          var drawnTubeRadians = 0;
-          var bend = 0;
-          var tubeTip; // used for placing final angle
-          // find the intersection of the tube and blade
-          const intersection = findIntersection(arcParams2, 
-            // modify blade to add thickness
-            {...blade, radius: blade.radius + (blade.thickness+tubeParams.thickness)/2});
-          if (intersection !== null && intersection.x > bladeTip.x && intersection.y > toothY) { 
-              // collision!
-              // calculate bearing from centre of blade curve to intersection point so can 
-              // calucate the new rotation centre of a tangental tube
-              const tubeBladeAxisBearing = calculateBearing(intersection, blade);
-              // get the anglar location of the tube so we can derive the length of the section 3
-              const tube2AxisBearing = calculateBearing(intersection, arcParams2);
-              arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
-              // todo draw the "ghost" tube
-              const arc3Centre = translate({...intersection, angle: tubeBladeAxisBearing.angle,
-              distance: tubeRadius});
-              const arcParams3 = {...arc3Centre, ...tubeParams}
-              const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
-              arcParams3.startAngle = tangentBearing;
-              bend = tangentAngle(intersection, arcParams3, arcParams2)
-              // calculate angle to glotticPlaneX
-              const deltaX = glotticPlaneX - arcParams3.x;
-              //const finalAngle = Math.asin(deltaX/arcParams3.radius);
-              const finalAngle = Math.acos(deltaX/arcParams3.radius);
-              arcParams3.endAngle = finalAngle > arcParams3.startAngle ? finalAngle : arcParams3.startAngle;
-              drawArc(arcParams3);
-              drawnTubeRadians += arcRadians(arcParams3);
-              drawDot({...intersection, style: 'red'});
-              tubeTip = translate({...arc3Centre, angle: arcParams3.endAngle, distance: tubeRadius })
-          }
-          else {
-            // no collision
-            // arcParams2.style = "green"
-            // calculate angle to glotticPlaneX
-            const deltaX = glotticPlaneX - arcParams2.x;
-            //const finalAngle = Math.asin(deltaX/arcParams2.radius);
-            const finalAngle = Math.acos(deltaX/arcParams2.radius);
-            arcParams2.endAngle = finalAngle;
-            tubeTip = translate({...arcParams2, angle: finalAngle, distance: tubeRadius })
-          }
-          drawArc(arcParams2);
-          // figure out how much tube has been drawn so far:
-          drawnTubeRadians += arcRadians(arcParams2);
-          const remainingRadians = tubeRadians - drawnTubeRadians;
-          if (remainingRadians > 0) { // not all th tub is in th mouth. yay!
-            // const incisorBend = bend; //evd('incisorBend');
-            const angleToTooth1 = tubeAngle + bend//2 + Math.PI; 
-            const outerCentre = translate({...toothRotationCentre, angle: tubeAngle + bend, distance: tubeRadius})
-            // drawDot(outerCentre)
-            const arcParams1 = { ...outerCentre, endAngle: angleToTooth1-Math.PI, ...tubeParams} 
-            arcParams1.startAngle = arcParams1.endAngle - remainingRadians;
-            drawArc(arcParams1);
-          }
+        const bladeRadians = Math.asin(params.bladeLength / (params.bladeRadius * 2)) * 2;
+        state.bladeCentre = translate({
+            x: state.lowerIncisorX,
+            y: state.lowerIncisorY,
+            angle: params.bladeAngle + Math.PI,
+            distance: params.bladeRadius
+        });
+        state.blade = {
+            ...state.bladeCentre,
+            startAngle: params.bladeAngle - bladeRadians * (1 - (params.bladeInsertion / 100)),
+            endAngle: params.bladeAngle + bladeRadians * (params.bladeInsertion / 100),
+            radius: params.bladeRadius,
+            thickness: 3,
+            style: "metal"
+        };
+        state.bladeTip = translate({
+            ...state.bladeCentre,
+            angle: state.blade.endAngle,
+            distance: state.blade.radius
+        });
+        
 
-          // reference arc 
-          const startAngle = evd("startAngle");
-          const endAngle = evd("endAngle");
-          const thickness = ev("thickness");
-          const x = ev("x");
-          const y = ev("y");
-          const radius = 5;
-          const style = "pink";
-          const arcParams = { startAngle, endAngle, thickness, x, y, radius, style };
-          drawArc(arcParams);
+       const toothRotationCentre = {
+            x: params.toothX - 10 / 2,
+            y: params.toothY - 10 / 2
+      }
 
-          // Draw labels if the checkbox is checked
-          if (e('showLabels').checked) {
-              label({ x: lowerIncisorX, y: lowerIncisorY, text: 'Lower Incisor', alignment: 'left' });
-              label({ x: toothX, y: toothY, text: 'Upper Incisor', alignment: 'right' });
-              label({ x: bladeTip.x, y: bladeTip.y, text: 'Blade', alignment: 'above' });
-              label({ x: glotticPlaneX, y: bladeTip.y, text: 'Glottis', alignment: 'above' });
-              label({ x: tubeTip.x, y: tubeTip.y, text: 'Tube', alignment: 'below' });
-          }
+        state.inflection = translate({
+            ...toothRotationCentre,
+            angle: params.tubeAngle,
+            distance: params.tubeRadius
+        });
+        
+        const angleToTooth2 = params.tubeAngle + Math.PI;
+        state.arcParams2 = {
+            ...state.inflection,
+            startAngle: angleToTooth2,
+            endAngle: angleToTooth2 + 1,
+            style: "tube",
+            radius: params.tubeRadius,
+            thickness: 10
+        };
+        
+
+        // track the total arc of tube accounted for
+        state.drawnTubeRadians = 0;
+        state.bend = 0;
+        
+        // figure out where tube (secgment 2) collides with the balde
+        const intersection = findIntersection(state.arcParams2, {
+            ...state.blade,
+            radius: state.blade.radius + (state.blade.thickness + 10) / 2
+        });
+        
+        if (intersection !== null && intersection.x > state.bladeTip.x && intersection.y > params.toothY) {
+            const tubeBladeAxisBearing = calculateBearing(intersection, state.blade);
+            const tube2AxisBearing = calculateBearing(intersection, state.arcParams2);
+            state.arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
+            
+            const arc3Centre = translate({
+                ...intersection,
+                angle: tubeBladeAxisBearing.angle,
+                distance: params.tubeRadius
+            });
+            
+            state.arcParams3 = {
+                ...arc3Centre,
+                style: "tube",
+                radius: params.tubeRadius,
+                thickness: 10
+            };
+            
+            const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
+            state.arcParams3.startAngle = tangentBearing;
+            state.bend = tangentAngle(intersection, state.arcParams3, state.arcParams2);
+            
+            const deltaX = params.glotticPlaneX - state.arcParams3.x;
+            const finalAngle = Math.acos(deltaX / state.arcParams3.radius);
+            state.arcParams3.endAngle = finalAngle > state.arcParams3.startAngle ? finalAngle : state.arcParams3.startAngle;
+            
+            state.drawnTubeRadians += arcRadians(state.arcParams3);
+            state.tubeTip = translate({
+                ...arc3Centre,
+                angle: state.arcParams3.endAngle,
+                distance: params.tubeRadius
+            });
+        } else { // no contact between blade and tube
+            const deltaX = params.glotticPlaneX - state.arcParams2.x;
+            const finalAngle = Math.acos(deltaX / state.arcParams2.radius);
+            state.arcParams2.endAngle = finalAngle;
+            state.tubeTip = translate({
+                ...state.arcParams2,
+                angle: finalAngle,
+                distance: params.tubeRadius
+            });
         }
+        
+        state.drawnTubeRadians += arcRadians(state.arcParams2);
+        
+        const remainingRadians = params.tubeLength / params.tubeRadius - state.drawnTubeRadians;
+        if (remainingRadians > 0) {
+            const outerCentre = translate({
+                ...toothRotationCentre,
+                angle: params.tubeAngle + state.bend,
+                distance: params.tubeRadius
+            });
+            
+            state.arcParams1 = {
+                ...outerCentre,
+                endAngle: params.tubeAngle + state.bend + Math.PI,
+                style: "tube",
+                radius: params.tubeRadius,
+                thickness: 10
+            };
+            
+            state.arcParams1.startAngle = state.arcParams1.endAngle - remainingRadians;
+        }
+       state.glottis = {
+            start: {x: params.glotticPlaneX, y: state.bladeTip.y - 10},
+            end: {x: params.glotticPlaneX, y: state.bladeTip.y + 10}
+      }
+        
+        state.arcParams = {
+            startAngle: params.startAngle,
+            endAngle: params.endAngle,
+            thickness: params.thickness,
+            x: params.x,
+            y: params.y,
+            radius: 5,
+            style: "pink"
+        };
+        
+        return state;
+    }
+
+    function draw(state) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // teeth
+        drawTooth({x: 300, y: 200, height: 10, lineWidth: 1});
+        drawTooth({x: state.lowerIncisorX, y: state.lowerIncisorY, height: -10, lineWidth: 1});
+        // blade
+        drawArc(state.blade);
+        drawDot({...state.bladeTip, style: 'gray'});
+        // glottis
+        drawGlottis(state.glottis);
+        // tube
+        drawArc(state.arcParams2);
+        if (state.arcParams3) {
+            drawArc(state.arcParams3);
+            drawDot({...state.intersection, style: 'red'});
+        }
+        if (state.arcParams1) {
+            drawArc(state.arcParams1);
+        }
+        // fiducial
+        drawArc(state.arcParams);
+        // labels 
+        if (state.params.showLabels) {
+            label({x: state.lowerIncisorX, y: state.lowerIncisorY, text: 'Lower Incisor', alignment: 'left'});
+            label({x: 300, y: 200, text: 'Upper Incisor', alignment: 'right'});
+            label({x: state.bladeTip.x, y: state.bladeTip.y, text: 'Blade', alignment: 'above'});
+            label({x: state.params.glotticPlaneX, y: state.bladeTip.y, text: 'Glottis', alignment: 'above'});
+            label({x: state.tubeTip.x, y: state.tubeTip.y, text: 'Tube', alignment: 'below'});
+        }
+    }
+
+    function redraw() {
+        updateValues();
+        const params = readParams();
+        const state = calculateGeometry(params);
+        draw(state);
+    }
 
     // cartesian translation
       function arcRadians(arc) {
@@ -522,6 +594,7 @@
             }
         }
         
+        // given two circles, what is the angle between their tangents
         function tangentAngle(intersection, circle1, circle2) {
             // Convert points to vectors
             const u = { x: circle1.x - intersection.x, y: circle1.y - intersection.y };
@@ -539,7 +612,7 @@
             return intersectionAngle = theta;
         }
 
-        // const scale = {f:4, xo: -100, yo: -100} 
+        // apply scale 
         function rescale(o_in) {
           const o = {...o_in}
           o.x = (o.x + scale.xo) * scale.f;
