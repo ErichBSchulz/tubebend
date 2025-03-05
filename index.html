@@ -241,8 +241,17 @@
         <ul>
             <li>The model assumes that the deflection angle when the tube reflects off the teeth will be matched by the deflection angle over the teeth themselves.</li>
             <li>The model will break if you put in extreme values, eg a tube radius that is less than the blade radius.</li>
-            <li>The glottic marker tracks the blade tip height but can be moved further or close to the blade tip with <em>Glottic Plane X</em> slider.</li>
+            <li>The glottic marker tracks the blade tip height but can be moved further or close to the blade tip with <em>Glottic Plane X</em> slider.
+             This behaviour approximates a Cormack and Lehane view of <em>2b</em></li>
             <li>If you would like to take measurements, you can do so simply with the little fiducial.</li>
+        </ul>
+      <h2>Todo</h2>
+        <ul>
+            <li>Make blade draggable</li>
+            <li>Make tube draggable</li>
+            <li>Reset button or scenario buttons (overbite/underbite/ good/bad technique etc)</li>
+            <li>Have a mode where the tube tracks the glottis</li>
+            <li>Recognise when upper teeth up damaged</li>
         </ul>
     </div>
 
@@ -287,7 +296,7 @@
         appearance: {
             showLabels: e('showLabels').checked
         },
-        geometry: {
+        airwayParams: {
             upperIncisorX: 300,
             upperIncisorY: 200,
             lowerIncisorX: ev('lowerIncisorX'),
@@ -378,11 +387,11 @@
         if (intersection !== null && intersection.x > state.bladeTip.x && intersection.y > params.upperIncisorY) {
             const tubeBladeAxisBearing = calculateBearing(intersection, state.blade);
             const tube2AxisBearing = calculateBearing(intersection, state.arcParams2);
-            state.arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
+            state.arcParams2.endAngle = tube2AxisBearing - Math.PI;
             
             const arc3Centre = translate({
                 ...intersection,
-                angle: tubeBladeAxisBearing.angle,
+                angle: tubeBladeAxisBearing,
                 distance: params.tubeRadius
             });
             
@@ -393,7 +402,7 @@
                 thickness: 10
             };
             
-            const tangentBearing = tubeBladeAxisBearing.angle + Math.PI;
+            const tangentBearing = tubeBladeAxisBearing + Math.PI;
             state.arcParams3.startAngle = tangentBearing;
             state.bend = tangentAngle(intersection, state.arcParams3, state.arcParams2);
             
@@ -443,7 +452,7 @@
             end: {x: params.glotticPlaneX, y: state.bladeTip.y + 10}
       }
         
-        state.arcParams = {
+        state.fiducial = { // rename all these to be prefixed by `fiducial`
             startAngle: params.startAngle,
             endAngle: params.endAngle,
             thickness: params.thickness,
@@ -457,6 +466,8 @@
     }
 
     function draw(state, appearance) {
+        // save state to drawing context 
+        ctx.geometry = state;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // teeth
@@ -477,13 +488,12 @@
             drawArc(state.arcParams1);
         }
         // fiducial
-        drawArc(state.arcParams);
+        drawArc(state.fiducial);
         // labels 
         if (appearance.showLabels) {
             label({x: state.lowerIncisorX, y: state.lowerIncisorY, text: 'Lower Incisor', alignment: 'left'});
             label({x: state.upperIncisorX, y: state.upperIncisorY, text: 'Upper Incisor', alignment: 'right'});
             label({x: state.bladeTip.x, y: state.bladeTip.y, text: 'Blade', alignment: 'above'});
-
             label({x: state.glottis.start.x, y: state.glottis.start.y,
               text: 'Glottis', alignment: 'left', offset: 5});
             label({x: state.tubeTip.x, y: state.tubeTip.y, text: 'Tube', alignment: 'below'});
@@ -492,8 +502,8 @@
 
     function redraw() {
         updateValues();
-        const {appearance, geometry} = readParams();
-        const state = calculateGeometry(geometry);
+        const {appearance, airwayParams} = readParams();
+        const state = calculateGeometry(airwayParams);
         draw(state, appearance);
     }
 
@@ -506,14 +516,14 @@
         return r;
         }
 
-     let isDragging = false;
+     let draggingObject = false;
      let dragStart = { x: 0, y: 0 };
  
      function onMouseUp() {
-         if (isDragging) {
+         if (draggingObject) {
            //  console.log('Stopped dragging');
          }
-         isDragging = false;
+         draggingObject = false;
      }
 
     function getMousePos(canvas, event) {
@@ -527,35 +537,49 @@
     function onMouseDown(event) {
         const p = getMousePos(canvas, event);
         //console.log('Mouse down at:', x, y);
-        if (isNearLowerIncisor(p)) {
-            isDragging = true;
+        const o = closestObject(p);
+        if (o) {
+            draggingObject = o;
             dragStart = p;
             //console.log('Started dragging');
         }
     }
 
     function onMouseMove(event) {
-        if (!isDragging) return;
+        if (!draggingObject) return;
         const p = getMousePos(canvas, event);
         const dx = p.x - dragStart.x;
         const dy = p.y - dragStart.y;
-        // console.log('Dragging to:', p.x, p.y, 'Delta:', dx, dy);
-        e('lowerIncisorX').value = ev('lowerIncisorX') + dx / scale.f;
-        e('lowerIncisorY').value = ev('lowerIncisorY') + dy / scale.f;
         dragStart = p;
+        console.log('Dragging', draggingObject, 'to:', p.x, p.y, 'Delta:', dx, dy);
+        
+        switch (draggingObject) {
+            case 'LI':
+                e('lowerIncisorX').value = ev('lowerIncisorX') + dx / scale.f;
+                e('lowerIncisorY').value = ev('lowerIncisorY') + dy / scale.f;
+                break;
+            case 'tube':
+                break;
+            case 'blade':
+                break;
+            case 'glottis':
+                break;
+            default: // 'left'
+                break;
+        }
+
         redraw();
     }
 
-    function isNearLowerIncisor(p) {
+    function closestObject(p) {
         // TODO store a tooth centre coord in global space
-        const lowerIncisorX = 300 + ev('lowerIncisorX');
-        const lowerIncisorY = 200 + ev('lowerIncisorY');
-        const t = rescale({ x: lowerIncisorX, y: lowerIncisorY });
+        const t = rescale({ x: ctx.geometry.lowerIncisorX, y: ctx.geometry.lowerIncisorY});
+      console.log('ctx.geometry', ctx.geometry)
         // console.log('Lower Incisor Coordinates:', lowerIncisorX, lowerIncisorY);
         // console.log('Rescaled Coordinates:', t.x, t.y);
         const distance = Math.sqrt((p.x - t.x) ** 2 + (p.y - t.y) ** 2);
         // console.log('Distance to lower incisor:', distance);
-        return distance < 200; // Adjust the threshold as needed
+        return distance < 200 ? 'LI' : false; // Adjust the threshold as needed
     }
         // cartesian translation
         function translate({x, y, angle, distance}) {
@@ -563,15 +587,19 @@
         }
 
         // given two points calcuate angle and distance between them
-        function calculateBearing(point1, point2) {
-            const { x: x1, y: y1 } = point1;
-            const { x: x2, y: y2 } = point2;
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const angle = Math.atan2(dy, dx);
-            // calculate distance between points
+        function distanceBetween(p1, p2) {
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            return {angle, distance};
+            return distance;
+        }
+
+        // given two points calcuate angle and distance between them
+        function calculateBearing(p1, p2) {
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const angle = Math.atan2(-dy, -dx);
+            return angle;
         }
 
         // get the cordinates of the tip of an arc
