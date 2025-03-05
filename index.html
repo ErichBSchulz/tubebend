@@ -286,10 +286,30 @@
       canvas.addEventListener('mousedown', onMouseDown);
       canvas.addEventListener('mouseup', onMouseUp);
       canvas.addEventListener('mousemove', onMouseMove);
+      // Add touch event listeners for mobile support
+      canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+      canvas.addEventListener('touchend', onTouchEnd, { passive: false });
+      canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+
       sliders.forEach(slider => e(slider).addEventListener('input', redraw));
       e('showLabels').addEventListener('change', redraw); 
       redraw()
     }
+
+function onTouchStart(event) {
+    event.preventDefault();
+    onMouseDown(event.touches[0]);
+}
+
+function onTouchMove(event) {
+    event.preventDefault();
+    onMouseMove(event.touches[0]);
+}
+
+function onTouchEnd(event) {
+    event.preventDefault();
+    onMouseUp(event.changedTouches[0]);
+}
 
     function readParams() {
       return {
