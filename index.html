@@ -283,9 +283,13 @@
     }
 
     function readParams() {
-        return {
-            toothX: 300,
-            toothY: 200,
+      return {
+        appearance: {
+            showLabels: e('showLabels').checked
+        },
+        geometry: {
+            upperIncisorX: 300,
+            upperIncisorY: 200,
             lowerIncisorX: ev('lowerIncisorX'),
             lowerIncisorY: ev('lowerIncisorY'),
             bladeLength: ev('bladeLength'),
@@ -301,14 +305,15 @@
             thickness: ev("thickness"),
             x: ev("x"),
             y: ev("y"),
-            showLabels: e('showLabels').checked
-        };
+        }};
     }
 
     function calculateGeometry(params) {
         const state = {};
-        state.lowerIncisorX = params.toothX + params.lowerIncisorX;
-        state.lowerIncisorY = params.toothY + params.lowerIncisorY;
+        state.upperIncisorX = params.upperIncisorX;
+        state.upperIncisorY = params.upperIncisorY;
+        state.lowerIncisorX = params.upperIncisorX + params.lowerIncisorX;
+        state.lowerIncisorY = params.upperIncisorY + params.lowerIncisorY;
         
         const bladeRadians = Math.asin(params.bladeLength / (params.bladeRadius * 2)) * 2;
         state.bladeCentre = translate({
@@ -333,8 +338,8 @@
         
 
        const toothRotationCentre = {
-            x: params.toothX - 10 / 2,
-            y: params.toothY - 10 / 2
+            x: params.upperIncisorX - 10 / 2,
+            y: params.upperIncisorY - 10 / 2
       }
 
         state.inflection = translate({
@@ -364,7 +369,7 @@
             radius: state.blade.radius + (state.blade.thickness + 10) / 2
         });
         
-        if (intersection !== null && intersection.x > state.bladeTip.x && intersection.y > params.toothY) {
+        if (intersection !== null && intersection.x > state.bladeTip.x && intersection.y > params.upperIncisorY) {
             const tubeBladeAxisBearing = calculateBearing(intersection, state.blade);
             const tube2AxisBearing = calculateBearing(intersection, state.arcParams2);
             state.arcParams2.endAngle = tube2AxisBearing.angle - Math.PI;
@@ -445,11 +450,11 @@
         return state;
     }
 
-    function draw(state) {
+    function draw(state, appearance) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // teeth
-        drawTooth({x: 300, y: 200, height: 10, lineWidth: 1});
+        drawTooth({x: state.upperIncisorX, y: state.upperIncisorY, height: 10, lineWidth: 1});
         drawTooth({x: state.lowerIncisorX, y: state.lowerIncisorY, height: -10, lineWidth: 1});
         // blade
         drawArc(state.blade);
@@ -468,7 +473,7 @@
         // fiducial
         drawArc(state.arcParams);
         // labels 
-        if (state.params.showLabels) {
+        if (appearance.showLabels) {
             label({x: state.lowerIncisorX, y: state.lowerIncisorY, text: 'Lower Incisor', alignment: 'left'});
             label({x: 300, y: 200, text: 'Upper Incisor', alignment: 'right'});
             label({x: state.bladeTip.x, y: state.bladeTip.y, text: 'Blade', alignment: 'above'});
@@ -479,9 +484,9 @@
 
     function redraw() {
         updateValues();
-        const params = readParams();
-        const state = calculateGeometry(params);
-        draw(state);
+        const {appearance, geometry} = readParams();
+        const state = calculateGeometry(geometry);
+        draw(state, appearance);
     }
 
     // cartesian translation
