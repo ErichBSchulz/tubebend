@@ -310,11 +310,14 @@
 
     function calculateGeometry(params) {
         const state = {};
+
+        // start with the teeth:
         state.upperIncisorX = params.upperIncisorX;
         state.upperIncisorY = params.upperIncisorY;
         state.lowerIncisorX = params.upperIncisorX + params.lowerIncisorX;
+
         state.lowerIncisorY = params.upperIncisorY + params.lowerIncisorY;
-        
+        // place blade against lower incisors
         const bladeRadians = Math.asin(params.bladeLength / (params.bladeRadius * 2)) * 2;
         state.bladeCentre = translate({
             x: state.lowerIncisorX,
@@ -328,21 +331,24 @@
             endAngle: params.bladeAngle + bladeRadians * (params.bladeInsertion / 100),
             radius: params.bladeRadius,
             thickness: 3,
-            style: "metal"
+            style: "metal" // TODO move to draw
         };
         state.bladeTip = translate({
             ...state.bladeCentre,
             angle: state.blade.endAngle,
             distance: state.blade.radius
         });
-        
 
+       // Locate the tube, starting with the middle segment (arc2), 
+       // starting against the upper teeth at the specified angle 
+      // then deflecting off the blade to arc3 
+      // then bending by the same ammount at the teeth for arc1.
        const toothRotationCentre = {
             x: params.upperIncisorX - 10 / 2,
             y: params.upperIncisorY - 10 / 2
       }
 
-        state.inflection = translate({
+        state.inflection = translate({ 
             ...toothRotationCentre,
             angle: params.tubeAngle,
             distance: params.tubeRadius
@@ -353,7 +359,7 @@
             ...state.inflection,
             startAngle: angleToTooth2,
             endAngle: angleToTooth2 + 1,
-            style: "tube",
+            style: "tube", //TODO move to draw
             radius: params.tubeRadius,
             thickness: 10
         };
@@ -382,7 +388,7 @@
             
             state.arcParams3 = {
                 ...arc3Centre,
-                style: "tube",
+                style: "tube", //TODO move to draw
                 radius: params.tubeRadius,
                 thickness: 10
             };
@@ -475,9 +481,11 @@
         // labels 
         if (appearance.showLabels) {
             label({x: state.lowerIncisorX, y: state.lowerIncisorY, text: 'Lower Incisor', alignment: 'left'});
-            label({x: 300, y: 200, text: 'Upper Incisor', alignment: 'right'});
+            label({x: state.upperIncisorX, y: state.upperIncisorY, text: 'Upper Incisor', alignment: 'right'});
             label({x: state.bladeTip.x, y: state.bladeTip.y, text: 'Blade', alignment: 'above'});
-            label({x: state.params.glotticPlaneX, y: state.bladeTip.y, text: 'Glottis', alignment: 'above'});
+
+            label({x: state.glottis.start.x, y: state.glottis.start.y,
+              text: 'Glottis', alignment: 'left', offset: 5});
             label({x: state.tubeTip.x, y: state.tubeTip.y, text: 'Tube', alignment: 'below'});
         }
     }
@@ -503,7 +511,7 @@
  
      function onMouseUp() {
          if (isDragging) {
-             console.log('Stopped dragging');
+           //  console.log('Stopped dragging');
          }
          isDragging = false;
      }
@@ -531,7 +539,7 @@
         const p = getMousePos(canvas, event);
         const dx = p.x - dragStart.x;
         const dy = p.y - dragStart.y;
-        console.log('Dragging to:', p.x, p.y, 'Delta:', dx, dy);
+        // console.log('Dragging to:', p.x, p.y, 'Delta:', dx, dy);
         e('lowerIncisorX').value = ev('lowerIncisorX') + dx / scale.f;
         e('lowerIncisorY').value = ev('lowerIncisorY') + dy / scale.f;
         dragStart = p;
@@ -543,10 +551,10 @@
         const lowerIncisorX = 300 + ev('lowerIncisorX');
         const lowerIncisorY = 200 + ev('lowerIncisorY');
         const t = rescale({ x: lowerIncisorX, y: lowerIncisorY });
-        console.log('Lower Incisor Coordinates:', lowerIncisorX, lowerIncisorY);
-        console.log('Rescaled Coordinates:', t.x, t.y);
+        // console.log('Lower Incisor Coordinates:', lowerIncisorX, lowerIncisorY);
+        // console.log('Rescaled Coordinates:', t.x, t.y);
         const distance = Math.sqrt((p.x - t.x) ** 2 + (p.y - t.y) ** 2);
-        console.log('Distance to lower incisor:', distance);
+        // console.log('Distance to lower incisor:', distance);
         return distance < 200; // Adjust the threshold as needed
     }
         // cartesian translation
@@ -686,9 +694,9 @@
         }
 
         function drawTooth(params) {
-          console.log('tooth pre scale', params)
+          // console.log('tooth pre scale', params)
           const p = rescale({lineWidth: 2, ...params});
-          console.log('tooth p after rescaling', p)
+          //  console.log('tooth p after rescaling', p)
           const width = p.height/3;
           const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
           gradient.addColorStop(0, '#fff'); // White color at the start
