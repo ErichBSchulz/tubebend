@@ -211,6 +211,10 @@
         </div>
     </div>
     <div id="notes" class="notes">
+        <h1>Instructions:</h1>
+      <p>Reposition the tube and blade to try to get the tube to make contact with the glottis. 
+        Drag above the upper teeth to rotate the tube. Drag above the lower teeth to rotate and advance the blade.
+        Drag the loower teeth to simulate lifting forces. Alternatively, you can use the slders.</p>
         <h1>Notes:</h1>
       <h2>Why this page?</h2>
         <p>This page aims to help those seeking to learn or teach tracheal intubation understand some of the geometry.
@@ -580,7 +584,7 @@ function onTouchEnd(event) {
                 e('lowerIncisorY').value = ev('lowerIncisorY') + dy / scale.f;
                 break;
             case 'tube':
-                e('tubeAngle').value = ev('tubeAngle') + dx / scale.f;
+                e('tubeAngle').value = ev('tubeAngle') + dx / (2 * scale.f);
                 break;
             case 'blade':
                 e('bladeAngle').value = ev('bladeAngle') + dx / scale.f;
@@ -610,7 +614,7 @@ function onTouchEnd(event) {
           return 'tube'
         }
       } else {
-        return false; 
+        return 'LI'; 
       } 
       return distanceBetween(point, lowerIncisor) < 50 ? 'LI' : false; // Adjust the threshold as needed
     }
