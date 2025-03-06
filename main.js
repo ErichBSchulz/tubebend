@@ -2,7 +2,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const sliders = [
   "tubeAngle",
-  // 'incisorBend',
   "tubeRadius",
   "glotticPlaneX",
   "tubeLength",
@@ -12,11 +11,11 @@ const sliders = [
   "bladeAngle",
   "lowerIncisorX",
   "lowerIncisorY",
-  "startAngle",
-  "endAngle",
-  "thickness",
-  "x",
-  "y",
+  "fiducialStartAngle",
+  "fiducialEndAngle",
+  "fiducialThickness",
+  "fiducialX",
+  "fiducialY",
 ];
 // shortcut function
 const e = document.getElementById.bind(document);
@@ -84,11 +83,11 @@ function readParams() {
       tubeRadius: ev("tubeRadius"),
       tubeAngle: evd("tubeAngle"),
       glotticPlaneX: ev("glotticPlaneX"),
-      startAngle: evd("startAngle"),
-      endAngle: evd("endAngle"),
-      thickness: ev("thickness"),
-      x: ev("x"),
-      y: ev("y"),
+      fiducialStartAngle: evd("fiducialStartAngle"),
+      fiducialEndAngle: evd("fiducialEndAngle"),
+      fiducialThickness: ev("fiducialThickness"),
+      fiducialX: ev("fiducialX"),
+      fiducialY: ev("fiducialY"),
     },
   };
 }
@@ -242,11 +241,11 @@ function calculateGeometry(params) {
 
   state.fiducial = {
     // rename all these to be prefixed by `fiducial`
-    startAngle: params.startAngle,
-    endAngle: params.endAngle,
-    thickness: params.thickness,
-    x: params.x,
-    y: params.y,
+    fiducialStartAngle: params.fiducialStartAngle,
+    fiducialEndAngle: params.fiducialEndAngle,
+    fiducialThickness: params.fiducialThickness,
+    fiducialX: params.fiducialX,
+    fiducialY: params.fiducialY,
     radius: 5,
     style: "pink",
   };
@@ -363,7 +362,6 @@ function onMouseDown(event) {
   //console.log('Mouse down at:', x, y);
   const o = closestObject(p);
   if (o) {
-    console.log("o", o);
     draggingObject = o;
     dragStart = p;
     //console.log('Started dragging');
@@ -376,7 +374,6 @@ function onMouseMove(event) {
   const dx = p.x - dragStart.x;
   const dy = p.y - dragStart.y;
   dragStart = p;
-  console.log("Dragging", draggingObject, "to:", p.x, p.y, "Delta:", dx, dy);
 
   switch (draggingObject) {
     case "LI":
