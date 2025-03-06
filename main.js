@@ -241,11 +241,11 @@ function calculateGeometry(params) {
 
   state.fiducial = {
     // rename all these to be prefixed by `fiducial`
-    fiducialStartAngle: params.fiducialStartAngle,
-    fiducialEndAngle: params.fiducialEndAngle,
-    fiducialThickness: params.fiducialThickness,
-    fiducialX: params.fiducialX,
-    fiducialY: params.fiducialY,
+    startAngle: params.fiducialStartAngle,
+    endAngle: params.fiducialEndAngle,
+    thickness: params.fiducialThickness,
+    x: params.fiducialX,
+    y: params.fiducialY,
     radius: 5,
     style: "pink",
   };
