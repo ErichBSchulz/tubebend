@@ -1,30 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tracheal Intubation Geometry Simulation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
     <div class="main-container">
-        <div class="left-column">
-            <div class="canvas-wrapper">
-                <canvas id="canvas" width="1500" height="1500"></canvas>
-            </div>
+      <div class="left-column">
+        <div class="canvas-wrapper">
+          <canvas id="canvas" width="1500" height="1500"></canvas>
         </div>
-        <div class="right-column">
-            <h2>Parameters</h2>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="tubeAngle">Tube Angle (degrees): </label>
-                    <input type="range" id="tubeAngle" min="170" max="250" value="206" step="0.1">
-                    <span id="tubeAngleValue">0</span>
-                </div>
-                <p class="description">This is the angle the tube leaves the upper incisors.</p>
-            </div>
+      </div>
+      <div class="right-column">
+        <h2>Parameters</h2>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="tubeAngle">Tube Angle (degrees): </label>
+            <input
+              type="range"
+              id="tubeAngle"
+              min="170"
+              max="250"
+              value="206"
+              step="0.1"
+            />
+            <span id="tubeAngleValue">0</span>
+          </div>
+          <p class="description">
+            This is the angle the tube leaves the upper incisors.
+          </p>
+        </div>
         <!--
             <div class="slider-container">
                 <div class="slider-row">
@@ -35,190 +47,300 @@
                 <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
             </div>
         -->
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="glotticPlaneX">Glottic Plane X (mm):</label>
-                    <input type="range" id="glotticPlaneX" min="90" max="300" value="165">
-                    <span id="glotticPlaneXValue">0</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="tubeLength">Tube Length (mm): </label>
-                    <input type="range" id="tubeLength" min="90" max="300" value="280">
-                    <span id="tubeLengthValue">0</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="tubeRadius">Tube Radius (mm): </label>
-                    <input type="range" id="tubeRadius" min="50" max="500" value="150">
-                    <span id="tubeRadiusValue">0</span>
-                </div>
-                <p class="description">The radius of curvature of standard tracheal tube is 140mm when it leaves the packet, but bending over the teeth will increase this.</p>
-            </div>
-            <h2>Laryngoscope Blade</h2>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="bladeLength">Blade Length (mm): </label>
-                    <input type="range" id="bladeLength" min="40" max="150" value="140">
-                    <span id="bladeLengthValue">0</span>
-                </div>
-                <p class="description">Macintosh blade #3 and #4 are 101mm and 135mm long respectively.</p>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="bladeInsertion">Blade Insertion (%): </label>
-                    <input type="range" id="bladeInsertion" min="50" max="100" value="72">
-                    <span id="bladeInsertionValue">0</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="bladeRadius">Blade Curvature Radius (mm): </label>
-                    <input type="range" id="bladeRadius" min="70" max="140" value="118">
-                    <span id="bladeRadiusValue">0</span>
-                </div>
-                <p class="description">Macintosh blade #3 and #4 have radii of 118mm and 136mm respectively.</p>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="bladeAngle">Blade angle (degrees): </label>
-                    <input type="range" id="bladeAngle" min="-20" max="70" value="18">
-                    <span id="bladeAngleValue">0</span>
-                </div>
-                <p class="description">This is the angle at the incisors.</p>
-            </div>
-            <h2>Dentition</h2>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="lowerIncisorX">Lower Incisor X (mm): </label>
-                    <input type="range" id="lowerIncisorX" min="-100" max="10" value="-25">
-                    <span id="lowerIncisorXValue">0</span>
-                </div>
-                <p class="description">Mouth opening as measured horizontally.</p>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-                    <input type="range" id="lowerIncisorY" min="-50" max="50" value="0">
-                    <span id="lowerIncisorYValue">0</span>
-                </div>
-                <p class="description">Under or overbite.</p>
-            </div>
-            <h2>Reference params</h2>
-            <p class="description">This moves a small pink fiducial.</p>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="startAngle">Start Angle (degrees): </label>
-                    <input type="range" id="startAngle" min="0" max="360" value="0">
-                    <span id="startAngleValue">0</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="endAngle">End Angle (degrees): </label>
-                    <input type="range" id="endAngle" min="0" max="360" value="360">
-                    <span id="endAngleValue">90</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="thickness">Thickness: </label>
-                    <input type="range" id="thickness" min="1" max="20" value="1">
-                    <span id="thicknessValue">5</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="x">X Coordinate: </label>
-                    <input type="range" id="x" min="0" max="400" value="0">
-                    <span id="xValue">250</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="y">Y Coordinate: </label>
-                    <input type="range" id="y" min="0" max="400" value="0">
-                    <span id="yValue">250</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-row">
-                    <label for="showLabels">Show labels: </label>
-                    <input type="checkbox" id="showLabels" checked>
-                </div>
-            </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="glotticPlaneX">Glottic Plane X (mm):</label>
+            <input
+              type="range"
+              id="glotticPlaneX"
+              min="90"
+              max="300"
+              value="165"
+            />
+            <span id="glotticPlaneXValue">0</span>
+          </div>
         </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="tubeLength">Tube Length (mm): </label>
+            <input
+              type="range"
+              id="tubeLength"
+              min="90"
+              max="300"
+              value="280"
+            />
+            <span id="tubeLengthValue">0</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="tubeRadius">Tube Radius (mm): </label>
+            <input
+              type="range"
+              id="tubeRadius"
+              min="50"
+              max="500"
+              value="150"
+            />
+            <span id="tubeRadiusValue">0</span>
+          </div>
+          <p class="description">
+            The radius of curvature of standard tracheal tube is 140mm when it
+            leaves the packet, but bending over the teeth will increase this.
+          </p>
+        </div>
+        <h2>Laryngoscope Blade</h2>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="bladeLength">Blade Length (mm): </label>
+            <input
+              type="range"
+              id="bladeLength"
+              min="40"
+              max="150"
+              value="140"
+            />
+            <span id="bladeLengthValue">0</span>
+          </div>
+          <p class="description">
+            Macintosh blade #3 and #4 are 101mm and 135mm long respectively.
+          </p>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="bladeInsertion">Blade Insertion (%): </label>
+            <input
+              type="range"
+              id="bladeInsertion"
+              min="50"
+              max="100"
+              value="72"
+            />
+            <span id="bladeInsertionValue">0</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="bladeRadius">Blade Curvature Radius (mm): </label>
+            <input
+              type="range"
+              id="bladeRadius"
+              min="70"
+              max="140"
+              value="118"
+            />
+            <span id="bladeRadiusValue">0</span>
+          </div>
+          <p class="description">
+            Macintosh blade #3 and #4 have radii of 118mm and 136mm
+            respectively.
+          </p>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="bladeAngle">Blade angle (degrees): </label>
+            <input type="range" id="bladeAngle" min="-20" max="70" value="18" />
+            <span id="bladeAngleValue">0</span>
+          </div>
+          <p class="description">This is the angle at the incisors.</p>
+        </div>
+        <h2>Dentition</h2>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="lowerIncisorX">Lower Incisor X (mm): </label>
+            <input
+              type="range"
+              id="lowerIncisorX"
+              min="-100"
+              max="10"
+              value="-25"
+            />
+            <span id="lowerIncisorXValue">0</span>
+          </div>
+          <p class="description">Mouth opening as measured horizontally.</p>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
+            <input
+              type="range"
+              id="lowerIncisorY"
+              min="-50"
+              max="50"
+              value="0"
+            />
+            <span id="lowerIncisorYValue">0</span>
+          </div>
+          <p class="description">Under or overbite.</p>
+        </div>
+        <h2>Reference params</h2>
+        <p class="description">This moves a small pink fiducial.</p>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="startAngle">Start Angle (degrees): </label>
+            <input type="range" id="startAngle" min="0" max="360" value="0" />
+            <span id="startAngleValue">0</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="endAngle">End Angle (degrees): </label>
+            <input type="range" id="endAngle" min="0" max="360" value="360" />
+            <span id="endAngleValue">90</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="thickness">Thickness: </label>
+            <input type="range" id="thickness" min="1" max="20" value="1" />
+            <span id="thicknessValue">5</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="x">X Coordinate: </label>
+            <input type="range" id="x" min="0" max="400" value="0" />
+            <span id="xValue">250</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="y">Y Coordinate: </label>
+            <input type="range" id="y" min="0" max="400" value="0" />
+            <span id="yValue">250</span>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-row">
+            <label for="showLabels">Show labels: </label>
+            <input type="checkbox" id="showLabels" checked />
+          </div>
+        </div>
+      </div>
     </div>
     <div id="notes" class="notes">
-        <h1>Instructions</h1>
-      <p>Reposition the tube and blade to try to get the tube to make contact with the glottis. 
-        Drag above the upper teeth to rotate the tube. Drag above the lower teeth to rotate and advance the blade.
-        Drag the lower teeth to simulate lifting forces. 
-        Alternatively, you can use the sliders.</p>
-        <h1>FAQ</h1>
+      <h1>Instructions</h1>
+      <p>
+        Reposition the tube and blade to try to get the tube to make contact
+        with the glottis. Drag above the upper teeth to rotate the tube. Drag
+        above the lower teeth to rotate and advance the blade. Drag the lower
+        teeth to simulate lifting forces. Alternatively, you can use the
+        sliders.
+      </p>
+      <h1>FAQ</h1>
       <h2>Why this page?</h2>
-        <p>This page aims to help those seeking to learn or teach tracheal intubation understand some of the geometry.
-        <p>It does this by illustrating the adverse impact of bending an endotracheal tube over the upper incisors while attempting tracheal intubation.</p>
+      <p>
+        This page aims to help those seeking to learn or teach tracheal
+        intubation understand some of the geometry.
+      </p>
+      <p>
+        It does this by illustrating the adverse impact of bending an
+        endotracheal tube over the upper incisors while attempting tracheal
+        intubation.
+      </p>
       <h2>What do I do?</h2>
-        <p>Slide the <em>Tube Angle</em> slider back and forth watching the impact on tube tip positions.
+      <p>
+        Slide the <em>Tube Angle</em> slider back and forth watching the impact
+        on tube tip positions.
       </p>
       <h2>What am I looking at?</h2>
-        <p>Above is a simplified diagram showing the upper and lower incisors
+      <p>
+        Above is a simplified diagram showing the upper and lower incisors
         (white triangles), the laryngoscope blade (grey arc) and a tracheal
         tube. A red bar is placed at the level of the blade tip to provide a
-        approximate reference for the glottic opening between the vocal
-        cords.</p>
+        approximate reference for the glottic opening between the vocal cords.
+      </p>
       <h2>Why does the tip go backwards when the tube is rotated back?</h2>
-        <p>Ah, this is the interesting point.
-        As the tube is tilted back over the teeth the tube-blade contact point (shown with a red dot) migrates upwards. 
-        Because of the curve of the blade the tube is deflected posteriorly in an unintuitive manner.</p>
+      <p>
+        Ah, this is the interesting point. As the tube is tilted back over the
+        teeth the tube-blade contact point (shown with a red dot) migrates
+        upwards. Because of the curve of the blade the tube is deflected
+        posteriorly in an unintuitive manner.
+      </p>
       <h2>But if bending over the teeth is not the answer, what is?</h2>
-      <p>Applying more lift and flattening the blade helps a lot. You can simulate this by dragging below the teeth and then readjusting the blade positions.</p>
-      <p>There's a <a href="https://docs.google.com/presentation/d/13Ze2Voji9oHipIiDxQ8Twd_j0vmV84NjkLF33yOwns0/edit#slide=id.g33cd68f3b87_0_6">
-       slideshow!</a></p>
-      <p>As I showed in <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1">earlier work</a>,
-      optimal tracheal tube orientation is to pull the tube laterally at the level of the mouth (to the right),
-      so that you can rotate the tube backwards without bending it or shifting the blade-tube contact point.
-        Avoid rolling the tube over. It's complicated.
-        You may need to <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1">read the paper</a>.
+      <p>
+        Applying more lift and flattening the blade helps a lot. You can
+        simulate this by dragging below the teeth and then readjusting the blade
+        positions.
+      </p>
+      <p>
+        There's a
+        <a
+          href="https://docs.google.com/presentation/d/13Ze2Voji9oHipIiDxQ8Twd_j0vmV84NjkLF33yOwns0/edit#slide=id.g33cd68f3b87_0_6"
+        >
+          slideshow!</a
+        >
+      </p>
+      <p>
+        As I showed in
+        <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1"
+          >earlier work</a
+        >, optimal tracheal tube orientation is to pull the tube laterally at
+        the level of the mouth (to the right), so that you can rotate the tube
+        backwards without bending it or shifting the blade-tube contact point.
+        Avoid rolling the tube over. It's complicated. You may need to
+        <a href="https://www.medrxiv.org/content/10.1101/2023.08.22.23294387v1"
+          >read the paper</a
+        >.
       </p>
       <h2>What is tracheal intubation?</h2>
-        <p>Tracheal intubation is a vital skill for paramedics and emergency
+      <p>
+        Tracheal intubation is a vital skill for paramedics and emergency
         doctors, but training opportunities are scarce. The challenges in
         gaining experience requires innovative training methods to maximimise
         the chances healthcare workers can intubate in emergency situations.
       </p>
-      <p>In an emergency successful intubation can save a life, prevent brain
-        damage or prevent fatal aspiration of gastric acid into the lungs.</p>
-      <p>However, even if when aided modern video laryngoscops the first time
-        success rate for intubation by trained hospital doctors in the
-        Emergency or Critical Care departments is only 85%
-      <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2301601">(Prekker et al, 2023)</a>.
+      <p>
+        In an emergency successful intubation can save a life, prevent brain
+        damage or prevent fatal aspiration of gastric acid into the lungs.
+      </p>
+      <p>
+        However, even if when aided modern video laryngoscops the first time
+        success rate for intubation by trained hospital doctors in the Emergency
+        or Critical Care departments is only 85%
+        <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2301601"
+          >(Prekker et al, 2023)</a
+        >.
       </p>
       <h2>Notes</h2>
-        <ul>
-            <li>The model assumes that the deflection angle when the tube reflects off the teeth will be matched by the deflection angle over the teeth themselves.</li>
-            <li>The model will break if you put in extreme values, eg a tube radius that is less than the blade radius.</li>
-            <li>The glottic marker tracks the blade tip height but can be moved further or close to the blade tip with <em>Glottic Plane X</em> slider.
-             This behaviour approximates a Cormack and Lehane view of <em>2b</em></li>
-            <li>If you would like to take measurements, you can do so simply with the little fiducial.</li>
-        </ul>
+      <ul>
+        <li>
+          The model assumes that the deflection angle when the tube reflects off
+          the teeth will be matched by the deflection angle over the teeth
+          themselves.
+        </li>
+        <li>
+          The model will break if you put in extreme values, eg a tube radius
+          that is less than the blade radius.
+        </li>
+        <li>
+          The glottic marker tracks the blade tip height but can be moved
+          further or close to the blade tip with
+          <em>Glottic Plane X</em> slider. This behaviour approximates a Cormack
+          and Lehane view of <em>2b</em>
+        </li>
+        <li>
+          If you would like to take measurements, you can do so simply with the
+          little fiducial.
+        </li>
+      </ul>
       <h2>Todo</h2>
-        <ul>
-            <li>Recognise when upper teeth up damaged</li>
-            <li>hide tube when invalid position (indicate why)</li>
-            <li>Fix the tube angle so it has same units as blade angle </li>
-            <li>Reset button or scenario buttons (overbite/underbite/ good/bad technique etc)</li>
-            <li>Have a mode where the tube tracks the glottis</li>
-            <li>Indicate approximate line of sight.</li>
-            <li>Show successful orientation</li>
-        </ul>
+      <ul>
+        <li>Recognise when upper teeth up damaged</li>
+        <li>hide tube when invalid position (indicate why)</li>
+        <li>Fix the tube angle so it has same units as blade angle</li>
+        <li>
+          Reset button or scenario buttons (overbite/underbite/ good/bad
+          technique etc)
+        </li>
+        <li>Have a mode where the tube tracks the glottis</li>
+        <li>Indicate approximate line of sight.</li>
+        <li>Show successful orientation</li>
+      </ul>
     </div>
     <h2>Please share</h2>
-    <img src="qr.png" alt="QR Code" style="width: 50%; max-width: 300px;">
-  <script src="main.js"></script>
-</body>
+    <img src="qr.png" alt="QR Code" style="width: 50%; max-width: 300px" />
+    <script src="main.js"></script>
+  </body>
 </html>
-      
