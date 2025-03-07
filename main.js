@@ -136,11 +136,11 @@ function calculateGeometry(params) {
 
   state.inflection = translate({
     ...toothRotationCentre,
-    angle: params.tubeAngle,
+    angle: params.tubeAngle + Math.PI,
     distance: params.tubeRadius,
   });
 
-  const angleToTooth2 = params.tubeAngle + Math.PI;
+  const angleToTooth2 = params.tubeAngle;
   state.tube2 = {
     ...state.inflection,
     startAngle: angleToTooth2,
@@ -217,13 +217,13 @@ function calculateGeometry(params) {
   if (remainingRadians > 0) {
     const outerCentre = translate({
       ...toothRotationCentre,
-      angle: params.tubeAngle + state.bend,
+      angle: params.tubeAngle + Math.PI + state.bend,
       distance: params.tubeRadius,
     });
 
     state.tube1 = {
       ...outerCentre,
-      endAngle: params.tubeAngle + state.bend + Math.PI,
+      endAngle: params.tubeAngle + state.bend,
       style: "tube",
       radius: params.tubeRadius,
       thickness: 10,
