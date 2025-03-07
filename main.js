@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 const sliders = [
   "tubeAngle",
   "tubeRadius",
+  "tubeOD",
   "glotticPlaneX",
   "tubeLength",
   "bladeLength",
@@ -81,6 +82,7 @@ function readParams() {
       bladeAngle: evd("bladeAngle"),
       tubeLength: ev("tubeLength"),
       tubeRadius: ev("tubeRadius"),
+      tubeOD: ev("tubeOD"),
       tubeAngle: evd("tubeAngle"),
       glotticPlaneX: ev("glotticPlaneX"),
       fiducialStartAngle: evd("fiducialStartAngle"),
@@ -130,8 +132,8 @@ function calculateGeometry(params) {
   // then deflecting off the blade to arc3
   // then bending by the same ammount at the teeth for arc1.
   const toothRotationCentre = {
-    x: params.upperIncisorX - 10 / 2,
-    y: params.upperIncisorY - 10 / 2,
+    x: params.upperIncisorX - params.tubeOD / 2,
+    y: params.upperIncisorY - params.tubeOD / 2,
   };
 
   state.inflection = translate({
@@ -147,7 +149,7 @@ function calculateGeometry(params) {
     endAngle: angleToTooth2 + 1,
     style: "tube", //TODO move to draw
     radius: params.tubeRadius,
-    thickness: 10,
+    thickness: params.tubeOD,
   };
 
   // track the total arc of tube drawn so far
@@ -157,7 +159,7 @@ function calculateGeometry(params) {
   // figure out where tube (secgment 2) collides with the balde
   const intersection = findIntersection(state.tube2, {
     ...state.blade,
-    radius: state.blade.radius + (state.blade.thickness + 10) / 2,
+    radius: state.blade.radius + (state.blade.thickness + params.tubeOD) / 2,
   });
 
   // in contact with the teeth, calculate tangental trajectory away from teeth
@@ -180,7 +182,7 @@ function calculateGeometry(params) {
       ...arc3Centre,
       style: "tube", //TODO move to draw
       radius: params.tubeRadius,
-      thickness: 10,
+      thickness: params.tubeOD,
     };
 
     const tangentBearing = tubeBladeAxisBearing + Math.PI;
@@ -226,7 +228,7 @@ function calculateGeometry(params) {
       endAngle: params.tubeAngle + state.bend,
       style: "tube",
       radius: params.tubeRadius,
-      thickness: 10,
+      thickness: params.tubeOD,
     };
 
     state.tube1.startAngle = state.tube1.endAngle - remainingRadians;
