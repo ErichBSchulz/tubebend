@@ -147,7 +147,6 @@ function calculateGeometry(params) {
     ...state.inflection,
     startAngle: angleToTooth2,
     endAngle: angleToTooth2 + 1,
-    style: "tube", //TODO move to draw
     radius: params.tubeRadius,
     thickness: params.tubeOD,
   };
@@ -180,7 +179,6 @@ function calculateGeometry(params) {
 
     state.tube3 = {
       ...arc3Centre,
-      style: "tube", //TODO move to draw
       radius: params.tubeRadius,
       thickness: params.tubeOD,
     };
@@ -226,7 +224,6 @@ function calculateGeometry(params) {
     state.tube1 = {
       ...outerCentre,
       endAngle: params.tubeAngle + state.bend,
-      style: "tube",
       radius: params.tubeRadius,
       thickness: params.tubeOD,
     };
@@ -277,13 +274,13 @@ function draw(state, appearance) {
   // glottis
   drawGlottis(state.glottis);
   // tube
-  drawArc(state.tube2);
+  drawArc({ ...state.tube2, style: "tube" });
   if (state.tube3) {
-    drawArc(state.tube3);
+    drawArc({ ...state.tube3, style: "tube" });
     drawDot({ ...state.intersection, style: "red" });
   }
   if (state.tube1) {
-    drawArc(state.tube1);
+    drawArc({ ...state.tube1, style: "tube" });
   }
   // fiducial
   drawArc(state.fiducial);
