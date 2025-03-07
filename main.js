@@ -7,6 +7,7 @@ const sliders = [
   "glotticPlaneX",
   "tubeLength",
   "bladeLength",
+  "bladeThickness",
   "bladeInsertion",
   "bladeRadius",
   "bladeAngle",
@@ -77,6 +78,7 @@ function readParams() {
       lowerIncisorX: ev("lowerIncisorX"),
       lowerIncisorY: ev("lowerIncisorY"),
       bladeLength: ev("bladeLength"),
+      bladeThickness: ev("bladeThickness"),
       bladeInsertion: ev("bladeInsertion"),
       bladeRadius: ev("bladeRadius"),
       bladeAngle: evd("bladeAngle"),
@@ -126,6 +128,14 @@ function calculateGeometry(params) {
     angle: state.blade.endAngle,
     distance: state.blade.radius,
   });
+
+  // how close is the blade to the upper incisors
+  state.bladeUpperIncisorDistance =
+    distanceBetween(state.blade, {
+      x: state.upperIncisorX,
+      y: state.upperIncisorY,
+    }) -
+    (state.blade.radius + params.bladeThickness);
 
   // Locate the tube, starting with the middle segment (arc2),
   // starting against the upper teeth at the specified angle
@@ -256,11 +266,13 @@ function draw(state, appearance) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // teeth
+  const dentalDamage = state.bladeUpperIncisorDistance < 0;
   drawTooth({
     x: state.upperIncisorX,
     y: state.upperIncisorY,
     height: 10,
     lineWidth: 1,
+    strokeStyle: dentalDamage ? "red" : "grey",
   });
   drawTooth({
     x: state.lowerIncisorX,
@@ -295,7 +307,7 @@ function draw(state, appearance) {
     label({
       x: state.upperIncisorX,
       y: state.upperIncisorY,
-      text: "Upper Incisor",
+      text: (dentalDamage ? "Damaged " : "") + " Upper Incisor",
       alignment: "right",
     });
     label({
@@ -576,7 +588,8 @@ function drawGlottis(params) {
 
 function drawTooth(params) {
   // console.log('tooth pre scale', params)
-  const p = rescale({ lineWidth: 2, ...params });
+  const p = rescale({ lineWidth: 2, strokeStyle: "grey", ...params });
+  console.log("p", p);
   //  console.log('tooth p after rescaling', p)
   const width = p.height / 3;
   const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
@@ -585,7 +598,7 @@ function drawTooth(params) {
   gradient.addColorStop(1, "#fff"); // White color at the end
 
   ctx.fillStyle = gradient; // Set the fill color to the gradient
-  ctx.strokeStyle = "grey"; // Set the color
+  ctx.strokeStyle = p.strokeStyle; // Set the color
   ctx.beginPath();
   ctx.moveTo(p.x, p.y);
   ctx.lineTo(p.x + p.height, p.y + width);
