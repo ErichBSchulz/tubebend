@@ -141,7 +141,7 @@ function calculateGeometry(params) {
   });
 
   const angleToTooth2 = params.tubeAngle + Math.PI;
-  state.arcParams2 = {
+  state.tube2 = {
     ...state.inflection,
     startAngle: angleToTooth2,
     endAngle: angleToTooth2 + 1,
@@ -155,7 +155,7 @@ function calculateGeometry(params) {
   state.bend = 0;
 
   // figure out where tube (secgment 2) collides with the balde
-  const intersection = findIntersection(state.arcParams2, {
+  const intersection = findIntersection(state.tube2, {
     ...state.blade,
     radius: state.blade.radius + (state.blade.thickness + 10) / 2,
   });
@@ -167,8 +167,8 @@ function calculateGeometry(params) {
     intersection.y > params.upperIncisorY
   ) {
     const tubeBladeAxisBearing = calculateBearing(intersection, state.blade);
-    const tube2AxisBearing = calculateBearing(intersection, state.arcParams2);
-    state.arcParams2.endAngle = tube2AxisBearing - Math.PI;
+    const tube2AxisBearing = calculateBearing(intersection, state.tube2);
+    state.tube2.endAngle = tube2AxisBearing - Math.PI;
 
     const arc3Centre = translate({
       ...intersection,
@@ -176,7 +176,7 @@ function calculateGeometry(params) {
       distance: params.tubeRadius,
     });
 
-    state.arcParams3 = {
+    state.tube3 = {
       ...arc3Centre,
       style: "tube", //TODO move to draw
       radius: params.tubeRadius,
@@ -184,35 +184,33 @@ function calculateGeometry(params) {
     };
 
     const tangentBearing = tubeBladeAxisBearing + Math.PI;
-    state.arcParams3.startAngle = tangentBearing;
-    state.bend = tangentAngle(intersection, state.arcParams3, state.arcParams2);
+    state.tube3.startAngle = tangentBearing;
+    state.bend = tangentAngle(intersection, state.tube3, state.tube2);
 
-    const deltaX = params.glotticPlaneX - state.arcParams3.x;
-    const finalAngle = Math.acos(deltaX / state.arcParams3.radius);
-    state.arcParams3.endAngle =
-      finalAngle > state.arcParams3.startAngle
-        ? finalAngle
-        : state.arcParams3.startAngle;
+    const deltaX = params.glotticPlaneX - state.tube3.x;
+    const finalAngle = Math.acos(deltaX / state.tube3.radius);
+    state.tube3.endAngle =
+      finalAngle > state.tube3.startAngle ? finalAngle : state.tube3.startAngle;
 
-    state.drawnTubeRadians += arcRadians(state.arcParams3);
+    state.drawnTubeRadians += arcRadians(state.tube3);
     state.tubeTip = translate({
       ...arc3Centre,
-      angle: state.arcParams3.endAngle,
+      angle: state.tube3.endAngle,
       distance: params.tubeRadius,
     });
   } else {
     // no contact between blade and tube
-    const deltaX = params.glotticPlaneX - state.arcParams2.x;
-    const finalAngle = Math.acos(deltaX / state.arcParams2.radius);
-    state.arcParams2.endAngle = finalAngle;
+    const deltaX = params.glotticPlaneX - state.tube2.x;
+    const finalAngle = Math.acos(deltaX / state.tube2.radius);
+    state.tube2.endAngle = finalAngle;
     state.tubeTip = translate({
-      ...state.arcParams2,
+      ...state.tube2,
       angle: finalAngle,
       distance: params.tubeRadius,
     });
   }
 
-  state.drawnTubeRadians += arcRadians(state.arcParams2);
+  state.drawnTubeRadians += arcRadians(state.tube2);
 
   const remainingRadians =
     params.tubeLength / params.tubeRadius - state.drawnTubeRadians;
@@ -223,7 +221,7 @@ function calculateGeometry(params) {
       distance: params.tubeRadius,
     });
 
-    state.arcParams1 = {
+    state.tube1 = {
       ...outerCentre,
       endAngle: params.tubeAngle + state.bend + Math.PI,
       style: "tube",
@@ -231,7 +229,7 @@ function calculateGeometry(params) {
       thickness: 10,
     };
 
-    state.arcParams1.startAngle = state.arcParams1.endAngle - remainingRadians;
+    state.tube1.startAngle = state.tube1.endAngle - remainingRadians;
   }
 
   state.glottis = {
@@ -277,13 +275,13 @@ function draw(state, appearance) {
   // glottis
   drawGlottis(state.glottis);
   // tube
-  drawArc(state.arcParams2);
-  if (state.arcParams3) {
-    drawArc(state.arcParams3);
+  drawArc(state.tube2);
+  if (state.tube3) {
+    drawArc(state.tube3);
     drawDot({ ...state.intersection, style: "red" });
   }
-  if (state.arcParams1) {
-    drawArc(state.arcParams1);
+  if (state.tube1) {
+    drawArc(state.tube1);
   }
   // fiducial
   drawArc(state.fiducial);
