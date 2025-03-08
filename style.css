@@ -50,9 +50,26 @@ h2 {
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
+  #cookie-banner {
+    z-index: 1000;
+  }
+  button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px;
 }
 .slider-container input[type="range"]:hover {
+  cursor: pointer;
+}
+
+#cookie-banner {
+  z-index: 1000;
+}
+button {
+  margin: 0 10px;
+  padding: 10px 20px;
   cursor: pointer;
 }

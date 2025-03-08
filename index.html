@@ -6,18 +6,10 @@
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-1T08HG0NCV"
     ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
 
-      gtag("config", "G-1T08HG0NCV");
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracheal Intubation Geometry Simulation</title>
+    <title>Tracheal Intubation Geometry Simulation x</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
@@ -25,6 +17,26 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div
+      id="cookie-banner"
+      style="
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #333;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: none;
+      "
+    >
+      <p>
+        We use cookies to analyse site traffic.
+        <a href="/privacy.html">Learn more</a>.
+      </p>
+      <button id="accept-cookies">Accept</button>
+      <button id="decline-cookies">Decline</button>
+    </div>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
     <div class="main-container">
       <div class="left-column">
@@ -402,5 +414,35 @@
     <h2>Please share</h2>
     <img src="qr.png" alt="QR Code" style="width: 50%; max-width: 300px" />
     <script src="main.js"></script>
+    <script>
+      // Check if user has already made a choice
+      if (!localStorage.getItem("cookieConsent")) {
+        document.getElementById("cookie-banner").style.display = "block";
+      }
+
+      // Accept cookies
+      document
+        .getElementById("accept-cookies")
+        .addEventListener("click", function () {
+          localStorage.setItem("cookieConsent", "accepted");
+          document.getElementById("cookie-banner").style.display = "none";
+          // Load Google Analytics
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag("js", new Date());
+          gtag("config", "G-1T08HG0NCV");
+        });
+
+      // Decline cookies
+      document
+        .getElementById("decline-cookies")
+        .addEventListener("click", function () {
+          localStorage.setItem("cookieConsent", "declined");
+          document.getElementById("cookie-banner").style.display = "none";
+          // Do not load Google Analytics
+        });
+    </script>
   </body>
 </html>
