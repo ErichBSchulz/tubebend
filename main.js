@@ -340,17 +340,42 @@ function draw(state, appearance) {
       x: state.upperIncisorX + 50,
       y: state.upperIncisorY - 50,
       text: "Rotate tube",
-      labelAllignment: "left",
-      labelOffset: 20,
+      labelAllignment: "above",
+      labelOffset: 15,
       orientation: "horizontal",
     });
     drawArrow({
-      x: state.upperIncisorX - 150,
+      x: state.upperIncisorX - 50,
       y: state.upperIncisorY - 50,
       text: "Advance-withdraw blade",
       labelAllignment: "above",
-      labelOffset: 20,
+      labelOffset: 25,
       orientation: "vertical",
+    });
+    drawArrow({
+      x: state.upperIncisorX - 50,
+      y: state.upperIncisorY - 50,
+      text: "Rotate blade",
+      labelAllignment: "left",
+      labelOffset: 25,
+      orientation: "horizontal",
+    });
+    const bx = 10;
+    drawArrow({
+      x: state.upperIncisorX - bx,
+      y: state.upperIncisorY + 50,
+      text: "Jaw thrust",
+      labelAllignment: "below",
+      labelOffset: 25,
+      orientation: "vertical",
+    });
+    drawArrow({
+      x: state.upperIncisorX - bx,
+      y: state.upperIncisorY + 50,
+      text: "Mouth opening",
+      labelAllignment: "right",
+      labelOffset: 25,
+      orientation: "horizontal",
     });
   }
 }
@@ -641,72 +666,52 @@ function drawTooth(params) {
 }
 
 function drawArrow(params) {
-  console.log("params", params);
   const p = rescale({
     orientation: "horizontal", // might be vertical
     length: 20, // arrow head point to point distance
     shaftWidth: 25,
     arrowWidth: 15, // width of the arrow tip
     arrowLength: 10, // width of the arrow head at its widest
-    lineWidth: 2,
-    strokeStyle: "grey",
+    lineWidth: 1,
+    strokeStyle: "darkgreen",
+    labelColor: "darkgreen",
     ...params,
   });
-  console.log("p", p);
-
   ctx.fillStyle = p.strokeStyle; // Set the fill color to the stroke style
   ctx.strokeStyle = p.strokeStyle; // Set the stroke color
   ctx.lineWidth = p.lineWidth; // Set the line width
-
-  // Draw the shaft
-  if (p.orientation === "horizontal") {
-    ctx.beginPath();
-    ctx.moveTo(p.x - p.length / 2, p.y + p.shaftWidth / 2); // right lower shaft
-
-    ctx.lineTo(p.x + p.length / 2, p.y + p.shaftWidth / 2); // right lower shaft
-    // Draw right arrowhead
-    //
-    ctx.lineTo(p.x + p.length / 2, p.y + p.arrowWidth / 2); // lower right barb
-    ctx.lineTo(p.x + p.length / 2 + p.arrowLength, p.y); // right tip
-    ctx.lineTo(p.x + p.length / 2, p.y - p.arrowWidth / 2); // upper left
-
-    ctx.lineTo(p.x + p.length / 2, p.y - p.shaftWidth / 2); // right upper shaft
-    // ctx.lineTo(p.x, p.y); //middle
-    ctx.lineTo(p.x - p.length / 2, p.y - p.shaftWidth / 2); // L lower shaft
-    // Draw left arrowhead
-    //
-    ctx.lineTo(p.x - p.length / 2, p.y - p.arrowWidth / 2); //left lower barb
-    ctx.lineTo(p.x - p.length / 2 - p.arrowLength, p.y); // left tip
-    ctx.lineTo(p.x - p.length / 2, p.y + p.arrowWidth / 2); // left upper barb
-
-    ctx.closePath();
-    ctx.stroke();
-    // ctx.fill();
-  } else {
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y - p.length / 2);
-    ctx.lineTo(p.x, p.y + p.length / 2);
-    ctx.stroke();
-
-    // Draw top arrowhead
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y - p.length / 2 - p.arrowLength);
-    ctx.lineTo(p.x - p.arrowWidth / 2, p.y - p.length / 2);
-    ctx.lineTo(p.x + p.arrowWidth / 2, p.y - p.length / 2);
-    ctx.closePath();
-    ctx.fill();
-
-    // Draw bottom arrowhead
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y + p.length / 2 + p.arrowLength);
-    ctx.lineTo(p.x - p.arrowWidth / 2, p.y + p.length / 2);
-    ctx.lineTo(p.x + p.arrowWidth / 2, p.y + p.length / 2);
-    ctx.closePath();
-    ctx.fill();
+  const points = [
+    { x: -p.length / 2, y: +p.shaftWidth / 2 }, // right lower shaft
+    { x: +p.length / 2, y: +p.shaftWidth / 2 }, // right lower shaft
+    { x: +p.length / 2, y: +p.arrowWidth / 2 }, // lower right barb
+    { x: +p.length / 2 + p.arrowLength, y: 0 }, // right tip
+    { x: +p.length / 2, y: -p.arrowWidth / 2 }, // upper left
+    { x: +p.length / 2, y: -p.shaftWidth / 2 }, // right upper shaft
+    { x: -p.length / 2, y: -p.shaftWidth / 2 }, // L lower shaft
+    { x: -p.length / 2, y: -p.arrowWidth / 2 }, // left lower barb
+    { x: -p.length / 2 - p.arrowLength, y: 0 }, // left tip
+    { x: -p.length / 2, y: +p.arrowWidth / 2 }, // left upper barb
+  ];
+  if (p.orientation !== "horizontal") {
+    // swap orientation
+    points.forEach((point) => ([point.x, point.y] = [point.y, point.x]));
   }
-
+  // draw
+  ctx.beginPath();
+  ctx.moveTo(p.x + points[0].x, p.y + points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    ctx.lineTo(p.x + points[i].x, p.y + points[i].y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  // ctx.fill();
   // Draw the label
-  label({ ...params, alignment: p.labelAllignment, offset: p.labelOffset });
+  label({
+    ...params,
+    color: p.labelColor,
+    alignment: p.labelAllignment,
+    offset: p.labelOffset,
+  });
 }
 
 function drawArc(params) {
