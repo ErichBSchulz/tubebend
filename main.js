@@ -48,7 +48,10 @@ function init() {
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
 
   sliders.forEach((slider) => e(slider).addEventListener("input", redraw));
-  e("showLabels").addEventListener("change", redraw);
+  ["showLabels", "showHelp"].forEach((input) =>
+    e(input).addEventListener("change", redraw),
+  );
+
   redraw();
 }
 
@@ -71,6 +74,7 @@ function readParams() {
   return {
     appearance: {
       showLabels: e("showLabels").checked,
+      showHelp: e("showHelp").checked,
     },
     airwayParams: {
       upperIncisorX: 300,
@@ -329,6 +333,9 @@ function draw(state, appearance) {
       text: "Tube",
       alignment: "below",
     });
+  }
+  if (appearance.showHelp) {
+    // draw left-right arrow labeled with 'rotate tube' at the upperincisor (+50, -50)
   }
 }
 
@@ -598,6 +605,21 @@ function drawTooth(params) {
   gradient.addColorStop(1, "#fff"); // White color at the end
 
   ctx.fillStyle = gradient; // Set the fill color to the gradient
+  ctx.strokeStyle = p.strokeStyle; // Set the color
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  ctx.lineTo(p.x + p.height, p.y + width);
+  ctx.lineTo(p.x + p.height, p.y - width);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = p.lineWidth; // Set the line width for the triangle
+  ctx.stroke();
+}
+
+function drawArrow(params) {
+  const p = rescale({ lineWidth: 2, strokeStyle: "grey", ...params });
+  const width = p.height / 3;
+  ctx.fillStyle = "grey"; // Set the fill color to the gradient
   ctx.strokeStyle = p.strokeStyle; // Set the color
   ctx.beginPath();
   ctx.moveTo(p.x, p.y);
