@@ -336,6 +336,22 @@ function draw(state, appearance) {
   }
   if (appearance.showHelp) {
     // draw left-right arrow labeled with 'rotate tube' at the upperincisor (+50, -50)
+    drawArrow({
+      x: state.upperIncisorX + 50,
+      y: state.upperIncisorY - 50,
+      text: "Rotate tube",
+      labelAllignment: "left",
+      labelOffset: 20,
+      orientation: "horizontal",
+    });
+    drawArrow({
+      x: state.upperIncisorX - 150,
+      y: state.upperIncisorY - 50,
+      text: "Advance-withdraw blade",
+      labelAllignment: "above",
+      labelOffset: 20,
+      orientation: "vertical",
+    });
   }
 }
 
@@ -523,13 +539,21 @@ function rescale(o_in) {
       o[v] = rescale(o[v]);
     }
   });
-  ["radius", "height", "thickness", "lineWidth", "fontsize", "offset"].forEach(
-    (v) => {
-      if (o[v]) {
-        o[v] = o[v] * scale.f;
-      }
-    },
-  );
+  [
+    "radius",
+    "height",
+    "thickness",
+    "lineWidth",
+    "fontsize",
+    "offset",
+    "length",
+    "arrowWidth",
+    "arrowLength",
+  ].forEach((v) => {
+    if (o[v]) {
+      o[v] = o[v] * scale.f;
+    }
+  });
   return o;
 }
 
@@ -617,18 +641,72 @@ function drawTooth(params) {
 }
 
 function drawArrow(params) {
-  const p = rescale({ lineWidth: 2, strokeStyle: "grey", ...params });
-  const width = p.height / 3;
-  ctx.fillStyle = "grey"; // Set the fill color to the gradient
-  ctx.strokeStyle = p.strokeStyle; // Set the color
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
-  ctx.lineTo(p.x + p.height, p.y + width);
-  ctx.lineTo(p.x + p.height, p.y - width);
-  ctx.closePath();
-  ctx.fill();
-  ctx.lineWidth = p.lineWidth; // Set the line width for the triangle
-  ctx.stroke();
+  console.log("params", params);
+  const p = rescale({
+    orientation: "horizontal", // might be vertical
+    length: 20, // arrow head point to point distance
+    shaftWidth: 25,
+    arrowWidth: 15, // width of the arrow tip
+    arrowLength: 10, // width of the arrow head at its widest
+    lineWidth: 2,
+    strokeStyle: "grey",
+    ...params,
+  });
+  console.log("p", p);
+
+  ctx.fillStyle = p.strokeStyle; // Set the fill color to the stroke style
+  ctx.strokeStyle = p.strokeStyle; // Set the stroke color
+  ctx.lineWidth = p.lineWidth; // Set the line width
+
+  // Draw the shaft
+  if (p.orientation === "horizontal") {
+    ctx.beginPath();
+    ctx.moveTo(p.x - p.length / 2, p.y + p.shaftWidth / 2); // right lower shaft
+
+    ctx.lineTo(p.x + p.length / 2, p.y + p.shaftWidth / 2); // right lower shaft
+    // Draw right arrowhead
+    //
+    ctx.lineTo(p.x + p.length / 2, p.y + p.arrowWidth / 2); // lower right barb
+    ctx.lineTo(p.x + p.length / 2 + p.arrowLength, p.y); // right tip
+    ctx.lineTo(p.x + p.length / 2, p.y - p.arrowWidth / 2); // upper left
+
+    ctx.lineTo(p.x + p.length / 2, p.y - p.shaftWidth / 2); // right upper shaft
+    // ctx.lineTo(p.x, p.y); //middle
+    ctx.lineTo(p.x - p.length / 2, p.y - p.shaftWidth / 2); // L lower shaft
+    // Draw left arrowhead
+    //
+    ctx.lineTo(p.x - p.length / 2, p.y - p.arrowWidth / 2); //left lower barb
+    ctx.lineTo(p.x - p.length / 2 - p.arrowLength, p.y); // left tip
+    ctx.lineTo(p.x - p.length / 2, p.y + p.arrowWidth / 2); // left upper barb
+
+    ctx.closePath();
+    ctx.stroke();
+    // ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y - p.length / 2);
+    ctx.lineTo(p.x, p.y + p.length / 2);
+    ctx.stroke();
+
+    // Draw top arrowhead
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y - p.length / 2 - p.arrowLength);
+    ctx.lineTo(p.x - p.arrowWidth / 2, p.y - p.length / 2);
+    ctx.lineTo(p.x + p.arrowWidth / 2, p.y - p.length / 2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw bottom arrowhead
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y + p.length / 2 + p.arrowLength);
+    ctx.lineTo(p.x - p.arrowWidth / 2, p.y + p.length / 2);
+    ctx.lineTo(p.x + p.arrowWidth / 2, p.y + p.length / 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Draw the label
+  label({ ...params, alignment: p.labelAllignment, offset: p.labelOffset });
 }
 
 function drawArc(params) {
