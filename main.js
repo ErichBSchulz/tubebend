@@ -334,6 +334,28 @@ function draw(state, appearance) {
       alignment: "below",
     });
   }
+
+  console.log("state", state);
+  console.log("state.lowerIncisorX,", state.lowerIncisorX);
+  const profile = {
+    upperIncisor: {
+      x: state.upperIncisorX,
+      y: state.upperIncisorY,
+    },
+    lowerIncisor: {
+      x: state.lowerIncisorX,
+      y: state.lowerIncisorY,
+    },
+    thyroid: state.glottis.end,
+    pronathism: 100,
+    bladeTip: state.bladeTip,
+    bladeRadius: state.blade.radius,
+    bladeCentre: state.bladeCentre,
+  };
+  console.log("profile", JSON.stringify(profile));
+  console.log("profile", JSON.stringify(profile));
+  drawPatientProfile(profile);
+
   if (appearance.showHelp) {
     // draw left-right arrow labeled with 'rotate tube' at the upperincisor (+50, -50)
     drawArrow({
@@ -553,11 +575,25 @@ function tangentAngle(intersection, circle1, circle2) {
   return (intersectionAngle = theta);
 }
 
+// scale point list
+function scalePointList(points) {
+  console.log("points in", JSON.stringify(points));
+  points.forEach((point, index) => {
+    points[index] = { ...points, ...quickScalePoint(points) };
+  });
+  console.log("points out", JSON.stringify(points));
+  return points;
+}
+
+function quickScalePoint(point) {
+  return {
+    x: (point.x + scale.xo) * scale.f,
+    y: (point.y + scale.yo) * scale.f,
+  };
+}
 // apply scale
 function rescale(o_in) {
-  const o = { ...o_in };
-  o.x = (o.x + scale.xo) * scale.f;
-  o.y = (o.y + scale.yo) * scale.f;
+  const o = { ...o_in, ...quickScalePoint(o_in) };
   // console.log('Rescaling:', o_in.x,o_in.y, 'to', o.x, o.y);
   ["start", "end"].forEach((v) => {
     if (o[v]) {
@@ -616,6 +652,7 @@ function label(p) {
 }
 
 function drawDot(params) {
+  console.log("dot params", params);
   const p = rescale({ style: "blue", radius: 2, ...params });
   ctx.beginPath();
   ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
@@ -645,7 +682,6 @@ function drawGlottis(params) {
 function drawTooth(params) {
   // console.log('tooth pre scale', params)
   const p = rescale({ lineWidth: 2, strokeStyle: "grey", ...params });
-  console.log("p", p);
   //  console.log('tooth p after rescaling', p)
   const width = p.height / 3;
   const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
@@ -744,6 +780,159 @@ function drawArc(params) {
   ctx.lineWidth = p.thickness;
   ctx.strokeStyle = p.style; // Set the color for the bounding box
   ctx.stroke();
+}
+
+/**
+ * Draws the outline of the patient's profile for a medical intubation simulation.
+ * The patient is lying down, viewed from the left side (x increases toward the head,
+ * y increases posteriorly). The scale is 1 unit = 1 mm.
+ * The upper section includes the nose, upper lip, hard palate, and uvula.
+ * The lower section includes the lower lip, chin, undersurface of jaw, and anterior neck.
+ *
+ * @param {Object} upperIncisor - Coordinates of the upper incisor tip {x, y}.
+ * @param {Object} lowerIncisor - Coordinates of the lower incisor tip {x, y}.
+ * @param {Object} thyroid - Coordinates of the laryngeal prominence {x, y}.
+ * @param {number} pronathism - Jaw shape, from -100 (micrognathic) to 100 (prognathic).
+ * @param {Object} bladeTip - Coordinates of the laryngoscope blade tip {x, y}.
+ * @param {number} bladeRadius - Radius of the blade arc in mm.
+ * @param {Object} [bladeCentre] - Optional: Center of the blade arc {x, y}.
+ */
+function drawPatientProfile(params) {
+  const {
+    upperIncisor,
+    lowerIncisor,
+    thyroid,
+    pronathism,
+    bladeTip,
+    bladeRadius,
+    bladeCentre,
+  } = params;
+  console.log("params", JSON.stringify(params));
+  console.log("lowerIncisor", lowerIncisor);
+  console.log("upperIncisor", upperIncisor);
+  // Ensure ctx is defined globally
+  if (!ctx) {
+    console.error("Canvas context (ctx) is not defined.");
+    return;
+  }
+
+  // Clear previous drawings (optional, uncomment if needed)
+  // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  // Begin a new path for drawing
+  ctx.beginPath();
+
+  // --- Upper Section: From nose to uvula ---
+  const upperSection = [];
+
+  // Estimate nose tip (above and anterior to upperIncisor)
+  const noseTip = {
+    x: upperIncisor.x - 15, // Slightly below incisor in x (toward feet)
+    y: upperIncisor.y - 20, // Anterior to incisor (negative y)
+  };
+  upperSection.push(noseTip);
+
+  // Estimate upper lip (between nose and upperIncisor)
+  const upperLip = {
+    x: upperIncisor.x - 5,
+    y: upperIncisor.y - 5,
+  };
+  upperSection.push(upperLip);
+
+  // Add upperIncisor
+  upperSection.push(upperIncisor);
+
+  // Estimate hard palate (posterior and slightly above upperIncisor)
+  const hardPalate = {
+    x: upperIncisor.x + 10, // Toward head
+    y: upperIncisor.y + 5 + pronathism * 0.05, // Adjust for pronathism
+  };
+  upperSection.push(hardPalate);
+  drawDot(quickScalePoint(hardPalate));
+
+  // Estimate uvula (near thyroid, slightly anterior)
+  const uvula = {
+    x: thyroid.x - 5, // Slightly below thyroid in x
+    y: thyroid.y - 10, // Anterior to thyroid
+  };
+  upperSection.push(uvula);
+
+  // --- Lower Section: From lower lip to anterior neck, avoiding blade area ---
+  var lowerSection = [];
+
+  // Estimate lower lip (below and slightly posterior to lowerIncisor)
+  const lowerLip = {
+    name: "lowerLip",
+    x: lowerIncisor.x - 5,
+    y: lowerIncisor.y + 5 + pronathism * 0.1, // Adjust for pronathism
+  };
+  lowerSection.push(lowerLip);
+
+  // Estimate chin (below lower lip, adjusted by pronathism)
+  lowerSection.push({
+    name: "chin",
+    x: lowerLip.x - 10,
+    y: lowerLip.y + 10 + pronathism * 0.2, // Protrudes more for prognathic
+  });
+
+  // Add lowerIncisor
+  lowerSection.push({ ...lowerIncisor, name: "lowerIncisor" });
+
+  // Estimate bladeCentre if not provided
+  const effectiveBladeCentre = bladeCentre || {
+    x: bladeTip.x,
+    y: bladeTip.y - bladeRadius, // Assume blade is anterior (negative y direction)
+  };
+
+  // Add control points to curve around the blade and undersurface of jaw
+  // Avoid the area between lowerIncisor and bladeTip
+  lowerSection.push({
+    name: "bladeAvoidancePoint",
+    x: (lowerIncisor.x + bladeTip.x) / 2,
+    y: Math.max(lowerIncisor.y, bladeTip.y) + bladeRadius * 0.5, // Curve posteriorly
+  });
+
+  // Estimate undersurface of jaw (posterior and below blade area)
+
+  lowerSection.push({
+    name: "jawUndersurface",
+    x: bladeTip.x + 10,
+    y: bladeTip.y + bladeRadius + 5 + pronathism * 0.05,
+  });
+
+  // Estimate anterior neck (near thyroid, adjusted for pronathism)
+  lowerSection.push({
+    name: "anteriorNeck",
+    x: thyroid.x - 10,
+    y: thyroid.y + 10 + pronathism * 0.05,
+  });
+
+  // End at thyroid
+  lowerSection.push({ ...thyroid, name: "thyroid" });
+
+  // console.log("lowerSection", JSON.stringify(lowerSection));
+  [lowerSection, upperSection].forEach((curve) => {
+    console.log("curve", JSON.stringify(curve));
+    scalePointList(curve);
+    console.log("curve", JSON.stringify(curve));
+    drawCurve(curve);
+  });
+}
+function drawCurve(points) {
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length - 2; i += 2) {
+    const cp1 = points[i]; // First control point
+    const cp2 = points[i + 1]; // Second control point
+    const end = points[i + 2]; // End point
+    ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+  }
+  if (points.length % 2 === 0) {
+    //    ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+  }
+  ctx.strokeStyle = "black"; // Customize as needed
+  ctx.lineWidth = 2; // Customize as needed
+  ctx.stroke();
+  ctx.closePath();
 }
 
 function updateValues() {
