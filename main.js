@@ -174,6 +174,7 @@ function calculateGeometry(params) {
     ...state.blade,
     radius: state.blade.radius + (state.blade.thickness + params.tubeOD) / 2,
   });
+  state.intersection = intersection;
 
   // in contact with the teeth, calculate tangental trajectory away from teeth
   if (
@@ -293,7 +294,7 @@ function draw(state, appearance) {
   drawArc({ ...state.tube2, style: "tube" });
   if (state.tube3) {
     drawArc({ ...state.tube3, style: "tube" });
-    drawDot({ ...state.intersection, style: "red" });
+    drawDot({ ...state.intersection, style: "red" }); // TODO: make parametisable
   }
   if (state.tube1) {
     drawArc({ ...state.tube1, style: "tube" });
@@ -335,8 +336,7 @@ function draw(state, appearance) {
     });
   }
 
-  console.log("state", state);
-  console.log("state.lowerIncisorX,", state.lowerIncisorX);
+  // console.log("state", state);
   const profile = {
     upperIncisor: {
       x: state.upperIncisorX,
@@ -352,7 +352,6 @@ function draw(state, appearance) {
     bladeRadius: state.blade.radius,
     bladeCentre: state.bladeCentre,
   };
-  console.log("profile", JSON.stringify(profile));
   console.log("profile", JSON.stringify(profile));
   drawPatientProfile(profile);
 
@@ -577,11 +576,9 @@ function tangentAngle(intersection, circle1, circle2) {
 
 // scale point list
 function scalePointList(points) {
-  console.log("points in", JSON.stringify(points));
   points.forEach((point, index) => {
-    points[index] = { ...points, ...quickScalePoint(points) };
+    points[index] = { ...point, ...quickScalePoint(point) };
   });
-  console.log("points out", JSON.stringify(points));
   return points;
 }
 
@@ -619,6 +616,7 @@ function rescale(o_in) {
 }
 
 function label(p) {
+  console.log("label p", p);
   const { x, y, text, alignment, fontsize, color, offset } = rescale({
     alignment: "left",
     fontsize: 4,
@@ -827,6 +825,7 @@ function drawPatientProfile(params) {
 
   // Estimate nose tip (above and anterior to upperIncisor)
   const noseTip = {
+    name: "noseTip",
     x: upperIncisor.x - 15, // Slightly below incisor in x (toward feet)
     y: upperIncisor.y - 20, // Anterior to incisor (negative y)
   };
@@ -834,6 +833,7 @@ function drawPatientProfile(params) {
 
   // Estimate upper lip (between nose and upperIncisor)
   const upperLip = {
+    name: "upperLip",
     x: upperIncisor.x - 5,
     y: upperIncisor.y - 5,
   };
@@ -844,6 +844,7 @@ function drawPatientProfile(params) {
 
   // Estimate hard palate (posterior and slightly above upperIncisor)
   const hardPalate = {
+    hardPalate: "hardPalate",
     x: upperIncisor.x + 10, // Toward head
     y: upperIncisor.y + 5 + pronathism * 0.05, // Adjust for pronathism
   };
@@ -852,6 +853,7 @@ function drawPatientProfile(params) {
 
   // Estimate uvula (near thyroid, slightly anterior)
   const uvula = {
+    uvula: "uvula",
     x: thyroid.x - 5, // Slightly below thyroid in x
     y: thyroid.y - 10, // Anterior to thyroid
   };
@@ -912,9 +914,7 @@ function drawPatientProfile(params) {
 
   // console.log("lowerSection", JSON.stringify(lowerSection));
   [lowerSection, upperSection].forEach((curve) => {
-    console.log("curve", JSON.stringify(curve));
     scalePointList(curve);
-    console.log("curve", JSON.stringify(curve));
     drawCurve(curve);
   });
 }
@@ -925,14 +925,25 @@ function drawCurve(points) {
     const cp2 = points[i + 1]; // Second control point
     const end = points[i + 2]; // End point
     ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
+    if (cp2.name) {
+      const curveLabel = {
+        x: cp2.x + 10,
+        y: cp2.y + 10,
+        text: cp2.name,
+        alignment: "left",
+        color: "blue",
+      };
+      console.log("curveLabel", curveLabel);
+      label(curveLabel);
+    }
   }
   if (points.length % 2 === 0) {
-    //    ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+    ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
   }
   ctx.strokeStyle = "black"; // Customize as needed
   ctx.lineWidth = 2; // Customize as needed
   ctx.stroke();
-  ctx.closePath();
+  // ctx.closePath();
 }
 
 function updateValues() {
