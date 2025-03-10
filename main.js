@@ -30,9 +30,9 @@ const evd = (id) => toRadians(ev(id));
 const scale =
   // { f: 1, xo: 0, yo: 0 };
   { f: 5, xo: -100, yo: -100 };
+const urlParams = new URLSearchParams(window.location.search);
 
 function init() {
-  const urlParams = new URLSearchParams(window.location.search);
   const layout = urlParams.get("layout");
 
   if (layout === "twocol") {
@@ -348,7 +348,7 @@ function draw(state, appearance) {
       x: state.lowerIncisorX,
       y: state.lowerIncisorY,
     },
-    thyroid: state.glottis.end,
+    thyroid: state.glottis.start,
     pronathism: 100,
     bladeTip: state.bladeTip,
     bladeRadius: state.blade.radius,
@@ -511,7 +511,7 @@ function translate({ x, y, angle, distance }) {
 
 // given two points calcuate angle and distance between them
 function midpoint(p1, p2) {
-  return { x: (p1.x - p2.x) / 2, y: (p1.y - p2.y) / 2 };
+  return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
 }
 
 // given two points calcuate angle and distance between them
@@ -822,98 +822,135 @@ function drawPatientProfile(params) {
   // --- Upper Section: From nose to uvula ---
   const upperSection = [];
 
-  const nasium = {
-    name: "nasium",
+  const subnasale = {
+    name: "subnasale",
     x: upperIncisor.x + 25,
-    y: upperIncisor.y - 12,
+    y: upperIncisor.y - 20,
   };
 
   upperSection.push({
     name: "forehead",
-    x: nasium.x + 100,
-    y: nasium.y - 20,
+    x: subnasale.x + 100,
+    y: subnasale.y - 20,
   });
 
   upperSection.push({
-    name: "glabella top",
-    x: nasium.x + 65,
-    y: nasium.y,
+    name: "lower forhead",
+    x: subnasale.x + 65,
+    y: subnasale.y,
   });
   upperSection.push({
-    name: "glabella",
-    x: nasium.x + 60,
-    y: nasium.y,
+    name: "nasion",
+    x: subnasale.x + 60,
+    y: subnasale.y,
+  });
+  upperSection.push({
+    name: "pronasale",
+    x: subnasale.x + 15,
+    y: subnasale.y - 30,
   });
   upperSection.push({
     name: "nasal tip",
-    x: nasium.x + 10,
-    y: nasium.y - 30,
-  });
-  upperSection.push({
-    name: "nasal tip",
-    x: nasium.x + 8,
-    y: nasium.y - 20,
+    x: subnasale.x + 7,
+    y: subnasale.y - 25,
   });
 
-  upperSection.push(nasium);
+  upperSection.push(subnasale);
   upperSection.push({
     name: "top of top lip",
-    x: nasium.x - 1,
-    y: nasium.y - 1,
+    x: subnasale.x - 1,
+    y: subnasale.y - 1,
   });
-
-  // Estimate upper lip (between nose and upperIncisor)
   const upperLip = {
     name: "upperLip",
-    x: upperIncisor.x,
-    y: upperIncisor.y - 20,
+    x: upperIncisor.x - 5,
+    y: upperIncisor.y - 24,
   };
   upperSection.push(upperLip);
   upperSection.push({
     name: "inner upperLip",
     x: upperLip.x,
-    y: upperLip.y - 10,
+    y: upperLip.y + 16,
   });
 
-  // Add upperIncisor
-  upperSection.push({ ...upperIncisor, name: "upperIncisor" });
+  upperSection.push({
+    name: "upperLip nasal reflection",
+    x: upperIncisor.x + 30,
+    y: upperIncisor.y - 6,
+  });
+  upperSection.push({
+    name: "upperLip reflextion1",
+    x: upperIncisor.x + 10,
+    y: upperIncisor.y - 6,
+  });
+  upperSection.push({
+    name: "upperLip reflextion2",
+    x: upperIncisor.x + 10,
+    y: upperIncisor.y + 4,
+  });
 
-  // Estimate hard palate (posterior and slightly above upperIncisor)
   const hardPalate = {
     name: "hardPalate",
-    x: upperIncisor.x + 10, // Toward head
-    y: upperIncisor.y + 5 + pronathism * 0.05, // Adjust for pronathism
+    x: upperIncisor.x + 0,
+    y: upperIncisor.y + 70,
   };
   upperSection.push(hardPalate);
 
-  // Estimate uvula (near thyroid, slightly anterior)
   const uvula = {
     name: "uvula",
-    x: thyroid.x - 5, // Slightly below thyroid in x
-    y: thyroid.y - 10, // Anterior to thyroid
+    x: hardPalate.x - 20,
+    y: hardPalate.y + 10,
   };
   upperSection.push(uvula);
 
-  // --- Lower Section: From lower lip to anterior neck, avoiding blade area ---
   var lowerSection = [];
-
-  // Estimate lower lip (below and slightly posterior to lowerIncisor)
   const lowerLip = {
     name: "lowerLip",
-    x: lowerIncisor.x - 5,
-    y: lowerIncisor.y + 5 + pronathism * 0.1, // Adjust for pronathism
+    x: lowerIncisor.x + 5,
+    y: lowerIncisor.y - 24,
   };
-  lowerSection.push(lowerLip);
-
-  // Estimate chin (below lower lip, adjusted by pronathism)
+  const sublabiale = {
+    name: "lowerLip",
+    x: lowerIncisor.x + 5,
+    y: lowerIncisor.y - 24,
+  };
   lowerSection.push({
-    name: "chin",
-    x: lowerLip.x - 10,
-    y: lowerLip.y + 10 + pronathism * 0.2, // Protrudes more for prognathic
+    name: "lowerLip reflextion2",
+    x: lowerIncisor.x - 10,
+    y: lowerIncisor.y + 4,
   });
+  lowerSection.push({
+    name: "lowerLip reflextion1",
+    x: lowerIncisor.x - 10,
+    y: lowerIncisor.y - 6,
+  });
+  lowerSection.push({
+    name: "lowerLip nasal reflection",
+    x: lowerIncisor.x - 30,
+    y: lowerIncisor.y - 6,
+  });
+  lowerSection.push({
+    name: "inner lowerLip",
+    x: lowerLip.x,
+    y: lowerLip.y + 16,
+  });
+  lowerSection.push(lowerLip);
+  lowerSection.push({
+    name: "bottom of bottom lip",
+    x: sublabiale.x + 1,
+    y: sublabiale.y - 1,
+  });
+  lowerSection.push(sublabiale);
+  // Estimate chin (below lower lip, adjusted by pronathism)
+  const chin = {
+    name: "chin",
+    x: lowerLip.x - 40,
+    y: lowerLip.y + 10 - pronathism * 0.2, // Protrudes more for prognathic
+  };
+  lowerSection.push(chin);
 
   // Add lowerIncisor
-  lowerSection.push({ ...lowerIncisor, name: "lowerIncisor" });
+  //  lowerSection.push({ ...lowerIncisor, name: "lowerIncisor" });
 
   // Estimate bladeCentre if not provided
   const effectiveBladeCentre = bladeCentre || {
@@ -925,27 +962,23 @@ function drawPatientProfile(params) {
   // Avoid the area between lowerIncisor and bladeTip
   lowerSection.push({
     name: "bladeAvoidancePoint",
-    x: (lowerIncisor.x + bladeTip.x) / 2,
-    y: Math.max(lowerIncisor.y, bladeTip.y) + bladeRadius * 0.5, // Curve posteriorly
-  });
-
-  // Estimate undersurface of jaw (posterior and below blade area)
-
-  lowerSection.push({
-    name: "jawUndersurface",
-    x: bladeTip.x + 10,
-    y: bladeTip.y + bladeRadius + 5 + pronathism * 0.05,
-  });
-
-  // Estimate anterior neck (near thyroid, adjusted for pronathism)
-  lowerSection.push({
-    name: "anteriorNeck",
-    x: thyroid.x - 10,
-    y: thyroid.y + 10 + pronathism * 0.05,
+    x: bladeTip.x,
+    y: bladeTip.y - 20,
   });
 
   // End at thyroid
-  lowerSection.push({ ...thyroid, name: "thyroid" });
+  lowerSection.push({ x: thyroid.x, y: thyroid.y - 10, name: "thyroid" });
+
+  lowerSection.push({
+    name: "subthyroid",
+    x: thyroid.x - 10,
+    y: thyroid.y - 4,
+  });
+  lowerSection.push({
+    name: "anteriorNeck",
+    x: thyroid.x - 50,
+    y: thyroid.y - 4,
+  });
 
   // console.log("lowerSection", JSON.stringify(lowerSection));
   [lowerSection, upperSection].forEach((curve) => {
@@ -953,32 +986,37 @@ function drawPatientProfile(params) {
   });
 }
 function drawCurve(points) {
+  debug = urlParams.get("debugcurve");
+  function controlPoint(p1, p2, t = 0.2) {
+    return {
+      x: p1.x + (p2.x - p1.x) * t,
+      y: p1.y + (p2.y - p1.y) * t,
+    };
+  }
   const scaled = scalePointList(points);
   ctx.moveTo(scaled[0].x, scaled[0].y);
-  for (let i = 1; i < scaled.length - 2; i += 2) {
-    const cp1 = scaled[i]; // First control point
-    const cp2 = scaled[i + 1]; // Second control point
-    const end = scaled[i + 2]; // End point
-    ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
-  }
-  if (scaled.length % 2 === 0) {
-    ctx.lineTo(scaled[scaled.length - 1].x, scaled[scaled.length - 1].y);
+  for (let i = 1; i < scaled.length - 1; i++) {
+    const cp1 = scaled[i];
+    const cp2 = midpoint(scaled[i], scaled[i + 1]);
+    ctx.quadraticCurveTo(cp1.x, cp1.y, cp2.x, cp2.y);
   }
   ctx.strokeStyle = "black"; // Customize as needed
   ctx.lineWidth = 2; // Customize as needed
   ctx.stroke();
-  points.forEach((point, i) => {
-    const curveLabel = {
-      x: point.x,
-      y: point.y,
-      text: `${point.name} ${i}`,
-      alignment: "left",
-      color: "blue",
-    };
-    label(curveLabel);
-    drawDot(point);
-  });
-  // ctx.closePath();
+  if (debug) {
+    points.forEach((point, i) => {
+      const curveLabel = {
+        x: point.x,
+        y: point.y,
+        offset: 3,
+        text: `${point.name} ${i}`,
+        alignment: "left",
+        color: "blue",
+      };
+      label(curveLabel);
+      drawDot(point);
+    });
+  }
 }
 
 function updateValues() {
