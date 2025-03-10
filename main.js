@@ -834,20 +834,19 @@ function drawPatientProfile(params) {
   upperSection.push(upperLip);
 
   // Add upperIncisor
-  upperSection.push(upperIncisor);
+  upperSection.push({ ...upperIncisor, name: "upperIncisor" });
 
   // Estimate hard palate (posterior and slightly above upperIncisor)
   const hardPalate = {
-    hardPalate: "hardPalate",
+    name: "hardPalate",
     x: upperIncisor.x + 10, // Toward head
     y: upperIncisor.y + 5 + pronathism * 0.05, // Adjust for pronathism
   };
   upperSection.push(hardPalate);
-  drawDot(quickScalePoint(hardPalate));
 
   // Estimate uvula (near thyroid, slightly anterior)
   const uvula = {
-    uvula: "uvula",
+    name: "uvula",
     x: thyroid.x - 5, // Slightly below thyroid in x
     y: thyroid.y - 10, // Anterior to thyroid
   };
@@ -926,11 +925,11 @@ function drawCurve(points) {
   ctx.strokeStyle = "black"; // Customize as needed
   ctx.lineWidth = 2; // Customize as needed
   ctx.stroke();
-  points.forEach((point) => {
+  points.forEach((point, i) => {
     const curveLabel = {
       x: point.x,
       y: point.y,
-      text: point.name,
+      text: `${point.name} ${i}`,
       alignment: "left",
       color: "blue",
     };
