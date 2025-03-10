@@ -127,7 +127,6 @@ function calculateGeometry(params) {
     endAngle: params.bladeAngle + bladeRadians * (params.bladeInsertion / 100),
     radius: params.bladeRadius,
     thickness: 3,
-    style: "metal", // TODO move to draw
   };
   state.bladeTip = translate({
     ...state.bladeCentre,
@@ -268,9 +267,27 @@ function calculateGeometry(params) {
 }
 
 function draw(state, appearance) {
-  // save state to drawing context
   ctx.geometry = state;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const profile = {
+    upperIncisor: {
+      x: state.upperIncisorX,
+      y: state.upperIncisorY,
+    },
+    lowerIncisor: {
+      x: state.lowerIncisorX,
+      y: state.lowerIncisorY,
+    },
+    thyroid: state.glottis.start,
+    pronathism: 100,
+    bladeTip: state.bladeTip,
+    bladeRadius: state.blade.radius,
+    bladeCentre: state.bladeCentre,
+  };
+  console.log("profile", JSON.stringify(profile));
+  drawPatientProfile(profile);
+
+  // save state to drawing context
 
   // teeth
   const dentalDamage = state.bladeUpperIncisorDistance < 0;
@@ -288,7 +305,8 @@ function draw(state, appearance) {
     lineWidth: 1,
   });
   // blade
-  drawArc(state.blade);
+  drawArc({ ...state.blade, style: "metal" });
+
   drawDot({ ...state.bladeTip, style: "gray" });
   // glottis
   drawGlottis(state.glottis);
@@ -339,62 +357,45 @@ function draw(state, appearance) {
   }
 
   // console.log("state", state);
-  const profile = {
-    upperIncisor: {
-      x: state.upperIncisorX,
-      y: state.upperIncisorY,
-    },
-    lowerIncisor: {
-      x: state.lowerIncisorX,
-      y: state.lowerIncisorY,
-    },
-    thyroid: state.glottis.start,
-    pronathism: 100,
-    bladeTip: state.bladeTip,
-    bladeRadius: state.blade.radius,
-    bladeCentre: state.bladeCentre,
-  };
-  console.log("profile", JSON.stringify(profile));
-  drawPatientProfile(profile);
 
   if (appearance.showHelp) {
     // draw left-right arrow labeled with 'rotate tube' at the upperincisor (+50, -50)
     drawArrow({
-      x: state.upperIncisorX + 50,
-      y: state.upperIncisorY - 50,
+      x: state.upperIncisorX + 70,
+      y: state.upperIncisorY - 70,
       text: "Rotate tube",
       labelAllignment: "above",
-      labelOffset: 15,
+      labelOffset: 10,
       orientation: "horizontal",
     });
     drawArrow({
-      x: state.upperIncisorX - 50,
-      y: state.upperIncisorY - 50,
+      x: state.upperIncisorX - 70,
+      y: state.upperIncisorY - 70,
       text: "Advance-withdraw blade",
       labelAllignment: "above",
       labelOffset: 25,
       orientation: "vertical",
     });
     drawArrow({
-      x: state.upperIncisorX - 50,
-      y: state.upperIncisorY - 50,
+      x: state.upperIncisorX - 70,
+      y: state.upperIncisorY - 70,
       text: "Rotate blade",
       labelAllignment: "left",
       labelOffset: 25,
       orientation: "horizontal",
     });
-    const bx = 10;
+    const bx = -20;
     drawArrow({
-      x: state.upperIncisorX - bx,
-      y: state.upperIncisorY + 50,
+      x: state.upperIncisorX + bx,
+      y: state.upperIncisorY + 75,
       text: "Jaw thrust",
       labelAllignment: "below",
       labelOffset: 25,
       orientation: "vertical",
     });
     drawArrow({
-      x: state.upperIncisorX - bx,
-      y: state.upperIncisorY + 50,
+      x: state.upperIncisorX + bx,
+      y: state.upperIncisorY + 75,
       text: "Mouth opening",
       labelAllignment: "right",
       labelOffset: 25,
@@ -776,8 +777,8 @@ function drawArc(params) {
       p.y,
       p.radius + p.thickness,
     );
-    p.style.addColorStop(0, "rgba(192, 192, 192, 0.5)"); // Inner color (light grey)
-    p.style.addColorStop(1, "rgba(128, 128, 128, 0.5)"); // Outer color (darker grey)
+    p.style.addColorStop(0, "rgb(192, 192, 192)"); // Inner color (light grey)
+    p.style.addColorStop(1, "rgb(128, 128, 128)"); // Outer color (darker grey)
   }
   ctx.beginPath();
   ctx.arc(p.x, p.y, p.radius, p.startAngle, p.endAngle);
@@ -824,7 +825,7 @@ function drawPatientProfile(params) {
 
   const subnasale = {
     name: "subnasale",
-    x: upperIncisor.x + 25,
+    x: upperIncisor.x + 30,
     y: upperIncisor.y - 20,
   };
 
@@ -863,13 +864,13 @@ function drawPatientProfile(params) {
   });
   const upperLip = {
     name: "upperLip",
-    x: upperIncisor.x - 5,
-    y: upperIncisor.y - 24,
+    x: upperIncisor.x + 5,
+    y: upperIncisor.y - 20,
   };
   upperSection.push(upperLip);
   upperSection.push({
     name: "inner upperLip",
-    x: upperLip.x,
+    x: upperLip.x - 5,
     y: upperLip.y + 16,
   });
 
@@ -942,12 +943,17 @@ function drawPatientProfile(params) {
   });
   lowerSection.push(sublabiale);
   // Estimate chin (below lower lip, adjusted by pronathism)
-  const chin = {
-    name: "chin",
-    x: lowerLip.x - 40,
-    y: lowerLip.y + 10 - pronathism * 0.2, // Protrudes more for prognathic
+  const gnathio = {
+    name: "gnathio",
+    x: lowerIncisor.x - 40,
+    y: lowerIncisor.y - 20 - pronathism * 0.1, // Protrudes more for prognathic
   };
-  lowerSection.push(chin);
+  lowerSection.push(gnathio);
+  lowerSection.push({
+    name: "menton",
+    x: gnathio.x - 10,
+    y: gnathio.y + 10,
+  });
 
   // Add lowerIncisor
   //  lowerSection.push({ ...lowerIncisor, name: "lowerIncisor" });
@@ -987,12 +993,6 @@ function drawPatientProfile(params) {
 }
 function drawCurve(points) {
   debug = urlParams.get("debugcurve");
-  function controlPoint(p1, p2, t = 0.2) {
-    return {
-      x: p1.x + (p2.x - p1.x) * t,
-      y: p1.y + (p2.y - p1.y) * t,
-    };
-  }
   const scaled = scalePointList(points);
   ctx.moveTo(scaled[0].x, scaled[0].y);
   for (let i = 1; i < scaled.length - 1; i++) {
@@ -1000,8 +1000,8 @@ function drawCurve(points) {
     const cp2 = midpoint(scaled[i], scaled[i + 1]);
     ctx.quadraticCurveTo(cp1.x, cp1.y, cp2.x, cp2.y);
   }
-  ctx.strokeStyle = "black"; // Customize as needed
-  ctx.lineWidth = 2; // Customize as needed
+  ctx.strokeStyle = "rgba(139, 69, 19, 0.6)"; // Darker brown with some transparency
+  ctx.lineWidth = 8; // Customize as needed
   ctx.stroke();
   if (debug) {
     points.forEach((point, i) => {
