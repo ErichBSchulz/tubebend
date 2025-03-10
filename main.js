@@ -510,6 +510,11 @@ function translate({ x, y, angle, distance }) {
 }
 
 // given two points calcuate angle and distance between them
+function midpoint(p1, p2) {
+  return { x: (p1.x - p2.x) / 2, y: (p1.y - p2.y) / 2 };
+}
+
+// given two points calcuate angle and distance between them
 function distanceBetween(p1, p2) {
   const dx = p1.x - p2.x;
   const dy = p1.y - p2.y;
@@ -817,21 +822,58 @@ function drawPatientProfile(params) {
   // --- Upper Section: From nose to uvula ---
   const upperSection = [];
 
-  // Estimate nose tip (above and anterior to upperIncisor)
-  const noseTip = {
-    name: "noseTip",
-    x: upperIncisor.x - 15, // Slightly below incisor in x (toward feet)
-    y: upperIncisor.y - 20, // Anterior to incisor (negative y)
+  const nasium = {
+    name: "nasium",
+    x: upperIncisor.x + 25,
+    y: upperIncisor.y - 12,
   };
-  upperSection.push(noseTip);
+
+  upperSection.push({
+    name: "forehead",
+    x: nasium.x + 100,
+    y: nasium.y - 20,
+  });
+
+  upperSection.push({
+    name: "glabella top",
+    x: nasium.x + 65,
+    y: nasium.y,
+  });
+  upperSection.push({
+    name: "glabella",
+    x: nasium.x + 60,
+    y: nasium.y,
+  });
+  upperSection.push({
+    name: "nasal tip",
+    x: nasium.x + 10,
+    y: nasium.y - 30,
+  });
+  upperSection.push({
+    name: "nasal tip",
+    x: nasium.x + 8,
+    y: nasium.y - 20,
+  });
+
+  upperSection.push(nasium);
+  upperSection.push({
+    name: "top of top lip",
+    x: nasium.x - 1,
+    y: nasium.y - 1,
+  });
 
   // Estimate upper lip (between nose and upperIncisor)
   const upperLip = {
     name: "upperLip",
-    x: upperIncisor.x - 5,
-    y: upperIncisor.y - 5,
+    x: upperIncisor.x,
+    y: upperIncisor.y - 20,
   };
   upperSection.push(upperLip);
+  upperSection.push({
+    name: "inner upperLip",
+    x: upperLip.x,
+    y: upperLip.y - 10,
+  });
 
   // Add upperIncisor
   upperSection.push({ ...upperIncisor, name: "upperIncisor" });
