@@ -27,7 +27,9 @@ const ev = (id) => +e(id).value;
 const toRadians = (degrees) => (degrees * Math.PI) / 180;
 const toDegrees = (radians) => (radians / Math.PI) * 180;
 const evd = (id) => toRadians(ev(id));
-const scale = { f: 5, xo: -100, yo: -100 };
+const scale =
+  // { f: 1, xo: 0, yo: 0 };
+  { f: 5, xo: -100, yo: -100 };
 
 function init() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -576,10 +578,11 @@ function tangentAngle(intersection, circle1, circle2) {
 
 // scale point list
 function scalePointList(points) {
-  points.forEach((point, index) => {
-    points[index] = { ...point, ...quickScalePoint(point) };
+  const out = [];
+  points.map((point, index) => {
+    out[index] = { ...point, ...quickScalePoint(point) };
   });
-  return points;
+  return out;
 }
 
 function quickScalePoint(point) {
@@ -616,7 +619,6 @@ function rescale(o_in) {
 }
 
 function label(p) {
-  console.log("label p", p);
   const { x, y, text, alignment, fontsize, color, offset } = rescale({
     alignment: "left",
     fontsize: 4,
@@ -650,7 +652,6 @@ function label(p) {
 }
 
 function drawDot(params) {
-  console.log("dot params", params);
   const p = rescale({ style: "blue", radius: 2, ...params });
   ctx.beginPath();
   ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
@@ -806,13 +807,6 @@ function drawPatientProfile(params) {
     bladeCentre,
   } = params;
   console.log("params", JSON.stringify(params));
-  console.log("lowerIncisor", lowerIncisor);
-  console.log("upperIncisor", upperIncisor);
-  // Ensure ctx is defined globally
-  if (!ctx) {
-    console.error("Canvas context (ctx) is not defined.");
-    return;
-  }
 
   // Clear previous drawings (optional, uncomment if needed)
   // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -914,35 +908,35 @@ function drawPatientProfile(params) {
 
   // console.log("lowerSection", JSON.stringify(lowerSection));
   [lowerSection, upperSection].forEach((curve) => {
-    scalePointList(curve);
     drawCurve(curve);
   });
 }
 function drawCurve(points) {
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 2; i += 2) {
-    const cp1 = points[i]; // First control point
-    const cp2 = points[i + 1]; // Second control point
-    const end = points[i + 2]; // End point
+  const scaled = scalePointList(points);
+  ctx.moveTo(scaled[0].x, scaled[0].y);
+  for (let i = 1; i < scaled.length - 2; i += 2) {
+    const cp1 = scaled[i]; // First control point
+    const cp2 = scaled[i + 1]; // Second control point
+    const end = scaled[i + 2]; // End point
     ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
-    if (cp2.name) {
-      const curveLabel = {
-        x: cp2.x + 10,
-        y: cp2.y + 10,
-        text: cp2.name,
-        alignment: "left",
-        color: "blue",
-      };
-      console.log("curveLabel", curveLabel);
-      label(curveLabel);
-    }
   }
-  if (points.length % 2 === 0) {
-    ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+  if (scaled.length % 2 === 0) {
+    ctx.lineTo(scaled[scaled.length - 1].x, scaled[scaled.length - 1].y);
   }
   ctx.strokeStyle = "black"; // Customize as needed
   ctx.lineWidth = 2; // Customize as needed
   ctx.stroke();
+  points.forEach((point) => {
+    const curveLabel = {
+      x: point.x,
+      y: point.y,
+      text: point.name,
+      alignment: "left",
+      color: "blue",
+    };
+    label(curveLabel);
+    drawDot(point);
+  });
   // ctx.closePath();
 }
 
