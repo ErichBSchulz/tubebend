@@ -328,7 +328,6 @@ function draw(state, appearance) {
     bladeRadius: state.blade.radius,
     bladeCentre: state.bladeCentre,
   };
-  // Profile data is used for drawing
   drawPatientProfile(profile);
 
   // save state to drawing context
