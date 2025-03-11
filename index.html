@@ -9,7 +9,7 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracheal Intubation Geometry Simulation x</title>
+    <title>Tracheal Intubation Geometry Simulation</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
@@ -118,8 +118,7 @@
             <span id="tubeRadiusValue">0</span>
           </div>
           <p class="description">
-            The radius of curvature of standard tracheal tube is 140mm when it
-            leaves the packet, but bending over the teeth will increase this.
+            The outer diameter of standard tracheal tubes ranges from 7mm to 12mm depending on patient size.
           </p>
         </div>
         <div class="slider-container">
@@ -129,8 +128,7 @@
             <span id="tubeODValue">0</span>
           </div>
           <p class="description">
-            The radius of curvature of standard tracheal tube is 140mm when it
-            leaves the packet, but bending over the teeth will increase this.
+            The outer diameter of standard tracheal tubes ranges from 7mm to 12mm depending on patient size.
           </p>
         </div>
         <h2>Laryngoscope Blade</h2>
@@ -294,6 +292,12 @@
             <label for="showLabels">Show labels: </label>
             <input type="checkbox" id="showLabels" checked />
           </div>
+        </div>
+        
+        <div class="button-container" style="margin-top: 20px; text-align: center;">
+          <button id="resetButton" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Reset to Defaults
+          </button>
         </div>
       </div>
     </div>

@@ -1,5 +1,8 @@
+// Canvas setup and utility functions
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+
+// List of all slider IDs for batch operations
 const sliders = [
   "tubeAngle",
   "tubeRadius",
@@ -19,41 +22,55 @@ const sliders = [
   "fiducialX",
   "fiducialY",
 ];
-// shortcut function
+
+// DOM and value utility functions
 const e = document.getElementById.bind(document);
-// shortcut to read value
 const ev = (id) => +e(id).value;
-// read degrees and convirt to radians
 const toRadians = (degrees) => (degrees * Math.PI) / 180;
 const toDegrees = (radians) => (radians / Math.PI) * 180;
 const evd = (id) => toRadians(ev(id));
-const scale =
-  // { f: 1, xo: 0, yo: 0 };
-  { f: 5, xo: -100, yo: -100 };
+
+// Canvas scaling parameters
+const scale = { f: 5, xo: -100, yo: -100 };
+
+// URL parameters for configuration
 const urlParams = new URLSearchParams(window.location.search);
 
-function init() {
-  const layout = urlParams.get("layout");
+// Interaction state
+let draggingObject = false;
+let dragStart = { x: 0, y: 0 };
 
+/**
+ * Initialize the application
+ * Sets up event listeners and initial state
+ */
+function init() {
+  // Apply layout based on URL parameters
+  const layout = urlParams.get("layout");
   if (layout === "twocol") {
     document.querySelector(".left-column").style.width = "50%";
     document.querySelector(".right-column").style.width = "50%";
     document.querySelector("#canvas").style.width = "100%";
     document.querySelector("#canvas").style.height = "auto";
   }
+  
+  // Set up mouse event listeners
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mouseup", onMouseUp);
   canvas.addEventListener("mousemove", onMouseMove);
-  // Add touch event listeners for mobile support
+  
+  // Set up touch event listeners for mobile support
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
   canvas.addEventListener("touchend", onTouchEnd, { passive: false });
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
 
+  // Set up slider and checkbox event listeners
   sliders.forEach((slider) => e(slider).addEventListener("input", redraw));
   ["showLabels", "showHelp"].forEach((input) =>
     e(input).addEventListener("change", redraw),
   );
 
+  // Initial draw
   redraw();
 }
 
@@ -420,16 +437,20 @@ function arcRadians(arc) {
   return r;
 }
 
-let draggingObject = false;
-let dragStart = { x: 0, y: 0 };
-
+/**
+ * Handle mouse up event
+ * Stops the dragging operation
+ */
 function onMouseUp() {
-  if (draggingObject) {
-    //  console.log('Stopped dragging');
-  }
   draggingObject = false;
 }
 
+/**
+ * Convert mouse event coordinates to canvas coordinates
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {MouseEvent} event - The mouse event
+ * @returns {Object} The x,y coordinates in canvas space
+ */
 function getMousePos(canvas, event) {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -438,14 +459,17 @@ function getMousePos(canvas, event) {
   };
 }
 
+/**
+ * Handle mouse down event
+ * Starts dragging the closest interactive object
+ * @param {MouseEvent} event - The mouse event
+ */
 function onMouseDown(event) {
   const p = getMousePos(canvas, event);
-  //console.log('Mouse down at:', x, y);
   const o = closestObject(p);
   if (o) {
     draggingObject = o;
     dragStart = p;
-    //console.log('Started dragging');
   }
 }
 
@@ -1019,6 +1043,9 @@ function drawCurve(points) {
   }
 }
 
+/**
+ * Update the displayed values for all sliders
+ */
 function updateValues() {
   sliders.forEach((slider) => {
     const value = e(slider).value;
@@ -1030,4 +1057,47 @@ function updateValues() {
   });
 }
 
+/**
+ * Reset all controls to their default values
+ */
+function resetToDefaults() {
+  // Default values for all sliders
+  const defaults = {
+    "tubeAngle": 26,
+    "tubeRadius": 150,
+    "tubeOD": 10,
+    "glotticPlaneX": 165,
+    "tubeLength": 280,
+    "bladeLength": 140,
+    "bladeThickness": 15,
+    "bladeInsertion": 72,
+    "bladeRadius": 118,
+    "bladeAngle": 18,
+    "lowerIncisorX": -25,
+    "lowerIncisorY": 0,
+    "fiducialStartAngle": 0,
+    "fiducialEndAngle": 360,
+    "fiducialThickness": 1,
+    "fiducialX": 0,
+    "fiducialY": 0
+  };
+  
+  // Reset each slider to its default value
+  Object.entries(defaults).forEach(([id, value]) => {
+    const slider = e(id);
+    if (slider) {
+      slider.value = value;
+    }
+  });
+  
+  // Reset checkboxes
+  e("showLabels").checked = true;
+  e("showHelp").checked = true;
+  
+  // Update the UI and redraw
+  updateValues();
+  redraw();
+}
+
+// Initialize the application
 init();
