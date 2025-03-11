@@ -69,6 +69,12 @@ function init() {
   ["showLabels", "showHelp"].forEach((input) =>
     e(input).addEventListener("change", redraw),
   );
+  
+  // Add reset button functionality
+  const resetButton = e("resetButton");
+  if (resetButton) {
+    resetButton.addEventListener("click", resetToDefaults);
+  }
 
   // Initial draw
   redraw();
