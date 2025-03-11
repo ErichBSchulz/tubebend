@@ -1,75 +1,45 @@
+/* Keep only essential custom styles that aren't covered by Bootstrap */
 body {
-  font-family: "Roboto", sans-serif;
   background-color: #f8f9fa;
   color: #333;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-h1,
-h2 {
-  color: #007bff;
-}
-.main-container {
-  display: flex;
-  flex: 1;
-  padding: 20px;
-}
-.left-column,
-.right-column {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 10px;
-}
-.slider-container {
-  margin: 20px 0;
-}
-.slider-container label {
-  width: 200px;
-  text-align: right;
-  margin-right: 10px;
-}
-.slider-container input[type="range"] {
-  flex: 1;
-  margin: 0 10px;
-}
-.slider-container span {
-  width: 50px;
-  text-align: left;
-}
-.description {
-  font-size: 0.9em;
-  color: #555;
-  margin-top: 5px;
-}
-.notes {
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  #cookie-banner {
-    z-index: 1000;
-  }
-  button {
-    margin: 0 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-  }
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 20px;
-}
-.slider-container input[type="range"]:hover {
-  cursor: pointer;
 }
 
-#cookie-banner {
-  z-index: 1000;
+
+/* Canvas container */
+.canvas-wrapper {
+  width: 100%;
+  overflow: auto;
 }
-button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  cursor: pointer;
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Slider styling */
+.slider-container {
+  margin-bottom: 1rem;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.slider-row label {
+  min-width: 150px;
+}
+
+.description {
+  margin-top: 5px;
+}
+
+/* Mobile responsiveness adjustments */
+@media (max-width: 768px) {
+  .slider-row label {
+    min-width: 120px;
+    font-size: 0.9em;
+  }
 }

@@ -2,6 +2,21 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// Adjust canvas size for mobile devices
+function adjustCanvasForMobile() {
+  if (window.innerWidth <= 768) {
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = window.innerWidth * 0.9;
+  }
+}
+
+// Call on page load and resize
+adjustCanvasForMobile();
+window.addEventListener('resize', function() {
+  adjustCanvasForMobile();
+  redraw();
+});
+
 // List of all slider IDs for batch operations
 const sliders = [
   "tubeAngle",
@@ -47,12 +62,8 @@ let dragStart = { x: 0, y: 0 };
 function init() {
   // Apply layout based on URL parameters
   const layout = urlParams.get("layout");
-  if (layout === "twocol") {
-    document.querySelector(".left-column").style.width = "50%";
-    document.querySelector(".right-column").style.width = "50%";
-    document.querySelector("#canvas").style.width = "100%";
-    document.querySelector("#canvas").style.height = "auto";
-  }
+  // No need for manual adjustments with Bootstrap
+  // Bootstrap handles the layout with the grid system
   
   // Set up mouse event listeners
   canvas.addEventListener("mousedown", onMouseDown);
@@ -63,6 +74,11 @@ function init() {
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
   canvas.addEventListener("touchend", onTouchEnd, { passive: false });
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+  
+  // Show mobile instructions if on a small screen
+  if (window.innerWidth <= 768) {
+    showNotification("Tap and drag to interact with the simulation", "info", 5000);
+  }
 
   // Set up slider and checkbox event listeners
   sliders.forEach((slider) => e(slider).addEventListener("input", redraw));
@@ -103,17 +119,31 @@ function init() {
 
 function onTouchStart(event) {
   event.preventDefault();
-  onMouseDown(event.touches[0]);
+  const touch = event.touches[0];
+  // Convert touch to mouse event
+  const mouseEvent = {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  };
+  onMouseDown(mouseEvent);
 }
 
 function onTouchMove(event) {
   event.preventDefault();
-  onMouseMove(event.touches[0]);
+  if (!draggingObject) return;
+  
+  const touch = event.touches[0];
+  // Convert touch to mouse event
+  const mouseEvent = {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  };
+  onMouseMove(mouseEvent);
 }
 
 function onTouchEnd(event) {
   event.preventDefault();
-  onMouseUp(event.changedTouches[0]);
+  onMouseUp();
 }
 
 function readParams() {
@@ -1323,9 +1353,9 @@ function handleKeyDown(event) {
     case '2':
     case '3':
     case '4':
-      // Load presets 1-4
+      // Load presets 1-3
       const presetIndex = parseInt(key) - 1;
-      const presetNames = ['normal', 'difficult', 'pediatric', 'optimal'];
+      const presetNames = ['normal', 'difficult', 'optimal'];
       if (presetIndex >= 0 && presetIndex < presetNames.length) {
         loadPreset(presetNames[presetIndex]);
       }
@@ -1366,17 +1396,25 @@ function showNotification(message, type = 'success', duration = 3000) {
   const notification = document.getElementById('notification');
   if (!notification) return;
   
-  // Set background color based on type
-  let backgroundColor = '#4CAF50'; // success (green)
+  // Clear any existing classes
+  notification.className = 'position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white';
+  
+  // Add Bootstrap background class based on type
   if (type === 'error') {
-    backgroundColor = '#f44336'; // error (red)
+    notification.classList.add('bg-danger');
   } else if (type === 'info') {
-    backgroundColor = '#2196F3'; // info (blue)
+    notification.classList.add('bg-info');
+  } else {
+    notification.classList.add('bg-success');
   }
   
-  notification.style.backgroundColor = backgroundColor;
   notification.textContent = message;
   notification.style.display = 'block';
+  
+  // Make notification more visible on mobile
+  if (window.innerWidth <= 768) {
+    notification.classList.add('w-75', 'start-50', 'translate-middle-x', 'text-center');
+  }
   
   // Hide after duration
   setTimeout(() => {

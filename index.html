@@ -8,44 +8,34 @@
     ></script>
 
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Tracheal Intubation Geometry Simulation</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div
-      id="cookie-banner"
-      style="
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        background: #333;
-        color: white;
-        padding: 20px;
-        text-align: center;
-        display: none;
-      "
-    >
+    <div id="cookie-banner" class="fixed-bottom w-100 bg-dark text-white p-4 text-center" style="display: none;">
       <p>
         We use cookies to analyse site traffic.
-        <a href="/privacy.html">Learn more</a>.
+        <a href="/privacy.html" class="text-info">Learn more</a>.
       </p>
-      <button id="accept-cookies">Accept</button>
-      <button id="decline-cookies">Decline</button>
+      <button id="accept-cookies" class="btn btn-primary me-2">Accept</button>
+      <button id="decline-cookies" class="btn btn-secondary">Decline</button>
     </div>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
-    <div id="notification" style="display: none; position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"></div>
-    <div class="main-container">
-      <div class="left-column">
-        <div class="canvas-wrapper">
-          <canvas id="canvas" width="1500" height="1500"></canvas>
+    <div id="notification" style="display: none;" class="position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-7">
+          <div class="canvas-wrapper">
+            <canvas id="canvas" width="1500" height="1500"></canvas>
+          </div>
         </div>
-      </div>
-      <div class="right-column">
+        <div class="col-md-5">
         <div class="slider-container">
           <div class="slider-row">
             <label for="showHelp">Show help: </label>
@@ -66,7 +56,7 @@
             />
             <span id="tubeAngleValue">0</span>
           </div>
-          <p class="description">
+          <p class="description text-muted small">
             This is the angle the tube leaves the upper incisors.
           </p>
         </div>
@@ -128,7 +118,7 @@
             <input type="range" id="tubeOD" min="2" max="20" value="10" />
             <span id="tubeODValue">0</span>
           </div>
-          <p class="description">
+          <p class="description text-muted small">
             The outer diameter affects how the tube interacts with the upper airway structures.
           </p>
         </div>
@@ -145,7 +135,7 @@
             />
             <span id="bladeLengthValue">0</span>
           </div>
-          <p class="description">
+          <p class="description text-muted small">
             Macintosh blade #3 and #4 are 101mm and 135mm long respectively.
           </p>
         </div>
@@ -161,7 +151,7 @@
             />
             <span id="bladeThicknessValue">0</span>
           </div>
-          <p class="description">
+          <p class="description text-muted small">
             Used to detect potential damage to upper incisors.
           </p>
         </div>
@@ -190,7 +180,7 @@
             />
             <span id="bladeRadiusValue">0</span>
           </div>
-          <p class="description">
+          <p class="description text-muted small">
             Macintosh blade #3 and #4 have radii of 118mm and 136mm
             respectively.
           </p>
@@ -201,7 +191,7 @@
             <input type="range" id="bladeAngle" min="-20" max="70" value="18" />
             <span id="bladeAngleValue">0</span>
           </div>
-          <p class="description">This is the angle at the incisors.</p>
+          <p class="description text-muted small">This is the angle at the incisors.</p>
         </div>
         <h2>Dentition</h2>
         <div class="slider-container">
@@ -216,7 +206,7 @@
             />
             <span id="lowerIncisorXValue">0</span>
           </div>
-          <p class="description">Mouth opening as measured horizontally.</p>
+          <p class="description text-muted small">Mouth opening as measured horizontally.</p>
         </div>
         <div class="slider-container">
           <div class="slider-row">
@@ -230,10 +220,10 @@
             />
             <span id="lowerIncisorYValue">0</span>
           </div>
-          <p class="description">Under or overbite.</p>
+          <p class="description text-muted small">Under or overbite.</p>
         </div>
         <h2>Fiducial</h2>
-        <p class="description">This moves a small pink fiducial.</p>
+        <p class="description text-muted small">This moves a small pink fiducial.</p>
         <div class="slider-container">
           <div class="slider-row">
             <label for="fiducialStartAngle">Start Angle (degrees): </label>
@@ -295,34 +285,35 @@
           </div>
         </div>
         
-        <div class="button-container" style="margin-top: 20px; text-align: center;">
-          <button id="resetButton" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+        <div class="d-flex justify-content-center mt-4">
+          <button id="resetButton" class="btn btn-danger me-2">
             Reset to Defaults
           </button>
-          <button id="saveButton" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+          <button id="saveButton" class="btn btn-success me-2">
             Save Configuration
           </button>
-          <button id="loadButton" style="padding: 10px 20px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <button id="loadButton" class="btn btn-primary">
             Load Configuration
           </button>
         </div>
         
-        <div class="presets-container" style="margin-top: 20px; text-align: center;">
+        <div class="mt-4 text-center">
           <h3>Preset Configurations</h3>
-          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
-            <button class="preset-button" data-preset="normal" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <div class="d-flex justify-content-center flex-wrap gap-2">
+            <button class="preset-button btn btn-primary" data-preset="normal">
               Normal Anatomy
             </button>
-            <button class="preset-button" data-preset="difficult" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            <button class="preset-button btn btn-primary" data-preset="difficult">
               Difficult Airway
             </button>
-            <button class="preset-button" data-preset="pediatric" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            <!-- <button class="preset-button btn btn-primary" data-preset="pediatric">
               Pediatric
-            </button>
-            <button class="preset-button" data-preset="optimal" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            </button> -->
+            <button class="preset-button btn btn-primary" data-preset="optimal">
               Optimal Technique
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>
