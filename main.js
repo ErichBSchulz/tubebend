@@ -70,11 +70,32 @@ function init() {
     e(input).addEventListener("change", redraw),
   );
   
-  // Add reset button functionality
+  // Add button functionality
   const resetButton = e("resetButton");
   if (resetButton) {
     resetButton.addEventListener("click", resetToDefaults);
   }
+  
+  const saveButton = e("saveButton");
+  if (saveButton) {
+    saveButton.addEventListener("click", saveConfiguration);
+  }
+  
+  const loadButton = e("loadButton");
+  if (loadButton) {
+    loadButton.addEventListener("click", loadConfiguration);
+  }
+  
+  // Add preset button functionality
+  const presetButtons = document.querySelectorAll('.preset-button');
+  presetButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      loadPreset(button.dataset.preset);
+    });
+  });
+  
+  // Add keyboard navigation
+  document.addEventListener('keydown', handleKeyDown);
 
   // Initial draw
   redraw();
@@ -307,7 +328,7 @@ function draw(state, appearance) {
     bladeRadius: state.blade.radius,
     bladeCentre: state.bladeCentre,
   };
-  console.log("profile", JSON.stringify(profile));
+  // Profile data is used for drawing
   drawPatientProfile(profile);
 
   // save state to drawing context
@@ -517,8 +538,7 @@ function closestObject(point) {
     x: ctx.geometry.upperIncisorX,
     y: ctx.geometry.upperIncisorY,
   });
-  console.log("ctx.geometry", ctx.geometry);
-  // console.log('Distance to lower incisor:', distance);
+  // Check distance to interactive elements
   if (distanceBetween(point, lowerIncisor) < 50) {
     return "LI";
   } else if (point.y < upperIncisor.y) {
@@ -842,7 +862,6 @@ function drawPatientProfile(params) {
     bladeRadius,
     bladeCentre,
   } = params;
-  console.log("params", JSON.stringify(params));
 
   // Clear previous drawings (optional, uncomment if needed)
   // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -1022,7 +1041,7 @@ function drawPatientProfile(params) {
   });
 }
 function drawCurve(points) {
-  debug = urlParams.get("debugcurve");
+  const debug = urlParams.get("debugcurve");
   const scaled = scalePointList(points);
   ctx.moveTo(scaled[0].x, scaled[0].y);
   for (let i = 1; i < scaled.length - 1; i++) {
@@ -1103,6 +1122,267 @@ function resetToDefaults() {
   // Update the UI and redraw
   updateValues();
   redraw();
+}
+
+/**
+ * Save the current configuration to localStorage
+ */
+function saveConfiguration() {
+  const config = {};
+  
+  // Save all slider values
+  sliders.forEach(slider => {
+    config[slider] = e(slider).value;
+  });
+  
+  // Save checkbox states
+  config.showLabels = e("showLabels").checked;
+  config.showHelp = e("showHelp").checked;
+  
+  // Save to localStorage
+  localStorage.setItem('intubationConfig', JSON.stringify(config));
+  
+  // Show confirmation
+  showNotification('Configuration saved successfully!');
+}
+
+/**
+ * Load configuration from localStorage
+ */
+function loadConfiguration() {
+  const savedConfig = localStorage.getItem('intubationConfig');
+  
+  if (!savedConfig) {
+    showNotification('No saved configuration found.', 'error');
+    return;
+  }
+  
+  const config = JSON.parse(savedConfig);
+  
+  // Apply slider values
+  sliders.forEach(slider => {
+    if (config[slider] !== undefined) {
+      e(slider).value = config[slider];
+    }
+  });
+  
+  // Apply checkbox states
+  if (config.showLabels !== undefined) {
+    e("showLabels").checked = config.showLabels;
+  }
+  
+  if (config.showHelp !== undefined) {
+    e("showHelp").checked = config.showHelp;
+  }
+  
+  // Update UI and redraw
+  updateValues();
+  redraw();
+}
+
+/**
+ * Load a preset configuration
+ * @param {string} presetName - The name of the preset to load
+ */
+function loadPreset(presetName) {
+  const presets = {
+    normal: {
+      tubeAngle: 26,
+      tubeRadius: 150,
+      tubeOD: 10,
+      glotticPlaneX: 165,
+      tubeLength: 280,
+      bladeLength: 140,
+      bladeThickness: 15,
+      bladeInsertion: 72,
+      bladeRadius: 118,
+      bladeAngle: 18,
+      lowerIncisorX: -25,
+      lowerIncisorY: 0
+    },
+    difficult: {
+      tubeAngle: 35,
+      tubeRadius: 150,
+      tubeOD: 10,
+      glotticPlaneX: 200,
+      tubeLength: 280,
+      bladeLength: 140,
+      bladeThickness: 15,
+      bladeInsertion: 65,
+      bladeRadius: 118,
+      bladeAngle: 25,
+      lowerIncisorX: -15,
+      lowerIncisorY: 10
+    },
+    pediatric: {
+      tubeAngle: 20,
+      tubeRadius: 120,
+      tubeOD: 6,
+      glotticPlaneX: 130,
+      tubeLength: 220,
+      bladeLength: 100,
+      bladeThickness: 10,
+      bladeInsertion: 80,
+      bladeRadius: 90,
+      bladeAngle: 15,
+      lowerIncisorX: -20,
+      lowerIncisorY: 0
+    },
+    optimal: {
+      tubeAngle: 15,
+      tubeRadius: 150,
+      tubeOD: 10,
+      glotticPlaneX: 165,
+      tubeLength: 280,
+      bladeLength: 140,
+      bladeThickness: 15,
+      bladeInsertion: 85,
+      bladeRadius: 118,
+      bladeAngle: 10,
+      lowerIncisorX: -40,
+      lowerIncisorY: -5
+    }
+  };
+  
+  const preset = presets[presetName];
+  
+  if (!preset) {
+    showNotification('Preset not found!', 'error');
+    return;
+  }
+  
+  // Show which preset was loaded
+  showNotification(`Loaded preset: ${presetName.charAt(0).toUpperCase() + presetName.slice(1)}`, 'info');
+  
+  // Apply preset values
+  Object.entries(preset).forEach(([id, value]) => {
+    const slider = e(id);
+    if (slider) {
+      slider.value = value;
+    }
+  });
+  
+  // Update UI and redraw
+  updateValues();
+  redraw();
+}
+
+/**
+ * Handle keyboard navigation
+ * @param {KeyboardEvent} event - The keyboard event
+ */
+function handleKeyDown(event) {
+  const key = event.key;
+  const activeElement = document.activeElement;
+  
+  // Only handle keyboard navigation when not in an input field
+  if (activeElement.tagName === 'INPUT' || activeElement.tagName === 'BUTTON') {
+    return;
+  }
+  
+  switch (key) {
+    case 'ArrowUp':
+      // Increase tube angle
+      adjustSlider('tubeAngle', 1);
+      event.preventDefault();
+      break;
+    case 'ArrowDown':
+      // Decrease tube angle
+      adjustSlider('tubeAngle', -1);
+      event.preventDefault();
+      break;
+    case 'ArrowLeft':
+      // Decrease blade insertion
+      adjustSlider('bladeInsertion', -1);
+      event.preventDefault();
+      break;
+    case 'ArrowRight':
+      // Increase blade insertion
+      adjustSlider('bladeInsertion', 1);
+      event.preventDefault();
+      break;
+    case 'r':
+      // Reset to defaults
+      resetToDefaults();
+      event.preventDefault();
+      break;
+    case 's':
+      // Save configuration
+      if (event.ctrlKey) {
+        saveConfiguration();
+        event.preventDefault();
+      }
+      break;
+    case 'l':
+      // Load configuration
+      if (event.ctrlKey) {
+        loadConfiguration();
+        event.preventDefault();
+      }
+      break;
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+      // Load presets 1-4
+      const presetIndex = parseInt(key) - 1;
+      const presetNames = ['normal', 'difficult', 'pediatric', 'optimal'];
+      if (presetIndex >= 0 && presetIndex < presetNames.length) {
+        loadPreset(presetNames[presetIndex]);
+      }
+      event.preventDefault();
+      break;
+  }
+}
+
+/**
+ * Adjust a slider by a given amount
+ * @param {string} sliderId - The ID of the slider to adjust
+ * @param {number} amount - The amount to adjust by
+ */
+function adjustSlider(sliderId, amount) {
+  const slider = e(sliderId);
+  if (!slider) return;
+  
+  const step = parseFloat(slider.step) || 1;
+  const newValue = parseFloat(slider.value) + (amount * step);
+  
+  // Ensure the new value is within the slider's min and max
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  slider.value = Math.min(max, Math.max(min, newValue));
+  
+  // Update UI and redraw
+  updateValues();
+  redraw();
+}
+
+/**
+ * Show a notification message
+ * @param {string} message - The message to display
+ * @param {string} [type='success'] - The type of notification (success, error, info)
+ * @param {number} [duration=3000] - How long to show the notification in ms
+ */
+function showNotification(message, type = 'success', duration = 3000) {
+  const notification = document.getElementById('notification');
+  if (!notification) return;
+  
+  // Set background color based on type
+  let backgroundColor = '#4CAF50'; // success (green)
+  if (type === 'error') {
+    backgroundColor = '#f44336'; // error (red)
+  } else if (type === 'info') {
+    backgroundColor = '#2196F3'; // info (blue)
+  }
+  
+  notification.style.backgroundColor = backgroundColor;
+  notification.textContent = message;
+  notification.style.display = 'block';
+  
+  // Hide after duration
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, duration);
 }
 
 // Initialize the application

@@ -38,6 +38,7 @@
       <button id="decline-cookies">Decline</button>
     </div>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
+    <div id="notification" style="display: none; position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"></div>
     <div class="main-container">
       <div class="left-column">
         <div class="canvas-wrapper">
@@ -128,7 +129,7 @@
             <span id="tubeODValue">0</span>
           </div>
           <p class="description">
-            The outer diameter of standard tracheal tubes ranges from 7mm to 12mm depending on patient size.
+            The outer diameter affects how the tube interacts with the upper airway structures.
           </p>
         </div>
         <h2>Laryngoscope Blade</h2>
@@ -295,9 +296,33 @@
         </div>
         
         <div class="button-container" style="margin-top: 20px; text-align: center;">
-          <button id="resetButton" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <button id="resetButton" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
             Reset to Defaults
           </button>
+          <button id="saveButton" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+            Save Configuration
+          </button>
+          <button id="loadButton" style="padding: 10px 20px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Load Configuration
+          </button>
+        </div>
+        
+        <div class="presets-container" style="margin-top: 20px; text-align: center;">
+          <h3>Preset Configurations</h3>
+          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+            <button class="preset-button" data-preset="normal" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Normal Anatomy
+            </button>
+            <button class="preset-button" data-preset="difficult" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Difficult Airway
+            </button>
+            <button class="preset-button" data-preset="pediatric" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Pediatric
+            </button>
+            <button class="preset-button" data-preset="optimal" style="padding: 8px 15px; background-color: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Optimal Technique
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -411,13 +436,19 @@
       <ul>
         <li>help mode</li>
         <li>hide tube when invalid position (indicate why)</li>
-        <li>
-          Reset button or scenario buttons (overbite/underbite/ good/bad
-          technique etc)
-        </li>
         <li>Have a mode where the tube tracks the glottis</li>
         <li>Indicate approximate line of sight.</li>
         <li>Show successful orientation</li>
+      </ul>
+      
+      <h2>Keyboard Shortcuts</h2>
+      <ul>
+        <li><strong>Arrow Up/Down</strong>: Adjust tube angle</li>
+        <li><strong>Arrow Left/Right</strong>: Adjust blade insertion</li>
+        <li><strong>R</strong>: Reset to defaults</li>
+        <li><strong>Ctrl+S</strong>: Save configuration</li>
+        <li><strong>Ctrl+L</strong>: Load configuration</li>
+        <li><strong>1-4</strong>: Load preset configurations</li>
       </ul>
     </div>
     <h2>Please share</h2>
