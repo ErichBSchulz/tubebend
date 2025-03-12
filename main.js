@@ -1,3 +1,5 @@
+import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent } from './utils.js';
+
 // Canvas setup and utility functions
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
