@@ -1,4 +1,6 @@
-import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent, translate } from './utils.js';
+import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent, translate, scalePointList, quickScalePoint, rescale } from './utils.js';
+import { readParams, updateValues, sliders } from './ui.js';
+import { calculateGeometry, findIntersection, tangentAngle } from './geometry.js';
 
 // Canvas setup and utility functions
 const canvas = document.getElementById("canvas");
@@ -19,26 +21,6 @@ window.addEventListener("resize", function () {
   redraw();
 });
 
-// List of all slider IDs for batch operations
-const sliders = [
-  "tubeAngle",
-  "tubeRadius",
-  "tubeOD",
-  "glotticPlaneX",
-  "tubeLength",
-  "bladeLength",
-  "bladeThickness",
-  "bladeInsertion",
-  "bladeRadius",
-  "bladeAngle",
-  "lowerIncisorX",
-  "lowerIncisorY",
-  "fiducialStartAngle",
-  "fiducialEndAngle",
-  "fiducialThickness",
-  "fiducialX",
-  "fiducialY",
-];
 
 
 // Canvas scaling parameters
@@ -134,199 +116,7 @@ function onTouchEnd(event) {
 }
 
 
-function readParams() {
-  return {
-    appearance: {
-      showLabels: e("showLabels").checked,
-      showHelp: e("showHelp").checked,
-    },
-    airwayParams: {
-      upperIncisorX: 300,
-      upperIncisorY: 200,
-      lowerIncisorX: ev("lowerIncisorX"),
-      lowerIncisorY: ev("lowerIncisorY"),
-      bladeLength: ev("bladeLength"),
-      bladeThickness: ev("bladeThickness"),
-      bladeInsertion: ev("bladeInsertion"),
-      bladeRadius: ev("bladeRadius"),
-      bladeAngle: evd("bladeAngle"),
-      tubeLength: ev("tubeLength"),
-      tubeRadius: ev("tubeRadius"),
-      tubeOD: ev("tubeOD"),
-      tubeAngle: evd("tubeAngle"),
-      glotticPlaneX: ev("glotticPlaneX"),
-      fiducialStartAngle: evd("fiducialStartAngle"),
-      fiducialEndAngle: evd("fiducialEndAngle"),
-      fiducialThickness: ev("fiducialThickness"),
-      fiducialX: ev("fiducialX"),
-      fiducialY: ev("fiducialY"),
-    },
-  };
-}
 
-function calculateGeometry(params) {
-  const state = {};
-
-  // start with the teeth:
-  state.upperIncisorX = params.upperIncisorX;
-  state.upperIncisorY = params.upperIncisorY;
-  state.lowerIncisorX = params.upperIncisorX + params.lowerIncisorX;
-
-  state.lowerIncisorY = params.upperIncisorY + params.lowerIncisorY;
-  // place blade against lower incisors
-  const bladeRadians =
-    Math.asin(params.bladeLength / (params.bladeRadius * 2)) * 2;
-  state.bladeCentre = translate({
-    x: state.lowerIncisorX,
-    y: state.lowerIncisorY,
-    angle: params.bladeAngle + Math.PI,
-    distance: params.bladeRadius,
-  });
-  state.blade = {
-    ...state.bladeCentre,
-    startAngle:
-      params.bladeAngle - bladeRadians * (1 - params.bladeInsertion / 100),
-    endAngle: params.bladeAngle + bladeRadians * (params.bladeInsertion / 100),
-    radius: params.bladeRadius,
-    thickness: 3,
-  };
-  state.bladeTip = translate({
-    ...state.bladeCentre,
-    angle: state.blade.endAngle,
-    distance: state.blade.radius,
-  });
-
-  // how close is the blade to the upper incisors
-  state.bladeUpperIncisorDistance =
-    distanceBetween(state.blade, {
-      x: state.upperIncisorX,
-      y: state.upperIncisorY,
-    }) -
-    (state.blade.radius + params.bladeThickness);
-
-  // Locate the tube, starting with the middle segment (arc2),
-  // starting against the upper teeth at the specified angle
-  // then deflecting off the blade to arc3
-  // then bending by the same ammount at the teeth for arc1.
-  const toothRotationCentre = {
-    x: params.upperIncisorX - params.tubeOD / 2,
-    y: params.upperIncisorY - params.tubeOD / 2,
-  };
-
-  state.inflection = translate({
-    ...toothRotationCentre,
-    angle: params.tubeAngle + Math.PI,
-    distance: params.tubeRadius,
-  });
-
-  const angleToTooth2 = params.tubeAngle;
-  state.tube2 = {
-    ...state.inflection,
-    startAngle: angleToTooth2,
-    endAngle: angleToTooth2 + 1,
-    radius: params.tubeRadius,
-    thickness: params.tubeOD,
-  };
-
-  // track the total arc of tube drawn so far
-  state.drawnTubeRadians = 0;
-  state.bend = 0;
-
-  // figure out where tube (secgment 2) collides with the balde
-  const intersection = findIntersection(state.tube2, {
-    ...state.blade,
-    radius: state.blade.radius + (state.blade.thickness + params.tubeOD) / 2,
-  });
-  state.intersection = intersection;
-
-  // in contact with the teeth, calculate tangental trajectory away from teeth
-  if (
-    intersection !== null &&
-    intersection.x > state.bladeTip.x &&
-    intersection.y > params.upperIncisorY
-  ) {
-    const tubeBladeAxisBearing = calculateBearing(intersection, state.blade);
-    const tube2AxisBearing = calculateBearing(intersection, state.tube2);
-    state.tube2.endAngle = tube2AxisBearing - Math.PI;
-
-    const arc3Centre = translate({
-      ...intersection,
-      angle: tubeBladeAxisBearing,
-      distance: params.tubeRadius,
-    });
-
-    state.tube3 = {
-      ...arc3Centre,
-      radius: params.tubeRadius,
-      thickness: params.tubeOD,
-    };
-
-    const tangentBearing = tubeBladeAxisBearing + Math.PI;
-    state.tube3.startAngle = tangentBearing;
-    state.bend = tangentAngle(intersection, state.tube3, state.tube2);
-
-    const deltaX = params.glotticPlaneX - state.tube3.x;
-    const finalAngle = Math.acos(deltaX / state.tube3.radius);
-    state.tube3.endAngle =
-      finalAngle > state.tube3.startAngle ? finalAngle : state.tube3.startAngle;
-
-    state.drawnTubeRadians += arcRadians(state.tube3);
-    state.tubeTip = translate({
-      ...arc3Centre,
-      angle: state.tube3.endAngle,
-      distance: params.tubeRadius,
-    });
-  } else {
-    // no contact between blade and tube
-    const deltaX = params.glotticPlaneX - state.tube2.x;
-    const finalAngle = Math.acos(deltaX / state.tube2.radius);
-    state.tube2.endAngle = finalAngle;
-    state.tubeTip = translate({
-      ...state.tube2,
-      angle: finalAngle,
-      distance: params.tubeRadius,
-    });
-  }
-
-  state.drawnTubeRadians += arcRadians(state.tube2);
-
-  const remainingRadians =
-    params.tubeLength / params.tubeRadius - state.drawnTubeRadians;
-  if (remainingRadians > 0) {
-    const outerCentre = translate({
-      ...toothRotationCentre,
-      angle: params.tubeAngle + Math.PI + state.bend,
-      distance: params.tubeRadius,
-    });
-
-    state.tube1 = {
-      ...outerCentre,
-      endAngle: params.tubeAngle + state.bend,
-      radius: params.tubeRadius,
-      thickness: params.tubeOD,
-    };
-
-    state.tube1.startAngle = state.tube1.endAngle - remainingRadians;
-  }
-
-  state.glottis = {
-    start: { x: params.glotticPlaneX, y: state.bladeTip.y - 10 },
-    end: { x: params.glotticPlaneX, y: state.bladeTip.y + 10 },
-  };
-
-  state.fiducial = {
-    // rename all these to be prefixed by `fiducial`
-    startAngle: params.fiducialStartAngle,
-    endAngle: params.fiducialEndAngle,
-    thickness: params.fiducialThickness,
-    x: params.fiducialX,
-    y: params.fiducialY,
-    radius: 5,
-    style: "pink",
-  };
-
-  return state;
-}
 
 function draw(state, appearance) {
   ctx.geometry = state;
@@ -568,95 +358,7 @@ function arcTip(params) {
   return translate({ ...params, angle: params.endAngle });
 }
 
-// Calculate the intersection of two circles and
-// returns the one with the highest Y value (and highest X value if there's a tie).
-function findIntersection(circle1, circle2) {
-  const { x: x1, y: y1, radius: r1 } = circle1;
-  const { x: x2, y: y2, radius: r2 } = circle2;
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const d = Math.sqrt(dx * dx + dy * dy);
-  if (d > r1 + r2 || d < Math.abs(r1 - r2)) {
-    // No intersection
-    return null;
-  }
-  const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
-  const h = Math.sqrt(r1 * r1 - a * a);
-  const xm = x1 + (dx * a) / d;
-  const ym = y1 + (dy * a) / d;
-  const xs1 = xm + (h * dy) / d;
-  const ys1 = ym - (h * dx) / d;
-  const xs2 = xm - (h * dy) / d;
-  const ys2 = ym + (h * dx) / d;
-  // if (ys1 > ys2 || (ys1 === ys2 && xs1 > xs2)) {
-  if (ys1 + xs1 > ys2 + xs2) {
-    return { x: xs1, y: ys1 };
-  } else {
-    return { x: xs2, y: ys2 };
-  }
-}
 
-// given two circles, what is the angle between their tangents
-function tangentAngle(intersection, circle1, circle2) {
-  // Convert points to vectors
-  const u = { x: circle1.x - intersection.x, y: circle1.y - intersection.y };
-  const v = { x: circle2.x - intersection.x, y: circle2.y - intersection.y };
-  // Dot product of u and v
-  const dotProduct = u.x * v.x + u.y * v.y;
-  // Magnitudes of u and v
-  const magnitudeU = Math.sqrt(u.x * u.x + u.y * u.y);
-  const magnitudeV = Math.sqrt(v.x * v.x + v.y * v.y);
-  // Cosine of the angle between u and v
-  const cosTheta = dotProduct / (magnitudeU * magnitudeV);
-  // Angle in radians
-  const theta = Math.acos(cosTheta);
-  // Intersection angle (angle between tangents)
-  return theta;
-}
-
-// scale point list
-function scalePointList(points) {
-  const out = []; // Initialize an empty array
-  points.map((point, index) => {
-    out[index] = { ...point, ...quickScalePoint(point) };
-  });
-  return out;
-}
-
-function quickScalePoint(point) {
-  return {
-    x: (point.x + scale.xOffset) * scale.factor,
-    y: (point.y + scale.yOffset) * scale.factor,
-  };
-}
-
-// apply scale
-function rescale(oIn) {
-  // apply scale
-  const o = { ...quickScalePoint(oIn) };
-  const oOut = { ...oIn, ...o };
-  ["start", "end"].forEach((v) => {
-    if (oOut[v]) {
-      oOut[v] = rescale(oOut[v]);
-    }
-  });
-  [
-    "radius",
-    "height",
-    "thickness",
-    "lineWidth",
-    "fontsize",
-    "offset",
-    "length",
-    "arrowWidth",
-    "arrowLength",
-  ].forEach((v) => {
-    if (oOut[v]) {
-      oOut[v] = oOut[v] * scale.factor;
-    }
-  });
-  return oOut;
-}
 
 function label(p) {
   const { x, y, text, alignment, fontsize, color, offset } = rescale({
@@ -1049,19 +751,6 @@ function drawCurve(points) {
   }
 }
 
-/**
- * Update the displayed values for all sliders
- */
-function updateValues() {
-  sliders.forEach((slider) => {
-    const value = e(slider).value;
-    if (slider === "tubeAngle") {
-      e(`${slider}Value`).textContent = parseFloat(value).toFixed(1);
-    } else {
-      e(`${slider}Value`).textContent = value;
-    }
-  });
-}
 
 /**
  * Reset all controls to their default values
