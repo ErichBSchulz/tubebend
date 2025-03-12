@@ -6,20 +6,30 @@
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-1T08HG0NCV"
     ></script>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png" />
 
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Tracheal Intubation Geometry Simulation</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="cookie-banner" class="fixed-bottom w-100 bg-dark text-white p-4 text-center" style="display: none;">
+    <div
+      id="cookie-banner"
+      class="fixed-bottom w-100 bg-dark text-white p-4 text-center"
+      style="display: none"
+    >
       <p>
         We use cookies to analyse site traffic.
         <a href="/privacy.html" class="text-info">Learn more</a>.
@@ -28,7 +38,11 @@
       <button id="decline-cookies" class="btn btn-secondary">Decline</button>
     </div>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
-    <div id="notification" style="display: none;" class="position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white"></div>
+    <div
+      id="notification"
+      style="display: none"
+      class="position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white"
+    ></div>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-7">
@@ -37,31 +51,31 @@
           </div>
         </div>
         <div class="col-md-5">
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="showHelp">Show help: </label>
-            <input type="checkbox" id="showHelp" checked />
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="showHelp">Show help: </label>
+              <input type="checkbox" id="showHelp" checked />
+            </div>
           </div>
-        </div>
-        <h2>Parameters</h2>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="tubeAngle">Tube Angle (degrees): </label>
-            <input
-              type="range"
-              id="tubeAngle"
-              min="-10"
-              max="70"
-              value="26"
-              step="0.1"
-            />
-            <span id="tubeAngleValue">0</span>
+          <h2>Parameters</h2>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="tubeAngle">Tube Angle (degrees): </label>
+              <input
+                type="range"
+                id="tubeAngle"
+                min="-10"
+                max="70"
+                value="26"
+                step="0.1"
+              />
+              <span id="tubeAngleValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              This is the angle the tube leaves the upper incisors.
+            </p>
           </div>
-          <p class="description text-muted small">
-            This is the angle the tube leaves the upper incisors.
-          </p>
-        </div>
-        <!--
+          <!--
             <div class="slider-container">
                 <div class="slider-row">
                     <label for="incisorBend">Incisor Bend (degrees): </label>
@@ -71,249 +85,272 @@
                 <p class="description">Bending is a result of the tube being bent over the upper incisors.</p>
             </div>
         -->
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="glotticPlaneX">Glottic Plane X (mm):</label>
-            <input
-              type="range"
-              id="glotticPlaneX"
-              min="90"
-              max="300"
-              value="165"
-            />
-            <span id="glotticPlaneXValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="glotticPlaneX">Glottic Plane X (mm):</label>
+              <input
+                type="range"
+                id="glotticPlaneX"
+                min="90"
+                max="300"
+                value="165"
+              />
+              <span id="glotticPlaneXValue">0</span>
+            </div>
           </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="tubeLength">Tube Length (mm): </label>
-            <input
-              type="range"
-              id="tubeLength"
-              min="90"
-              max="300"
-              value="280"
-            />
-            <span id="tubeLengthValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="tubeLength">Tube Length (mm): </label>
+              <input
+                type="range"
+                id="tubeLength"
+                min="90"
+                max="300"
+                value="280"
+              />
+              <span id="tubeLengthValue">0</span>
+            </div>
           </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="tubeRadius">Tube Radius (mm): </label>
-            <input
-              type="range"
-              id="tubeRadius"
-              min="50"
-              max="500"
-              value="150"
-            />
-            <span id="tubeRadiusValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="tubeRadius">Tube Radius (mm): </label>
+              <input
+                type="range"
+                id="tubeRadius"
+                min="50"
+                max="500"
+                value="150"
+              />
+              <span id="tubeRadiusValue">0</span>
+            </div>
+            <p class="description">
+              The radius of the arc that the tube follows.
+            </p>
           </div>
-          <p class="description">
-            The radius of the arc that the tube follows.
-          </p>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="tubeOD">Tube OD (mm): </label>
-            <input type="range" id="tubeOD" min="2" max="20" value="10" />
-            <span id="tubeODValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="tubeOD">Tube OD (mm): </label>
+              <input type="range" id="tubeOD" min="2" max="20" value="10" />
+              <span id="tubeODValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              The outer diameter affects how the tube interacts with the upper
+              airway structures.
+            </p>
           </div>
+          <h2>Laryngoscope Blade</h2>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="bladeLength">Blade Length (mm): </label>
+              <input
+                type="range"
+                id="bladeLength"
+                min="40"
+                max="150"
+                value="140"
+              />
+              <span id="bladeLengthValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              Macintosh blade #3 and #4 are 101mm and 135mm long respectively.
+            </p>
+          </div>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="bladeThickness">Blade Thickness (mm): </label>
+              <input
+                type="range"
+                id="bladeThickness"
+                min="0"
+                max="30"
+                value="15"
+              />
+              <span id="bladeThicknessValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              Used to detect potential damage to upper incisors.
+            </p>
+          </div>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="bladeInsertion">Blade Insertion (%): </label>
+              <input
+                type="range"
+                id="bladeInsertion"
+                min="50"
+                max="100"
+                value="72"
+              />
+              <span id="bladeInsertionValue">0</span>
+            </div>
+          </div>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="bladeRadius">Blade Curvature Radius (mm): </label>
+              <input
+                type="range"
+                id="bladeRadius"
+                min="70"
+                max="140"
+                value="118"
+              />
+              <span id="bladeRadiusValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              Macintosh blade #3 and #4 have radii of 118 mm and 136 mm
+              respectively.
+            </p>
+          </div>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="bladeAngle">Blade angle (degrees): </label>
+              <input
+                type="range"
+                id="bladeAngle"
+                min="-20"
+                max="70"
+                value="18"
+              />
+              <span id="bladeAngleValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              This is the angle at the incisors.
+            </p>
+          </div>
+          <h2>Dentition</h2>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="lowerIncisorX">Lower Incisor X (mm): </label>
+              <input
+                type="range"
+                id="lowerIncisorX"
+                min="-100"
+                max="10"
+                value="-25"
+              />
+              <span id="lowerIncisorXValue">0</span>
+            </div>
+            <p class="description text-muted small">
+              Mouth opening as measured horizontally.
+            </p>
+          </div>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
+              <input
+                type="range"
+                id="lowerIncisorY"
+                min="-50"
+                max="50"
+                value="0"
+              />
+              <span id="lowerIncisorYValue">0</span>
+            </div>
+            <p class="description text-muted small">Under or overbite.</p>
+          </div>
+          <h2>Fiducial</h2>
           <p class="description text-muted small">
-            The outer diameter affects how the tube interacts with the upper airway structures.
+            This moves a small pink fiducial.
           </p>
-        </div>
-        <h2>Laryngoscope Blade</h2>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="bladeLength">Blade Length (mm): </label>
-            <input
-              type="range"
-              id="bladeLength"
-              min="40"
-              max="150"
-              value="140"
-            />
-            <span id="bladeLengthValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="fiducialStartAngle">Start Angle (degrees): </label>
+              <input
+                type="range"
+                id="fiducialStartAngle"
+                min="0"
+                max="360"
+                value="0"
+              />
+              <span id="fiducialStartAngleValue">0</span>
+            </div>
           </div>
-          <p class="description text-muted small">
-            Macintosh blade #3 and #4 are 101mm and 135mm long respectively.
-          </p>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="bladeThickness">Blade Thickness (mm): </label>
-            <input
-              type="range"
-              id="bladeThickness"
-              min="0"
-              max="30"
-              value="15"
-            />
-            <span id="bladeThicknessValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="fiducialEndAngle">End Angle (degrees): </label>
+              <input
+                type="range"
+                id="fiducialEndAngle"
+                min="0"
+                max="360"
+                value="360"
+              />
+              <span id="fiducialEndAngleValue">90</span>
+            </div>
           </div>
-          <p class="description text-muted small">
-            Used to detect potential damage to upper incisors.
-          </p>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="bladeInsertion">Blade Insertion (%): </label>
-            <input
-              type="range"
-              id="bladeInsertion"
-              min="50"
-              max="100"
-              value="72"
-            />
-            <span id="bladeInsertionValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="fiducialThickness">Thickness: </label>
+              <input
+                type="range"
+                id="fiducialThickness"
+                min="1"
+                max="20"
+                value="1"
+              />
+              <span id="fiducialThicknessValue">5</span>
+            </div>
           </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="bladeRadius">Blade Curvature Radius (mm): </label>
-            <input
-              type="range"
-              id="bladeRadius"
-              min="70"
-              max="140"
-              value="118"
-            />
-            <span id="bladeRadiusValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="fiducialX">X Coordinate: </label>
+              <input type="range" id="fiducialX" min="0" max="400" value="0" />
+              <span id="fiducialXValue">250</span>
+            </div>
           </div>
-          <p class="description text-muted small">
-            Macintosh blade #3 and #4 have radii of 118 mm and 136 mm respectively.
-          </p>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="bladeAngle">Blade angle (degrees): </label>
-            <input type="range" id="bladeAngle" min="-20" max="70" value="18" />
-            <span id="bladeAngleValue">0</span>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="fiducialY">Y Coordinate: </label>
+              <input type="range" id="fiducialY" min="0" max="400" value="0" />
+              <span id="fiducialYValue">250</span>
+            </div>
           </div>
-          <p class="description text-muted small">This is the angle at the incisors.</p>
-        </div>
-        <h2>Dentition</h2>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="lowerIncisorX">Lower Incisor X (mm): </label>
-            <input
-              type="range"
-              id="lowerIncisorX"
-              min="-100"
-              max="10"
-              value="-25"
-            />
-            <span id="lowerIncisorXValue">0</span>
+          <h2>Appearance</h2>
+          <div class="slider-container">
+            <div class="slider-row">
+              <label for="showLabels">Show labels: </label>
+              <input type="checkbox" id="showLabels" checked />
+            </div>
           </div>
-          <p class="description text-muted small">Mouth opening as measured horizontally.</p>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="lowerIncisorY">Lower Incisor Y (mm): </label>
-            <input
-              type="range"
-              id="lowerIncisorY"
-              min="-50"
-              max="50"
-              value="0"
-            />
-            <span id="lowerIncisorYValue">0</span>
-          </div>
-          <p class="description text-muted small">Under or overbite.</p>
-        </div>
-        <h2>Fiducial</h2>
-        <p class="description text-muted small">This moves a small pink fiducial.</p>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="fiducialStartAngle">Start Angle (degrees): </label>
-            <input
-              type="range"
-              id="fiducialStartAngle"
-              min="0"
-              max="360"
-              value="0"
-            />
-            <span id="fiducialStartAngleValue">0</span>
-          </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="fiducialEndAngle">End Angle (degrees): </label>
-            <input
-              type="range"
-              id="fiducialEndAngle"
-              min="0"
-              max="360"
-              value="360"
-            />
-            <span id="fiducialEndAngleValue">90</span>
-          </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="fiducialThickness">Thickness: </label>
-            <input
-              type="range"
-              id="fiducialThickness"
-              min="1"
-              max="20"
-              value="1"
-            />
-            <span id="fiducialThicknessValue">5</span>
-          </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="fiducialX">X Coordinate: </label>
-            <input type="range" id="fiducialX" min="0" max="400" value="0" />
-            <span id="fiducialXValue">250</span>
-          </div>
-        </div>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="fiducialY">Y Coordinate: </label>
-            <input type="range" id="fiducialY" min="0" max="400" value="0" />
-            <span id="fiducialYValue">250</span>
-          </div>
-        </div>
-        <h2>Appearance</h2>
-        <div class="slider-container">
-          <div class="slider-row">
-            <label for="showLabels">Show labels: </label>
-            <input type="checkbox" id="showLabels" checked />
-          </div>
-        </div>
-        
-        <div class="d-flex justify-content-center mt-4">
-          <button id="resetButton" class="btn btn-danger me-2">
-            Reset to Defaults
-          </button>
-          <button id="saveButton" class="btn btn-success me-2">
-            Save Configuration
-          </button>
-          <button id="loadButton" class="btn btn-primary">
-            Load Configuration
-          </button>
-        </div>
-        
-        <div class="mt-4 text-center">
-          <h3>Preset Configurations</h3>
-          <div class="d-flex justify-content-center flex-wrap gap-2">
-            <button class="preset-button btn btn-primary" data-preset="normal">
-              Normal Anatomy
+
+          <div class="d-flex justify-content-center mt-4">
+            <button id="resetButton" class="btn btn-danger me-2">
+              Reset to Defaults
             </button>
-            <button class="preset-button btn btn-primary" data-preset="difficult">
-              Difficult Airway
+            <button id="saveButton" class="btn btn-success me-2">
+              Save Configuration
             </button>
-            <!-- <button class="preset-button btn btn-primary" data-preset="pediatric">
+            <button id="loadButton" class="btn btn-primary">
+              Load Configuration
+            </button>
+          </div>
+
+          <div class="mt-4 text-center">
+            <h3>Preset Configurations</h3>
+            <div class="d-flex justify-content-center flex-wrap gap-2">
+              <button
+                class="preset-button btn btn-primary"
+                data-preset="normal"
+              >
+                Normal Anatomy
+              </button>
+              <button
+                class="preset-button btn btn-primary"
+                data-preset="difficult"
+              >
+                Difficult Airway
+              </button>
+              <!-- <button class="preset-button btn btn-primary" data-preset="pediatric">
               Pediatric
             </button> -->
-            <button class="preset-button btn btn-primary" data-preset="optimal">
-              Optimal Technique
-            </button>
+              <button
+                class="preset-button btn btn-primary"
+                data-preset="optimal"
+              >
+                Optimal Technique
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
@@ -415,7 +452,13 @@
         <li>
           The glottic marker tracks the blade tip height but can be moved
           further or close to the blade tip with
-          <em>Glottic Plane X</em> slider. This behaviour approximates a Cormack and Lehane grade of 2b.  See <a href="https://en.wikipedia.org/wiki/Cormack%E2%80%93Lehane_grading_system">Cormack-Lehane grading system</a> for more information.
+          <em>Glottic Plane X</em> slider. This behaviour approximates a Cormack
+          and Lehane grade of 2b. See
+          <a
+            href="https://en.wikipedia.org/wiki/Cormack%E2%80%93Lehane_grading_system"
+            >Cormack-Lehane grading system</a
+          >
+          for more information.
         </li>
         <li>
           If you would like to take measurements, you can do so simply with the
@@ -430,7 +473,7 @@
         <li>Indicate approximate line of sight.</li>
         <li>Show successful orientation</li>
       </ul>
-      
+
       <h2>Keyboard Shortcuts</h2>
       <ul>
         <li><strong>Arrow Up/Down</strong>: Adjust tube angle</li>
@@ -445,11 +488,10 @@
     <img src="qr.png" alt="QR Code" style="width: 50%; max-width: 300px" />
     <script src="main.js"></script>
     <script>
-      // Check if user has already made a choice
+      // handle cookie consent
       if (!localStorage.getItem("cookieConsent")) {
         document.getElementById("cookie-banner").style.display = "block";
       }
-
       // Accept cookies
       document
         .getElementById("accept-cookies")
