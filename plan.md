@@ -25,27 +25,6 @@ addressing several issues related to code structure, maintainability, and testab
 
 Each small step should leave the code in a fully functional state.
 
-1. Extract a new utils.js
-2. Allow user to test code still works
-3. Extract ui.js
-4. Allow user to test code still works
-5. Extract geometry.js
-6. Allow user to test code still works
-7. Extract drawing.js
-8. Allow user to test code still works
-9. Extract event_handling.js
-10. Allow user to test code still works
-11. Create state management system
-12. Allow user to test code still works
-13. Update index.html to use module type
-14. Allow user to test code still works
-15. Add module bundler (optional)
-16. Allow user to test code still works
-17. Add unit tests for each module
-18. Allow user to test code still works
-19. Add documentation for each module
-20. Final testing and cleanup
-
 ## Detailed Steps
 
 ### Step 1: Extract utils.js
