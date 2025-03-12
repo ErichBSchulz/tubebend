@@ -123,32 +123,21 @@ function init() {
 
 function onTouchStart(event) {
   event.preventDefault();
-  const touch = event.touches[0];
-  // Convert touch to mouse event
-  const mouseEvent = {
-    clientX: touch.clientX,
-    clientY: touch.clientY,
-  };
-  onMouseDown(mouseEvent);
+  onMouseDown(touchEventToMouseEvent(event.touches[0]));
 }
 
 function onTouchMove(event) {
   event.preventDefault();
   if (!draggingObject) return;
-
-  const touch = event.touches[0];
-  // Convert touch to mouse event
-  const mouseEvent = {
-    clientX: touch.clientX,
-    clientY: touch.clientY,
-  };
-  onMouseMove(mouseEvent);
+  onMouseMove(touchEventToMouseEvent(event.touches[0]));
 }
 
 function onTouchEnd(event) {
   event.preventDefault();
   onMouseUp();
 }
+
+const touchEventToMouseEvent = (touch) => ({ clientX: touch.clientX, clientY: touch.clientY });
 
 function readParams() {
   return {
