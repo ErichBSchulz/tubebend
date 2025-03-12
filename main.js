@@ -12,7 +12,7 @@ function adjustCanvasForMobile() {
 
 // Call on page load and resize
 adjustCanvasForMobile(); // Call on page load and resize
-window.addEventListener('resize', function() {
+window.addEventListener("resize", function () {
   adjustCanvasForMobile();
   redraw();
 });
@@ -64,20 +64,24 @@ function init() {
   const layout = urlParams.get("layout");
   // No need for manual adjustments with Bootstrap
   // Bootstrap handles the layout with the grid system
-  
+
   // Set up mouse event listeners
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mouseup", onMouseUp);
   canvas.addEventListener("mousemove", onMouseMove);
-  
+
   // Set up touch event listeners for mobile support
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
   canvas.addEventListener("touchend", onTouchEnd, { passive: false });
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
-  
+
   // Show mobile instructions if on a small screen
   if (window.innerWidth <= 768) {
-    showNotification("Tap and drag to interact with the simulation", "info", 5000);
+    showNotification(
+      "Tap and drag to interact with the simulation",
+      "info",
+      5000,
+    );
   }
 
   // Set up slider and checkbox event listeners
@@ -85,33 +89,33 @@ function init() {
   ["showLabels", "showHelp"].forEach((input) =>
     e(input).addEventListener("change", redraw),
   );
-  
+
   // Add button functionality
   const resetButton = e("resetButton");
   if (resetButton) {
     resetButton.addEventListener("click", resetToDefaults);
   }
-  
+
   const saveButton = e("saveButton");
   if (saveButton) {
     saveButton.addEventListener("click", saveConfiguration);
   }
-  
+
   const loadButton = e("loadButton");
   if (loadButton) {
     loadButton.addEventListener("click", loadConfiguration);
   }
-  
+
   // Add preset button functionality
-  const presetButtons = document.querySelectorAll('.preset-button');
-  presetButtons.forEach(button => {
-    button.addEventListener('click', () => {
+  const presetButtons = document.querySelectorAll(".preset-button");
+  presetButtons.forEach((button) => {
+    button.addEventListener("click", () => {
       loadPreset(button.dataset.preset);
     });
   });
-  
+
   // Add keyboard navigation
-  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener("keydown", handleKeyDown);
 
   // Initial draw
   redraw();
@@ -123,7 +127,7 @@ function onTouchStart(event) {
   // Convert touch to mouse event
   const mouseEvent = {
     clientX: touch.clientX,
-    clientY: touch.clientY
+    clientY: touch.clientY,
   };
   onMouseDown(mouseEvent);
 }
@@ -131,12 +135,12 @@ function onTouchStart(event) {
 function onTouchMove(event) {
   event.preventDefault();
   if (!draggingObject) return;
-  
+
   const touch = event.touches[0];
   // Convert touch to mouse event
   const mouseEvent = {
     clientX: touch.clientX,
-    clientY: touch.clientY
+    clientY: touch.clientY,
   };
   onMouseMove(mouseEvent);
 }
@@ -555,6 +559,8 @@ function onMouseMove(event) {
   redraw();
 }
 
+// determine which type of drag mode we should do on the ui.
+// This currently isn't optimal for users.
 function closestObject(point) {
   // TODO store a tooth centre coord in global space
   const scaledLowerIncisor = rescale({
@@ -575,8 +581,9 @@ function closestObject(point) {
       return "tube";
     }
   } else {
-    return false;
+    return "lowerIncisor";
   }
+}
 
 // cartesian translation
 function translate({ x, y, angle, distance }) {
@@ -675,7 +682,8 @@ function quickScalePoint(point) {
 }
 
 // apply scale
-function rescale(oIn) { // apply scale
+function rescale(oIn) {
+  // apply scale
   const o = { ...quickScalePoint(oIn) };
   const oOut = { ...oIn, ...o };
   ["start", "end"].forEach((v) => {
@@ -1112,25 +1120,25 @@ function updateValues() {
 function resetToDefaults() {
   // Default values for all sliders
   const defaults = {
-    "tubeAngle": 26,
-    "tubeRadius": 150,
-    "tubeOD": 10,
-    "glotticPlaneX": 165,
-    "tubeLength": 280,
-    "bladeLength": 140,
-    "bladeThickness": 15,
-    "bladeInsertion": 72,
-    "bladeRadius": 118,
-    "bladeAngle": 18,
-    "lowerIncisorX": -25,
-    "lowerIncisorY": 0,
-    "fiducialStartAngle": 0,
-    "fiducialEndAngle": 360,
-    "fiducialThickness": 1,
-    "fiducialX": 0,
-    "fiducialY": 0
+    tubeAngle: 26,
+    tubeRadius: 150,
+    tubeOD: 10,
+    glotticPlaneX: 165,
+    tubeLength: 280,
+    bladeLength: 140,
+    bladeThickness: 15,
+    bladeInsertion: 72,
+    bladeRadius: 118,
+    bladeAngle: 18,
+    lowerIncisorX: -25,
+    lowerIncisorY: 0,
+    fiducialStartAngle: 0,
+    fiducialEndAngle: 360,
+    fiducialThickness: 1,
+    fiducialX: 0,
+    fiducialY: 0,
   };
-  
+
   // Reset each slider to its default value
   Object.entries(defaults).forEach(([id, value]) => {
     const slider = e(id);
@@ -1138,11 +1146,11 @@ function resetToDefaults() {
       slider.value = value;
     }
   });
-  
+
   // Reset checkboxes
   e("showLabels").checked = true;
   e("showHelp").checked = true;
-  
+
   // Update the UI and redraw
   updateValues();
   redraw();
@@ -1153,52 +1161,52 @@ function resetToDefaults() {
  */
 function saveConfiguration() {
   const config = {};
-  
+
   // Save all slider values
-  sliders.forEach(slider => {
+  sliders.forEach((slider) => {
     config[slider] = e(slider).value;
   });
-  
+
   // Save checkbox states
   config.showLabels = e("showLabels").checked;
   config.showHelp = e("showHelp").checked;
-  
+
   // Save to localStorage
-  localStorage.setItem('intubationConfig', JSON.stringify(config));
-  
+  localStorage.setItem("intubationConfig", JSON.stringify(config));
+
   // Show confirmation
-  showNotification('Configuration saved successfully!');
+  showNotification("Configuration saved successfully!");
 }
 
 /**
  * Load configuration from localStorage
  */
 function loadConfiguration() {
-  const savedConfig = localStorage.getItem('intubationConfig');
-  
+  const savedConfig = localStorage.getItem("intubationConfig");
+
   if (!savedConfig) {
-    showNotification('No saved configuration found.', 'error');
+    showNotification("No saved configuration found.", "error");
     return;
   }
-  
+
   const config = JSON.parse(savedConfig);
-  
+
   // Apply slider values
-  sliders.forEach(slider => {
+  sliders.forEach((slider) => {
     if (config[slider] !== undefined) {
       e(slider).value = config[slider];
     }
   });
-  
+
   // Apply checkbox states
   if (config.showLabels !== undefined) {
     e("showLabels").checked = config.showLabels;
   }
-  
+
   if (config.showHelp !== undefined) {
     e("showHelp").checked = config.showHelp;
   }
-  
+
   // Update UI and redraw
   updateValues();
   redraw();
@@ -1222,7 +1230,7 @@ function loadPreset(presetName) {
       bladeRadius: 118,
       bladeAngle: 18,
       lowerIncisorX: -25,
-      lowerIncisorY: 0
+      lowerIncisorY: 0,
     },
     difficult: {
       tubeAngle: 35,
@@ -1236,7 +1244,7 @@ function loadPreset(presetName) {
       bladeRadius: 118,
       bladeAngle: 25,
       lowerIncisorX: -15,
-      lowerIncisorY: 10
+      lowerIncisorY: 10,
     },
     pediatric: {
       tubeAngle: 20,
@@ -1250,7 +1258,7 @@ function loadPreset(presetName) {
       bladeRadius: 90,
       bladeAngle: 15,
       lowerIncisorX: -20,
-      lowerIncisorY: 0
+      lowerIncisorY: 0,
     },
     optimal: {
       tubeAngle: 15,
@@ -1264,20 +1272,23 @@ function loadPreset(presetName) {
       bladeRadius: 118,
       bladeAngle: 10,
       lowerIncisorX: -40,
-      lowerIncisorY: -5
-    }
+      lowerIncisorY: -5,
+    },
   };
-  
+
   const preset = presets[presetName];
-  
+
   if (!preset) {
-    showNotification('Preset not found!', 'error');
+    showNotification("Preset not found!", "error");
     return;
   }
-  
+
   // Show which preset was loaded
-  showNotification(`Loaded preset: ${presetName.charAt(0).toUpperCase() + presetName.slice(1)}`, 'info');
-  
+  showNotification(
+    `Loaded preset: ${presetName.charAt(0).toUpperCase() + presetName.slice(1)}`,
+    "info",
+  );
+
   // Apply preset values
   Object.entries(preset).forEach(([id, value]) => {
     const slider = e(id);
@@ -1285,7 +1296,7 @@ function loadPreset(presetName) {
       slider.value = value;
     }
   });
-  
+
   // Update UI and redraw
   updateValues();
   redraw();
@@ -1298,59 +1309,59 @@ function loadPreset(presetName) {
 function handleKeyDown(event) {
   const key = event.key;
   const activeElement = document.activeElement;
-  
+
   // Only handle keyboard navigation when not in an input field
-  if (activeElement.tagName === 'INPUT' || activeElement.tagName === 'BUTTON') {
+  if (activeElement.tagName === "INPUT" || activeElement.tagName === "BUTTON") {
     return;
   }
-  
+
   switch (key) {
-    case 'ArrowUp':
+    case "ArrowUp":
       // Increase tube angle
-      adjustSlider('tubeAngle', 1);
+      adjustSlider("tubeAngle", 1);
       event.preventDefault();
       break;
-    case 'ArrowDown':
+    case "ArrowDown":
       // Decrease tube angle
-      adjustSlider('tubeAngle', -1);
+      adjustSlider("tubeAngle", -1);
       event.preventDefault();
       break;
-    case 'ArrowLeft':
+    case "ArrowLeft":
       // Decrease blade insertion
-      adjustSlider('bladeInsertion', -1);
+      adjustSlider("bladeInsertion", -1);
       event.preventDefault();
       break;
-    case 'ArrowRight':
+    case "ArrowRight":
       // Increase blade insertion
-      adjustSlider('bladeInsertion', 1);
+      adjustSlider("bladeInsertion", 1);
       event.preventDefault();
       break;
-    case 'r':
+    case "r":
       // Reset to defaults
       resetToDefaults();
       event.preventDefault();
       break;
-    case 's':
+    case "s":
       // Save configuration
       if (event.ctrlKey) {
         saveConfiguration();
         event.preventDefault();
       }
       break;
-    case 'l':
+    case "l":
       // Load configuration
       if (event.ctrlKey) {
         loadConfiguration();
         event.preventDefault();
       }
       break;
-    case '1':
-    case '2':
-    case '3':
-    case '4':
+    case "1":
+    case "2":
+    case "3":
+    case "4":
       // Load presets 1-3
       const presetIndex = parseInt(key) - 1;
-      const presetNames = ['normal', 'difficult', 'optimal'];
+      const presetNames = ["normal", "difficult", "optimal"];
       if (presetIndex >= 0 && presetIndex < presetNames.length) {
         loadPreset(presetNames[presetIndex]);
       }
@@ -1367,15 +1378,15 @@ function handleKeyDown(event) {
 function adjustSlider(sliderId, amount) {
   const slider = e(sliderId);
   if (!slider) return;
-  
+
   const step = parseFloat(slider.step) || 1;
-  const newValue = parseFloat(slider.value) + (amount * step);
-  
+  const newValue = parseFloat(slider.value) + amount * step;
+
   // Ensure the new value is within the slider's min and max
   const min = parseFloat(slider.min);
   const max = parseFloat(slider.max);
   slider.value = Math.min(max, Math.max(min, newValue));
-  
+
   // Update UI and redraw
   updateValues();
   redraw();
@@ -1387,33 +1398,39 @@ function adjustSlider(sliderId, amount) {
  * @param {string} [type='success'] - The type of notification (success, error, info)
  * @param {number} [duration=3000] - How long to show the notification in ms
  */
-function showNotification(message, type = 'success', duration = 3000) {
-  const notification = document.getElementById('notification');
+function showNotification(message, type = "success", duration = 3000) {
+  const notification = document.getElementById("notification");
   if (!notification) return;
-  
+
   // Clear any existing classes
-  notification.className = 'position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white';
-  
+  notification.className =
+    "position-fixed top-0 end-0 m-3 p-3 rounded shadow-lg z-3 text-white";
+
   // Add Bootstrap background class based on type
-  if (type === 'error') {
-    notification.classList.add('bg-danger');
-  } else if (type === 'info') {
-    notification.classList.add('bg-info');
+  if (type === "error") {
+    notification.classList.add("bg-danger");
+  } else if (type === "info") {
+    notification.classList.add("bg-info");
   } else {
-    notification.classList.add('bg-success');
+    notification.classList.add("bg-success");
   }
-  
+
   notification.textContent = message;
-  notification.style.display = 'block';
-  
+  notification.style.display = "block";
+
   // Make notification more visible on mobile
   if (window.innerWidth <= 768) {
-    notification.classList.add('w-75', 'start-50', 'translate-middle-x', 'text-center');
+    notification.classList.add(
+      "w-75",
+      "start-50",
+      "translate-middle-x",
+      "text-center",
+    );
   }
-  
+
   // Hide after duration
   setTimeout(() => {
-    notification.style.display = 'none';
+    notification.style.display = "none";
   }, duration);
 }
 
