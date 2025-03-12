@@ -762,9 +762,7 @@ function drawGlottis(params) {
 }
 
 function drawTooth(params) {
-  // console.log('tooth pre scale', params)
   const p = rescale({ lineWidth: 2, strokeStyle: "grey", ...params });
-  //  console.log('tooth p after rescaling', p)
   const width = p.height / 3;
   const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.height, p.y);
   gradient.addColorStop(0, "#fff"); // White color at the start
@@ -1062,7 +1060,6 @@ function drawPatientProfile(params) {
     y: thyroid.y - 4,
   });
 
-  // console.log("lowerSection", JSON.stringify(lowerSection));
   [lowerSection, upperSection].forEach((curve) => {
     drawCurve(curve);
   });
