@@ -45,14 +45,7 @@
 
 3. **Performance optimizations**:
    - Cache DOM elements
-   - Optimize redraw strategy
    - Use requestAnimationFrame for animations
-
-4. **Enhanced UI**:
-   - Add preset configurations
-   - Implement save/load functionality
-   - Add reset button
-   - Improve mobile responsiveness
 
 5. **Accessibility**:
    - Add keyboard navigation
@@ -63,6 +56,8 @@
    - Add JSDoc comments
    - Create user documentation
    - Document the mathematical model
+
+# Wont Fix
 
 7. **Testing**:
    - Add unit tests for geometry calculations

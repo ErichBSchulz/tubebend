@@ -429,8 +429,6 @@ function draw(state, appearance) {
     });
   }
 
-  // console.log("state", state);
-
   if (appearance.showHelp) {
     // draw left-right arrow labeled with 'rotate tube' at the upperincisor (+50, -50)
     drawArrow({
@@ -678,11 +676,11 @@ function quickScalePoint(point) {
 }
 // apply scale
 function rescale(o_in) {
-  const o = { ...o_in, ...quickScalePoint(o_in) };
-  // console.log('Rescaling:', o_in.x,o_in.y, 'to', o.x, o.y);
+  const o = { ...quickScalePoint(o_in) };
+  const o_out = { ...o_in, ...o };
   ["start", "end"].forEach((v) => {
-    if (o[v]) {
-      o[v] = rescale(o[v]);
+    if (o_out[v]) {
+      o_out[v] = rescale(o_out[v]);
     }
   });
   [
@@ -696,11 +694,11 @@ function rescale(o_in) {
     "arrowWidth",
     "arrowLength",
   ].forEach((v) => {
-    if (o[v]) {
-      o[v] = o[v] * scale.f;
+    if (o_out[v]) {
+      o_out[v] = o_out[v] * scale.f;
     }
   });
-  return o;
+  return o_out;
 }
 
 function label(p) {
