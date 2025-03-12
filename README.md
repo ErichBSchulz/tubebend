@@ -15,9 +15,7 @@ I've aimed to make the code as accessible as possible.
 
 ### Optional local server
 
-I'm using these commands to run a server locally that refreshes the page as I edit the javascript:
+If you are familiar with `node` and `npm`  using these commands to run a server locally that refreshes the page as you save changes:
 
-    npm run start
-    npm run watch
+    npm run dev
 
-I can then view the page at http://localhost:3000 
