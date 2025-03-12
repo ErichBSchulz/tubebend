@@ -11,7 +11,7 @@ function adjustCanvasForMobile() {
 }
 
 // Call on page load and resize
-adjustCanvasForMobile();
+adjustCanvasForMobile(); // Call on page load and resize
 window.addEventListener('resize', function() {
   adjustCanvasForMobile();
   redraw();
@@ -46,7 +46,7 @@ const toDegrees = (radians) => (radians / Math.PI) * 180;
 const evd = (id) => toRadians(ev(id));
 
 // Canvas scaling parameters
-const scale = { f: 5, xo: -100, yo: -100 };
+const scale = { factor: 5, xOffset: -100, yOffset: -100 };
 
 // URL parameters for configuration
 const urlParams = new URLSearchParams(window.location.search);
@@ -342,7 +342,7 @@ function calculateGeometry(params) {
 
 function draw(state, appearance) {
   ctx.geometry = state;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
   const profile = {
     upperIncisor: {
       x: state.upperIncisorX,
@@ -535,16 +535,16 @@ function onMouseMove(event) {
   dragStart = p;
 
   switch (draggingObject) {
-    case "LI":
-      e("lowerIncisorX").value = ev("lowerIncisorX") + dx / scale.f;
-      e("lowerIncisorY").value = ev("lowerIncisorY") + dy / scale.f;
+    case "lowerIncisor":
+      e("lowerIncisorX").value = ev("lowerIncisorX") + dx / scale.factor;
+      e("lowerIncisorY").value = ev("lowerIncisorY") + dy / scale.factor;
       break;
     case "tube":
-      e("tubeAngle").value = ev("tubeAngle") + dx / (2 * scale.f);
+      e("tubeAngle").value = ev("tubeAngle") + dx / (2 * scale.factor);
       break;
     case "blade":
-      e("bladeAngle").value = ev("bladeAngle") + dx / scale.f;
-      e("bladeInsertion").value = ev("bladeInsertion") + dy / scale.f;
+      e("bladeAngle").value = ev("bladeAngle") + dx / scale.factor;
+      e("bladeInsertion").value = ev("bladeInsertion") + dy / scale.factor;
       break;
     case "glottis":
       break;
@@ -557,28 +557,26 @@ function onMouseMove(event) {
 
 function closestObject(point) {
   // TODO store a tooth centre coord in global space
-  const lowerIncisor = rescale({
+  const scaledLowerIncisor = rescale({
     x: ctx.geometry.lowerIncisorX,
     y: ctx.geometry.lowerIncisorY,
   });
-  const upperIncisor = rescale({
+  const scaledUpperIncisor = rescale({
     x: ctx.geometry.upperIncisorX,
     y: ctx.geometry.upperIncisorY,
   });
   // Check distance to interactive elements
-  if (distanceBetween(point, lowerIncisor) < 50) {
-    return "LI";
-  } else if (point.y < upperIncisor.y) {
-    if (point.x < (lowerIncisor.x + upperIncisor.x) / 2) {
+  if (distanceBetween(point, scaledLowerIncisor) < 50) {
+    return "lowerIncisor";
+  } else if (point.y < scaledUpperIncisor.y) {
+    if (point.x < (scaledLowerIncisor.x + scaledUpperIncisor.x) / 2) {
       return "blade";
     } else {
       return "tube";
     }
   } else {
-    return "LI";
+    return false;
   }
-  return distanceBetween(point, lowerIncisor) < 50 ? "LI" : false; // Adjust the threshold as needed
-}
 
 // cartesian translation
 function translate({ x, y, angle, distance }) {
@@ -662,7 +660,7 @@ function tangentAngle(intersection, circle1, circle2) {
 
 // scale point list
 function scalePointList(points) {
-  const out = [];
+  const out = []; // Initialize an empty array
   points.map((point, index) => {
     out[index] = { ...point, ...quickScalePoint(point) };
   });
@@ -671,13 +669,13 @@ function scalePointList(points) {
 
 function quickScalePoint(point) {
   return {
-    x: (point.x + scale.xo) * scale.f,
-    y: (point.y + scale.yo) * scale.f,
+    x: (point.x + scale.xOffset) * scale.factor,
+    y: (point.y + scale.yOffset) * scale.factor,
   };
 }
 
 // apply scale
-function rescale(oIn) {
+function rescale(oIn) { // apply scale
   const o = { ...quickScalePoint(oIn) };
   const oOut = { ...oIn, ...o };
   ["start", "end"].forEach((v) => {
@@ -697,7 +695,7 @@ function rescale(oIn) {
     "arrowLength",
   ].forEach((v) => {
     if (oOut[v]) {
-      oOut[v] = oOut[v] * scale.f;
+      oOut[v] = oOut[v] * scale.factor;
     }
   });
   return oOut;
@@ -705,7 +703,7 @@ function rescale(oIn) {
 
 function label(p) {
   const { x, y, text, alignment, fontsize, color, offset } = rescale({
-    alignment: "left",
+    alignment: "left", // default alignment
     fontsize: 4,
     color: "darkgrey",
     offset: 15,
