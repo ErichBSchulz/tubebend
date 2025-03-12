@@ -135,7 +135,7 @@ export function draw(state, appearance, ctx) {
 export function label(p, ctx) {
   const { x, y, text, alignment, fontsize, color, offset } = rescale({
     alignment: "left",
-    fontsize: 4,
+    fontsize: 6,
     color: "darkgrey",
     offset: 15,
     ...p,
@@ -219,8 +219,8 @@ export function drawArrow(params, ctx) {
     arrowWidth: 15,
     arrowLength: 10,
     lineWidth: 1,
-    strokeStyle: "darkgreen",
-    labelColor: "darkgreen",
+    strokeStyle: "#90EE90", // light green
+    labelColor: "#90EE90", // light green
     ...params,
   });
   ctx.fillStyle = p.strokeStyle;
@@ -247,6 +247,7 @@ export function drawArrow(params, ctx) {
     ctx.lineTo(p.x + points[i].x, p.y + points[i].y);
   }
   ctx.closePath();
+  ctx.fill();
   ctx.stroke();
   label({
     ...params,
