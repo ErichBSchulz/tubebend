@@ -1,22 +1,7 @@
-# Refactoring Plan for Tracheal Intubation Simulation
-
-This plan outlines the steps to refactor the monolithic `main.js` file into a modular architecture, addressing several issues related to code structure, maintainability, and testability.
-
-**1. Module Separation:**
-   - **geometry.js:** Contains all functions related to geometry calculations (e.g., `calculateGeometry`, `translate`, `distanceBetween`, `findIntersection`).
-   - **drawing.js:** Contains all functions related to drawing on the canvas (e.g., `draw`, `drawPatientProfile`, `drawArc`, `drawTooth`, `label`).
-   - **event_handling.js:** Contains all functions related to event handling (e.g., `onMouseDown`, `onMouseUp`, `onMouseMove`, `onTouchStart`, `onTouchMove`, `onTouchEnd`, `closestObject`).
-   - **ui.js:** Contains all functions related to UI elements and interactions (e.g., `init`, `updateValues`, `resetToDefaults`, `saveConfiguration`, `loadConfiguration`, `loadPreset`, `adjustSlider`, `showNotification`).
-   - **utils.js:** Contains utility functions (e.g., `toRadians`, `toDegrees`, `rescale`, `scalePointList`, `quickScalePoint`, `midpoint`, `calculateBearing`, `arcRadians`).
-
-**2. Dependency Management:**
-   - Use import/export statements to manage dependencies between modules.
-
 # Issues and Improvements for Tracheal Intubation Simulation
 
 ## Critical Issues
 
-3. **Inconsistent variable naming**: Mixing camelCase and snake_case in JavaScript functions.
 4. **Debug console logs**: Multiple `console.log` statements left in production code.
 5. **Missing error handling**: No handling for edge cases in geometry calculations.
 
