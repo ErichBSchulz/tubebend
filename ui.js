@@ -23,8 +23,8 @@ export const sliders = [
 export function readParams() {
   return {
     appearance: {
-      showLabels: e("showLabels").checked,
-      showHelp: e("showHelp").checked,
+      showLabels: e("showLabels").classList.contains("active"),
+      showHelp: e("showHelp").classList.contains("active"),
     },
     airwayParams: {
       upperIncisorX: 300,

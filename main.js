@@ -64,11 +64,19 @@ function init() {
     );
   }
 
-  // Set up slider and checkbox event listeners
+  // Set up slider event listeners
   sliders.forEach((slider) => e(slider).addEventListener("input", redraw));
-  ["showLabels", "showHelp"].forEach((input) =>
-    e(input).addEventListener("change", redraw),
-  );
+
+  // Initialize toggle buttons
+  const toggleButtons = ["showHelp", "showLabels"];
+  toggleButtons.forEach(id => {
+    const button = e(id);
+    button.classList.add("active"); // Start enabled
+    button.addEventListener("click", () => {
+      button.classList.toggle("active");
+      redraw();
+    });
+  });
 
   // Add button functionality
   const resetButton = e("resetButton");

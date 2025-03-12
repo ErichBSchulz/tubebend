@@ -23,6 +23,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body>
     <div
@@ -46,17 +47,19 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-7">
-          <div class="canvas-wrapper">
+          <div class="canvas-wrapper position-relative">
+            <div class="canvas-controls position-absolute top-0 start-0 m-2">
+              <button id="showHelp" class="btn btn-light btn-sm me-2" title="Toggle Help">
+                <i class="fas fa-question-circle"></i>
+              </button>
+              <button id="showLabels" class="btn btn-light btn-sm" title="Toggle Labels">
+                <i class="fas fa-tags"></i>
+              </button>
+            </div>
             <canvas id="canvas" width="1500" height="1500"></canvas>
           </div>
         </div>
         <div class="col-md-5">
-          <div class="slider-container">
-            <div class="slider-row">
-              <label for="showHelp">Show help: </label>
-              <input type="checkbox" id="showHelp" checked />
-            </div>
-          </div>
           <h2>Parameters</h2>
           <div class="slider-container">
             <div class="slider-row">
@@ -306,12 +309,6 @@
             </div>
           </div>
           <h2>Appearance</h2>
-          <div class="slider-container">
-            <div class="slider-row">
-              <label for="showLabels">Show labels: </label>
-              <input type="checkbox" id="showLabels" checked />
-            </div>
-          </div>
 
           <div class="d-flex justify-content-center mt-4">
             <button id="resetButton" class="btn btn-outline-danger me-2">
