@@ -579,6 +579,7 @@ function closestObject(point) {
   }
   return distanceBetween(point, lowerIncisor) < 50 ? "LI" : false; // Adjust the threshold as needed
 }
+
 // cartesian translation
 function translate({ x, y, angle, distance }) {
   return {
@@ -674,13 +675,14 @@ function quickScalePoint(point) {
     y: (point.y + scale.yo) * scale.f,
   };
 }
+
 // apply scale
-function rescale(o_in) {
-  const o = { ...quickScalePoint(o_in) };
-  const o_out = { ...o_in, ...o };
+function rescale(oIn) {
+  const o = { ...quickScalePoint(oIn) };
+  const oOut = { ...oIn, ...o };
   ["start", "end"].forEach((v) => {
-    if (o_out[v]) {
-      o_out[v] = rescale(o_out[v]);
+    if (oOut[v]) {
+      oOut[v] = rescale(oOut[v]);
     }
   });
   [
@@ -694,11 +696,11 @@ function rescale(o_in) {
     "arrowWidth",
     "arrowLength",
   ].forEach((v) => {
-    if (o_out[v]) {
-      o_out[v] = o_out[v] * scale.f;
+    if (oOut[v]) {
+      oOut[v] = oOut[v] * scale.f;
     }
   });
-  return o_out;
+  return oOut;
 }
 
 function label(p) {
