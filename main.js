@@ -137,7 +137,10 @@ function onTouchEnd(event) {
   onMouseUp();
 }
 
-const touchEventToMouseEvent = (touch) => ({ clientX: touch.clientX, clientY: touch.clientY });
+const touchEventToMouseEvent = (touch) => ({
+  clientX: touch.clientX,
+  clientY: touch.clientY,
+});
 
 function readParams() {
   return {
@@ -651,7 +654,7 @@ function tangentAngle(intersection, circle1, circle2) {
   // Angle in radians
   const theta = Math.acos(cosTheta);
   // Intersection angle (angle between tangents)
-  return (intersectionAngle = theta);
+  return theta;
 }
 
 // scale point list
