@@ -1,4 +1,4 @@
-import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent } from './utils.js';
+import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent, translate } from './utils.js';
 
 // Canvas setup and utility functions
 const canvas = document.getElementById("canvas");
@@ -40,12 +40,6 @@ const sliders = [
   "fiducialY",
 ];
 
-// DOM and value utility functions
-const e = document.getElementById.bind(document);
-const ev = (id) => +e(id).value;
-const toRadians = (degrees) => (degrees * Math.PI) / 180;
-const toDegrees = (radians) => (radians / Math.PI) * 180;
-const evd = (id) => toRadians(ev(id));
 
 // Canvas scaling parameters
 const scale = { factor: 5, xOffset: -100, yOffset: -100 };
@@ -139,10 +133,6 @@ function onTouchEnd(event) {
   onMouseUp();
 }
 
-const touchEventToMouseEvent = (touch) => ({
-  clientX: touch.clientX,
-  clientY: touch.clientY,
-});
 
 function readParams() {
   return {
@@ -481,13 +471,6 @@ function redraw() {
 }
 
 // cartesian translation
-function arcRadians(arc) {
-  var r = (arc.endAngle - arc.startAngle) % (2 * Math.PI);
-  if (r < 0) {
-    r += 2 * Math.PI;
-  }
-  return r;
-}
 
 /**
  * Handle mouse up event
@@ -579,34 +562,6 @@ function closestObject(point) {
   }
 }
 
-// cartesian translation
-function translate({ x, y, angle, distance }) {
-  return {
-    x: x + Math.cos(angle) * distance,
-    y: y + Math.sin(angle) * distance,
-  };
-}
-
-// given two points calcuate angle and distance between them
-function midpoint(p1, p2) {
-  return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-}
-
-// given two points calcuate angle and distance between them
-function distanceBetween(p1, p2) {
-  const dx = p1.x - p2.x;
-  const dy = p1.y - p2.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  return distance;
-}
-
-// given two points calcuate angle and distance between them
-function calculateBearing(p1, p2) {
-  const dx = p1.x - p2.x;
-  const dy = p1.y - p2.y;
-  const angle = Math.atan2(-dy, -dx);
-  return angle;
-}
 
 // get the cordinates of the tip of an arc
 function arcTip(params) {
