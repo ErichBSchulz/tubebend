@@ -1,4 +1,4 @@
-import { e, ev, evd } from './utils.js';
+import { e, ev, evd } from "./utils.js";
 
 export const sliders = [
   "tubeAngle",
@@ -170,6 +170,7 @@ export function loadPreset(presetName) {
       lowerIncisorY: 10,
     },
     pediatric: {
+      // this is just a placeholder
       tubeAngle: 20,
       tubeRadius: 120,
       tubeOD: 6,
