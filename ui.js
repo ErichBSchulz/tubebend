@@ -62,7 +62,7 @@ export function updateValues() {
   });
 }
 
-export function resetToDefaults() {
+export function resetToDefaults(redraw) {
   Object.entries(defaultGeometry).forEach(([id, value]) => {
     const slider = e(id);
     if (slider) {
@@ -70,14 +70,14 @@ export function resetToDefaults() {
     }
   });
 
-  e("showLabels").checked = true;
-  e("showHelp").checked = true;
+  e("showLabels").classList.add("active");
+  e("showHelp").classList.add("active");
 
   updateValues();
-  redraw();
+  if (redraw) redraw();
 }
 
-export function saveConfiguration() {
+export function saveConfiguration(redraw) {
   const config = {};
 
   sliders.forEach((slider) => {
@@ -90,9 +90,10 @@ export function saveConfiguration() {
   localStorage.setItem("intubationConfig", JSON.stringify(config));
 
   showNotification("Configuration saved successfully!");
+  if (redraw) redraw();
 }
 
-export function loadConfiguration() {
+export function loadConfiguration(redraw) {
   const savedConfig = localStorage.getItem("intubationConfig");
 
   if (!savedConfig) {
@@ -109,18 +110,18 @@ export function loadConfiguration() {
   });
 
   if (config.showLabels !== undefined) {
-    e("showLabels").checked = config.showLabels;
+    e("showLabels").classList.toggle("active", config.showLabels);
   }
 
   if (config.showHelp !== undefined) {
-    e("showHelp").checked = config.showHelp;
+    e("showHelp").classList.toggle("active", config.showHelp);
   }
 
   updateValues();
-  redraw();
+  if (redraw) redraw();
 }
 
-export function loadPreset(presetName) {
+export function loadPreset(presetName, redraw) {
   const preset = presets[presetName];
 
   if (!preset) {
@@ -143,10 +144,10 @@ export function loadPreset(presetName) {
   });
 
   updateValues();
-  redraw();
+  if (redraw) redraw();
 }
 
-export function adjustSlider(sliderId, amount) {
+export function adjustSlider(sliderId, amount, redraw) {
   const slider = e(sliderId);
   if (!slider) return;
 
@@ -158,10 +159,10 @@ export function adjustSlider(sliderId, amount) {
   slider.value = Math.min(max, Math.max(min, newValue));
 
   updateValues();
-  redraw();
+  if (redraw) redraw();
 }
 
-export function handleKeyDown(event) {
+export function handleKeyDown(event, redraw) {
   const key = event.key;
   const activeElement = document.activeElement;
 
@@ -209,7 +210,7 @@ export function handleKeyDown(event) {
       const presetIndex = parseInt(key) - 1;
       const presetNames = ["normal", "difficult", "optimal"];
       if (presetIndex >= 0 && presetIndex < presetNames.length) {
-        loadPreset(presetNames[presetIndex]);
+        loadPreset(presetNames[presetIndex], redraw);
       }
       event.preventDefault();
       break;

@@ -74,36 +74,36 @@ function init() {
     button.classList.add("active"); // Start enabled
     button.addEventListener("click", () => {
       button.classList.toggle("active");
-      redraw();
+      if (redraw) redraw();
     });
   });
 
   // Add button functionality
   const resetButton = e("resetButton");
   if (resetButton) {
-    resetButton.addEventListener("click", resetToDefaults);
+    resetButton.addEventListener("click", () => resetToDefaults(redraw));
   }
 
   const saveButton = e("saveButton");
   if (saveButton) {
-    saveButton.addEventListener("click", saveConfiguration);
+    saveButton.addEventListener("click", () => saveConfiguration(redraw));
   }
 
   const loadButton = e("loadButton");
   if (loadButton) {
-    loadButton.addEventListener("click", loadConfiguration);
+    loadButton.addEventListener("click", () => loadConfiguration(redraw));
   }
 
   // Add preset button functionality
   const presetButtons = document.querySelectorAll(".preset-button");
   presetButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      loadPreset(button.dataset.preset);
+      loadPreset(button.dataset.preset, redraw);
     });
   });
 
   // Add keyboard navigation
-  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("keydown", (e) => handleKeyDown(e, redraw));
 
   // Initial draw
   redraw();
