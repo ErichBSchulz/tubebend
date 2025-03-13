@@ -1,4 +1,5 @@
 import { e, ev, evd } from "./utils.js";
+import { defaultGeometry, presets } from "./geometry.js";
 
 export const sliders = [
   "tubeAngle",
@@ -62,27 +63,7 @@ export function updateValues() {
 }
 
 export function resetToDefaults() {
-  const defaults = {
-    tubeAngle: 26,
-    tubeRadius: 150,
-    tubeOD: 10,
-    glotticPlaneX: 165,
-    tubeLength: 280,
-    bladeLength: 140,
-    bladeThickness: 15,
-    bladeInsertion: 72,
-    bladeRadius: 118,
-    bladeAngle: 18,
-    lowerIncisorX: -25,
-    lowerIncisorY: 0,
-    fiducialStartAngle: 0,
-    fiducialEndAngle: 360,
-    fiducialThickness: 1,
-    fiducialX: 0,
-    fiducialY: 0,
-  };
-
-  Object.entries(defaults).forEach(([id, value]) => {
+  Object.entries(defaultGeometry).forEach(([id, value]) => {
     const slider = e(id);
     if (slider) {
       slider.value = value;
@@ -140,66 +121,6 @@ export function loadConfiguration() {
 }
 
 export function loadPreset(presetName) {
-  const presets = {
-    normal: {
-      tubeAngle: 26,
-      tubeRadius: 150,
-      tubeOD: 10,
-      glotticPlaneX: 165,
-      tubeLength: 280,
-      bladeLength: 140,
-      bladeThickness: 15,
-      bladeInsertion: 72,
-      bladeRadius: 118,
-      bladeAngle: 18,
-      lowerIncisorX: -25,
-      lowerIncisorY: 0,
-    },
-    difficult: {
-      tubeAngle: 35,
-      tubeRadius: 150,
-      tubeOD: 10,
-      glotticPlaneX: 200,
-      tubeLength: 280,
-      bladeLength: 140,
-      bladeThickness: 15,
-      bladeInsertion: 65,
-      bladeRadius: 118,
-      bladeAngle: 25,
-      lowerIncisorX: -15,
-      lowerIncisorY: 10,
-    },
-    pediatric: {
-      // this is just a placeholder
-      tubeAngle: 20,
-      tubeRadius: 120,
-      tubeOD: 6,
-      glotticPlaneX: 130,
-      tubeLength: 220,
-      bladeLength: 100,
-      bladeThickness: 10,
-      bladeInsertion: 80,
-      bladeRadius: 90,
-      bladeAngle: 15,
-      lowerIncisorX: -20,
-      lowerIncisorY: 0,
-    },
-    optimal: {
-      tubeAngle: 15,
-      tubeRadius: 150,
-      tubeOD: 10,
-      glotticPlaneX: 165,
-      tubeLength: 280,
-      bladeLength: 140,
-      bladeThickness: 15,
-      bladeInsertion: 85,
-      bladeRadius: 118,
-      bladeAngle: 10,
-      lowerIncisorX: -40,
-      lowerIncisorY: -5,
-    },
-  };
-
   const preset = presets[presetName];
 
   if (!preset) {
@@ -207,12 +128,14 @@ export function loadPreset(presetName) {
     return;
   }
 
+  const combined = { ...defaultGeometry, ...preset };
+
   showNotification(
     `Loaded preset: ${presetName.charAt(0).toUpperCase() + presetName.slice(1)}`,
     "info",
   );
 
-  Object.entries(preset).forEach(([id, value]) => {
+  Object.entries(combined).forEach(([id, value]) => {
     const slider = e(id);
     if (slider) {
       slider.value = value;
