@@ -461,6 +461,7 @@ export function drawCurve(points, ctx) {
   const urlParams = new URLSearchParams(window.location.search);
   const debug = urlParams.get("debugcurve");
   const scaled = scalePointList(points);
+  ctx.beginPath();
   ctx.moveTo(scaled[0].x, scaled[0].y);
   for (let i = 1; i < scaled.length - 1; i++) {
     const cp1 = scaled[i];
@@ -470,6 +471,7 @@ export function drawCurve(points, ctx) {
   ctx.strokeStyle = "rgba(139, 69, 19, 0.6)";
   ctx.lineWidth = 8;
   ctx.stroke();
+  ctx.closePath();
   if (debug) {
     points.forEach((point, i) => {
       const curveLabel = {
