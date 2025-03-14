@@ -3,25 +3,6 @@
 This plan outlines the steps to refactor the monolithic `main.js` file into a modular architecture,
 addressing several issues related to code structure, maintainability, and testability.
 
-## Goals for final state:
-**1. Module Separation:**
-   - **utils.js:** Contains utility functions (e.g., `toRadians`, `toDegrees`, 
-   `midpoint`, `calculateBearing`, `arcRadians`).
-
-   - **geometry.js:** Contains all functions related to geometry calculations (e.g., `calculateGeometry`
-`translate`, `distanceBetween`, `findIntersection`).
-   - **drawing.js:** Contains all functions related to drawing on the canvas (e.g., `draw`,
-   `rescale`, `scalePointList`, `quickScalePoint`, 
-`drawPatientProfile`, `drawArc`, `drawTooth`, `label`, `closestObject`).
-   - **event_handling.js:** Contains all functions related to event handling (e.g., `onMouseDown`,
-`onMouseUp`, `onMouseMove`, `onTouchStart`, `onTouchMove`, `onTouchEnd`).
-   - **ui.js:** Contains all functions related to UI elements and interactions (e.g., `init`,
-`updateValues`, `resetToDefaults`, `saveConfiguration`, `loadConfiguration`, `loadPreset`, `adjustSlider
-`showNotification`).
-**2. Dependency Management:**
-   - Use import/export statements to manage dependencies between modules.
-   - Create a central state management system to share data between modules.
-
 ## Steps
 
 Each small step should leave the code in a fully functional state.
@@ -84,5 +65,24 @@ Each small step should leave the code in a fully functional state.
 - Verify mobile support
 - Check performance
 
+
+## Goals for final state:
+**1. Module Separation:**
+   - **utils.js:** Contains utility functions (e.g., `toRadians`, `toDegrees`, 
+   `midpoint`, `calculateBearing`, `arcRadians`).
+
+   - **geometry.js:** Contains all functions related to geometry calculations (e.g., `calculateGeometry`
+`translate`, `distanceBetween`, `findIntersection`).
+   - **drawing.js:** Contains all functions related to drawing on the canvas (e.g., `draw`,
+   `rescale`, `scalePointList`, `quickScalePoint`, 
+`drawPatientProfile`, `drawArc`, `drawTooth`, `label`, `closestObject`).
+   - **event_handling.js:** Contains all functions related to event handling (e.g., `onMouseDown`,
+`onMouseUp`, `onMouseMove`, `onTouchStart`, `onTouchMove`, `onTouchEnd`).
+   - **ui.js:** Contains all functions related to UI elements and interactions (e.g., `init`,
+`updateValues`, `resetToDefaults`, `saveConfiguration`, `loadConfiguration`, `loadPreset`, `adjustSlider
+`showNotification`).
+**2. Dependency Management:**
+   - Use import/export statements to manage dependencies between modules.
+   - Create a central state management system to share data between modules.
 
 
