@@ -1,16 +1,4 @@
-import {
-  e,
-  ev,
-  evd,
-  toRadians,
-  toDegrees,
-  midpoint,
-  distanceBetween,
-  calculateBearing,
-  arcRadians,
-  touchEventToMouseEvent,
-  translate,
-} from "./utils.js";
+import { e, translate } from "./utils.js";
 import {
   readParams,
   updateValues,
@@ -126,7 +114,7 @@ function init() {
   function toggleFullscreen() {
     const canvasWrapper = document.getElementById("canvas-wrapper");
     const fullscreenButton = e("fullscreenButton");
-    
+
     if (canvasWrapper.classList.contains("fullscreen")) {
       // Exit fullscreen
       canvasWrapper.classList.remove("fullscreen");
