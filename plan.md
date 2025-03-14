@@ -12,27 +12,6 @@ Each small step should leave the code in a fully functional state.
 
 ## Detailed Steps
 
-### Step 2: Create a `state.js` module
-
-1.  **Create `state.js`:** Create a new file named `state.js`.
-2.  **Move State Variables:** Identify all variables in `main.js` that represent the application's state (e.g., `draggingObject`, `dragStart`, `scale`). Move these variables to `state.js`.
-3.  **Encapsulate State:** Wrap these variables inside a `state` object within `state.js`.
-4.  **Create Getters/Setters:** For each state variable, create getter and setter functions within `state.js`. For example:
-
-    ```javascript
-    // state.js
-    let draggingObject = false;
-
-    export function isDraggingObject() {
-        return draggingObject;
-    }
-
-    export function setDraggingObject(value) {
-        draggingObject = value;
-    }
-    ```
-5.  **Import/Export:** Export these getter and setter functions from `state.js` and import them into `main.js`.
-6.  **Refactor `main.js`:** Replace direct access to the state variables in `main.js` with calls to the getter and setter functions. For example, replace `draggingObject = true` with `setDraggingObject(true)`.
 
 ### Step 3: Decouple UI and Geometry Data
 
