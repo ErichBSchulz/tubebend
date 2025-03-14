@@ -97,6 +97,10 @@ function init() {
   // Set up slider event listeners
   sliders.forEach((slider) => e(slider).addEventListener("input", redraw));
 
+  // Fullscreen button functionality
+  const fullscreenButton = e("fullscreenButton");
+  fullscreenButton.addEventListener("click", toggleFullscreen);
+
   // Initialize toggle buttons
   const toggleButtons = ["showHelp", "showLabels"];
   toggleButtons.forEach((id) => {
@@ -127,6 +131,19 @@ function init() {
   const loadButton = e("loadButton");
   if (loadButton) {
     loadButton.addEventListener("click", () => loadConfiguration(redraw));
+  }
+
+  function toggleFullscreen() {
+    const canvasWrapper = document.querySelector(".canvas-wrapper");
+    const isFullscreen = canvasWrapper.classList.contains("fullscreen");
+
+    if (isFullscreen) {
+      canvasWrapper.classList.remove("fullscreen");
+      document.body.style.overflow = "auto";
+    } else {
+      canvasWrapper.classList.add("fullscreen");
+      document.body.style.overflow = "hidden";
+    }
   }
 
   // Add preset button functionality
