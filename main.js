@@ -23,11 +23,7 @@ import {
   showNotification,
 } from "./ui.js";
 import { setShowHelp, setShowLabels } from "./state.js";
-import {
-  calculateGeometry,
-  findIntersection,
-  tangentAngle,
-} from "./geometry.js";
+import { calculateGeometry } from "./geometry.js";
 import { draw } from "./drawing.js";
 import {
   onMouseDown,
