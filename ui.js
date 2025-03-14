@@ -76,11 +76,6 @@ export function resetToDefaults(redraw) {
     }
   });
 
-  setShowLabels(true);
-  setShowHelp(true);
-  e("showLabels").classList.add("active");
-  e("showHelp").classList.add("active");
-
   updateValues();
   if (redraw) redraw();
 }
