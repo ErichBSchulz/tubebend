@@ -7,7 +7,7 @@ body {
 /* Canvas container */
 .canvas-wrapper {
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 /* Fullscreen Styles */
@@ -40,7 +40,6 @@ canvas {
   max-width: 100%;
   width: 100%;
   height: auto;
-  object-fit: contain;
 }
 
 /* Slider styling */
@@ -61,12 +60,4 @@ canvas {
 
 .description {
   margin-top: 5px;
-}
-
-/* Mobile responsiveness adjustments */
-@media (max-width: 768px) {
-  .slider-row label {
-    min-width: 120px;
-    font-size: 0.9em;
-  }
 }
