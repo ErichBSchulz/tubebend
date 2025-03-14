@@ -49,3 +49,9 @@ Thumbs.db
 *.wmv
 
 .aider*
+
+airway.png 
+favicon.ico 
+
+# this may be  a bad plan 
+package-lock.json
