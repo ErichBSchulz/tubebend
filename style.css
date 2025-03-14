@@ -4,14 +4,8 @@ body {
   color: #333;
 }
 
-/* Canvas container */
-.canvas-wrapper {
-  width: 100%;
-  overflow: hidden;
-}
-
 /* Fullscreen Styles */
-.fullscreen {
+.fullscreenx {
   position: fixed;
   top: 0;
   left: 0;
@@ -19,27 +13,6 @@ body {
   height: 100vh;
   background-color: white;
   z-index: 1000;
-}
-
-.fullscreen #canvas {
-  max-width: 100vw;
-  max-height: 100vh;
-  width: auto;
-  height: auto;
-}
-
-.fullscreen .canvas-controls {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1001;
-}
-
-/* General Canvas Styles */
-canvas {
-  max-width: 100%;
-  width: 100%;
-  height: auto;
 }
 
 /* Slider styling */
