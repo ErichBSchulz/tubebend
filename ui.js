@@ -1,5 +1,6 @@
 import { e, ev, evd } from "./utils.js";
 import { defaultGeometry, presets } from "./geometry.js";
+import { getShowLabels, getShowHelp, setShowHelp, setShowLabels } from "./state.js";
 
 export const sliders = [
   "tubeAngle",
@@ -24,8 +25,8 @@ export const sliders = [
 export function readParams() {
   return {
     appearance: {
-      showLabels: e("showLabels").classList.contains("active"),
-      showHelp: e("showHelp").classList.contains("active"),
+      showLabels: getShowLabels(),
+      showHelp: getShowHelp(),
     },
     airwayParams: {
       upperIncisorX: 300,
@@ -70,6 +71,8 @@ export function resetToDefaults(redraw) {
     }
   });
 
+  setShowLabels(true);
+  setShowHelp(true);
   e("showLabels").classList.add("active");
   e("showHelp").classList.add("active");
 
@@ -84,8 +87,8 @@ export function saveConfiguration(redraw) {
     config[slider] = e(slider).value;
   });
 
-  config.showLabels = e("showLabels").checked;
-  config.showHelp = e("showHelp").checked;
+  config.showLabels = getShowLabels();
+  config.showHelp = getShowHelp();
 
   localStorage.setItem("intubationConfig", JSON.stringify(config));
 
@@ -109,13 +112,10 @@ export function loadConfiguration(redraw) {
     }
   });
 
-  if (config.showLabels !== undefined) {
-    e("showLabels").classList.toggle("active", config.showLabels);
-  }
-
-  if (config.showHelp !== undefined) {
-    e("showHelp").classList.toggle("active", config.showHelp);
-  }
+  setShowLabels(config.showLabels);
+  setShowHelp(config.showHelp);
+  e("showLabels").classList.toggle("active", config.showLabels);
+  e("showHelp").classList.toggle("active", config.showHelp);
 
   updateValues();
   if (redraw) redraw();

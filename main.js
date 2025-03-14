@@ -22,6 +22,7 @@ import {
   handleKeyDown,
   showNotification,
 } from "./ui.js";
+import { setShowHelp, setShowLabels } from "./state.js";
 import {
   calculateGeometry,
   findIntersection,
@@ -107,6 +108,12 @@ function init() {
     button.classList.add("active"); // Start enabled
     button.addEventListener("click", () => {
       button.classList.toggle("active");
+      const isActive = button.classList.contains("active");
+      if (id === "showHelp") {
+        setShowHelp(isActive);
+      } else if (id === "showLabels") {
+        setShowLabels(isActive);
+      }
       if (redraw) redraw();
     });
   });

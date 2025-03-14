@@ -28,3 +28,22 @@ export function getDragStart() {
 export function setDragStart(value) {
   interactionState.dragStart = value;
 }
+
+let showLabels = true;
+let showHelp = true;
+
+export function getShowLabels() {
+  return showLabels;
+}
+
+export function setShowLabels(value) {
+  showLabels = value;
+}
+
+export function getShowHelp() {
+  return showHelp;
+}
+
+export function setShowHelp(value) {
+  showHelp = value;
+}
