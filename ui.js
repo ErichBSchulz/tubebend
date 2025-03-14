@@ -1,6 +1,6 @@
 import { e, ev, evd } from "./utils.js";
-import { defaultGeometry, presets } from "./geometry.js";
 import { getShowLabels, getShowHelp, setShowHelp, setShowLabels } from "./state.js";
+import { defaultGeometry, presets } from "./geometryData.js";
 
 export const sliders = [
   "tubeAngle",
