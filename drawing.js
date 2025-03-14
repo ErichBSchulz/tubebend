@@ -22,19 +22,25 @@ export function draw(state, appearance, ctx) {
 
   // teeth
   const dentalDamage = state.bladeUpperIncisorDistance < 0;
-  drawTooth({
-    x: state.upperIncisorX,
-    y: state.upperIncisorY,
-    height: 10,
-    lineWidth: 1,
-    strokeStyle: dentalDamage ? "red" : "grey",
-  }, ctx);
-  drawTooth({
-    x: state.lowerIncisorX,
-    y: state.lowerIncisorY,
-    height: -10,
-    lineWidth: 1,
-  }, ctx);
+  drawTooth(
+    {
+      x: state.upperIncisorX,
+      y: state.upperIncisorY,
+      height: 10,
+      lineWidth: 1,
+      strokeStyle: dentalDamage ? "red" : "grey",
+    },
+    ctx,
+  );
+  drawTooth(
+    {
+      x: state.lowerIncisorX,
+      y: state.lowerIncisorY,
+      height: -10,
+      lineWidth: 1,
+    },
+    ctx,
+  );
   // blade
   drawArc({ ...state.blade, style: "metal" }, ctx);
 
@@ -54,81 +60,111 @@ export function draw(state, appearance, ctx) {
   drawArc(state.fiducial, ctx);
   // labels
   if (appearance.showLabels) {
-    label({
-      x: state.lowerIncisorX,
-      y: state.lowerIncisorY,
-      text: "Lower Incisor",
-      alignment: "left",
-    }, ctx);
-    label({
-      x: state.upperIncisorX,
-      y: state.upperIncisorY,
-      text: (dentalDamage ? "Damaged " : "") + " Upper Incisor",
-      alignment: "right",
-    }, ctx);
-    label({
-      x: state.bladeTip.x,
-      y: state.bladeTip.y,
-      text: "Blade",
-      alignment: "above",
-    }, ctx);
-    label({
-      x: state.glottis.start.x,
-      y: state.glottis.start.y,
-      text: "Glottis",
-      alignment: "left",
-      offset: 5,
-    }, ctx);
-    label({
-      x: state.tubeTip.x,
-      y: state.tubeTip.y,
-      text: "Tube",
-      alignment: "below",
-    }, ctx);
+    label(
+      {
+        x: state.lowerIncisorX,
+        y: state.lowerIncisorY,
+        text: "Lower Incisor",
+        alignment: "left",
+      },
+      ctx,
+    );
+    label(
+      {
+        x: state.upperIncisorX,
+        y: state.upperIncisorY,
+        text: (dentalDamage ? "Damaged " : "") + " Upper Incisor",
+        alignment: "right",
+      },
+      ctx,
+    );
+    label(
+      {
+        x: state.bladeTip.x,
+        y: state.bladeTip.y,
+        text: "Blade",
+        alignment: "above",
+      },
+      ctx,
+    );
+    label(
+      {
+        x: state.glottis.start.x,
+        y: state.glottis.start.y,
+        text: "Glottis",
+        alignment: "left",
+        offset: 5,
+      },
+      ctx,
+    );
+    label(
+      {
+        x: state.tubeTip.x,
+        y: state.tubeTip.y,
+        text: "Tube",
+        alignment: "below",
+      },
+      ctx,
+    );
   }
 
   if (appearance.showHelp) {
-    drawArrow({
-      x: state.upperIncisorX + 70,
-      y: state.upperIncisorY - 70,
-      text: "Rotate tube",
-      labelAllignment: "above",
-      labelOffset: 10,
-      orientation: "horizontal",
-    }, ctx);
-    drawArrow({
-      x: state.upperIncisorX - 70,
-      y: state.upperIncisorY - 70,
-      text: "Advance-withdraw blade",
-      labelAllignment: "above",
-      labelOffset: 25,
-      orientation: "vertical",
-    }, ctx);
-    drawArrow({
-      x: state.upperIncisorX - 70,
-      y: state.upperIncisorY - 70,
-      text: "Rotate blade",
-      labelAllignment: "left",
-      labelOffset: 25,
-      orientation: "horizontal",
-    }, ctx);
+    drawArrow(
+      {
+        x: state.upperIncisorX + 70,
+        y: state.upperIncisorY - 70,
+        text: "Rotate tube",
+        labelAllignment: "above",
+        labelOffset: 10,
+        orientation: "horizontal",
+      },
+      ctx,
+    );
+    drawArrow(
+      {
+        x: state.upperIncisorX - 70,
+        y: state.upperIncisorY - 70,
+        text: "Advance-withdraw blade",
+        labelAllignment: "above",
+        labelOffset: 25,
+        orientation: "vertical",
+      },
+      ctx,
+    );
+    drawArrow(
+      {
+        x: state.upperIncisorX - 70,
+        y: state.upperIncisorY - 70,
+        text: "Rotate blade",
+        labelAllignment: "left",
+        labelOffset: 25,
+        orientation: "horizontal",
+      },
+      ctx,
+    );
     const bx = -20;
-    drawArrow({
-      x: state.upperIncisorX + bx,
-      y: state.upperIncisorY + 75,
-      text: "Jaw thrust",
-      labelAllignment: "below",
-      labelOffset: 25,
-      orientation: "vertical",
-    }, ctx);
-    drawArrow({
-      x: state.upperIncisorX + bx,
-      y: state.upperIncisorY + 75,
-      text: "Mouth opening",
-      labelAllignment: "right",
-      labelOffset: 25,
-      orientation: "horizontal",
-    }, ctx);
+    drawArrow(
+      {
+        x: state.upperIncisorX + bx,
+        y: state.upperIncisorY + 75,
+        text: "Jaw thrust",
+        labelAllignment: "below",
+        labelOffset: 25,
+        orientation: "vertical",
+      },
+      ctx,
+    );
+    drawArrow(
+      {
+        x: state.upperIncisorX + bx,
+        y: state.upperIncisorY + 75,
+        text: "Mouth opening",
+        labelAllignment: "right",
+        labelOffset: 25,
+        orientation: "horizontal",
+      },
+      ctx,
+    );
   }
 }
 
