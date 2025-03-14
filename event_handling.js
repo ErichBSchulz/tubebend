@@ -1,6 +1,6 @@
-import { e, ev, touchEventToMouseEvent } from './utils.js';
-import { updateValues } from './ui.js';
-import { rescale, distanceBetween } from './utils.js';
+import { e, ev, touchEventToMouseEvent } from "./utils.js";
+import { updateValues } from "./ui.js";
+import { rescale, distanceBetween } from "./utils.js";
 
 let draggingObject = false;
 let dragStart = { x: 0, y: 0 };

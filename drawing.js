@@ -1,4 +1,4 @@
-import { scalePointList, quickScalePoint, rescale, midpoint } from './utils.js';
+import { scalePointList, quickScalePoint, rescale, midpoint } from "./utils.js";
 
 export function draw(state, appearance, ctx) {
   ctx.geometry = state;
@@ -249,12 +249,15 @@ export function drawArrow(params, ctx) {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-  label({
-    ...params,
-    color: p.labelColor,
-    alignment: p.labelAllignment,
-    offset: p.labelOffset,
-  }, ctx);
+  label(
+    {
+      ...params,
+      color: p.labelColor,
+      alignment: p.labelAllignment,
+      offset: p.labelOffset,
+    },
+    ctx,
+  );
 }
 
 export function drawArc(params, ctx) {

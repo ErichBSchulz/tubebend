@@ -1,8 +1,42 @@
-import { e, ev, evd, toRadians, toDegrees, midpoint, distanceBetween, calculateBearing, arcRadians, touchEventToMouseEvent, translate } from './utils.js';
-import { readParams, updateValues, sliders, resetToDefaults, saveConfiguration, loadConfiguration, loadPreset, handleKeyDown, showNotification } from './ui.js';
-import { calculateGeometry, findIntersection, tangentAngle } from './geometry.js';
-import { draw } from './drawing.js';
-import { onMouseDown, onMouseUp, onMouseMove, onTouchStart, onTouchEnd, onTouchMove } from './event_handling.js';
+import {
+  e,
+  ev,
+  evd,
+  toRadians,
+  toDegrees,
+  midpoint,
+  distanceBetween,
+  calculateBearing,
+  arcRadians,
+  touchEventToMouseEvent,
+  translate,
+} from "./utils.js";
+import {
+  readParams,
+  updateValues,
+  sliders,
+  resetToDefaults,
+  saveConfiguration,
+  loadConfiguration,
+  loadPreset,
+  handleKeyDown,
+  showNotification,
+} from "./ui.js";
+import {
+  calculateGeometry,
+  findIntersection,
+  tangentAngle,
+} from "./geometry.js";
+import { draw } from "./drawing.js";
+import {
+  onMouseDown,
+  onMouseUp,
+  onMouseMove,
+  onTouchStart,
+  onTouchEnd,
+  onTouchMove,
+} from "./event_handling.js";
+import { setScale } from "./state.js";
 
 // Canvas setup and utility functions
 const canvas = document.getElementById("canvas");
@@ -23,10 +57,9 @@ window.addEventListener("resize", function () {
   redraw();
 });
 
-
-
 // Canvas scaling parameters
 const scale = { factor: 5, xOffset: -100, yOffset: -100 };
+setScale(scale);
 
 // URL parameters for configuration
 const urlParams = new URLSearchParams(window.location.search);
@@ -51,9 +84,13 @@ function init() {
   canvas.addEventListener("mousemove", (e) => onMouseMove(e, redraw));
 
   // Set up touch event listeners for mobile support
-  canvas.addEventListener("touchstart", (e) => onTouchStart(e, ctx, redraw), { passive: false });
+  canvas.addEventListener("touchstart", (e) => onTouchStart(e, ctx, redraw), {
+    passive: false,
+  });
   canvas.addEventListener("touchend", onTouchEnd, { passive: false });
-  canvas.addEventListener("touchmove", (e) => onTouchMove(e, redraw), { passive: false });
+  canvas.addEventListener("touchmove", (e) => onTouchMove(e, redraw), {
+    passive: false,
+  });
 
   // Show mobile instructions if on a small screen
   if (window.innerWidth <= 768) {
@@ -69,7 +106,7 @@ function init() {
 
   // Initialize toggle buttons
   const toggleButtons = ["showHelp", "showLabels"];
-  toggleButtons.forEach(id => {
+  toggleButtons.forEach((id) => {
     const button = e(id);
     button.classList.add("active"); // Start enabled
     button.addEventListener("click", () => {
@@ -109,11 +146,6 @@ function init() {
   redraw();
 }
 
-
-
-
-
-
 function redraw() {
   updateValues();
   const { appearance, airwayParams } = readParams();
@@ -128,16 +160,10 @@ function redraw() {
  * Stops the dragging operation
  */
 
-
 // get the cordinates of the tip of an arc
 function arcTip(params) {
   return translate({ ...params, angle: params.endAngle });
 }
-
-
-
-
-
 
 // Initialize the application
 init();

@@ -1,4 +1,9 @@
-import { translate, distanceBetween, calculateBearing, arcRadians } from './utils.js';
+import {
+  translate,
+  distanceBetween,
+  calculateBearing,
+  arcRadians,
+} from "./utils.js";
 
 export const defaultGeometry = {
   upperIncisorX: 300,

@@ -1,4 +1,5 @@
-// DOM utility functions
+// utils.js
+import { getScale } from "./state.js";
 export const e = document.getElementById.bind(document);
 export const ev = (id) => +e(id).value;
 export const evd = (id) => toRadians(ev(id));
@@ -12,13 +13,6 @@ export const touchEventToMouseEvent = (touch) => ({
   clientX: touch.clientX,
   clientY: touch.clientY,
 });
-
-// Canvas scaling parameters
-let scale = { factor: 5, xOffset: -100, yOffset: -100 };
-
-export function setScale(newScale) {
-  scale = newScale;
-}
 
 // Cartesian geometry functions
 export function translate({ x, y, angle, distance }) {
@@ -52,11 +46,15 @@ export function arcRadians(arc) {
   return r;
 }
 
-
 export function quickScalePoint(point) {
+  const s = getScale();
+  if (!s) {
+    console.error("Scale not initialized!");
+    return { x: 0, y: 0 };
+  }
   return {
-    x: (point.x + scale.xOffset) * scale.factor,
-    y: (point.y + scale.yOffset) * scale.factor,
+    x: Math.round((point.x + s.xOffset) * s.factor),
+    y: Math.round((point.y + s.yOffset) * s.factor),
   };
 }
 
@@ -69,6 +67,7 @@ export function scalePointList(points) {
 }
 
 export function rescale(oIn) {
+  const scale = getScale();
   const o = { ...quickScalePoint(oIn) };
   const oOut = { ...oIn, ...o };
   ["start", "end"].forEach((v) => {
