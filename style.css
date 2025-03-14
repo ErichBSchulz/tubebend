@@ -19,9 +19,6 @@ body {
   height: 100vh;
   background-color: white;
   z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .fullscreen #canvas {
@@ -41,7 +38,9 @@ body {
 /* General Canvas Styles */
 canvas {
   max-width: 100%;
+  width: 100%;
   height: auto;
+  object-fit: contain;
 }
 
 /* Slider styling */
