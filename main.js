@@ -110,11 +110,10 @@ function init() {
       } else if (id === "showLabels") {
         setShowLabels(isActive);
       }
-      if (redraw) redraw();
+      redraw();
     });
   });
 
-  // Add button functionality
   const resetButton = e("resetButton");
   if (resetButton) {
     resetButton.addEventListener("click", () => resetToDefaults(redraw));

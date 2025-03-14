@@ -23,7 +23,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
     <div
@@ -35,8 +38,12 @@
         We use cookies to analyse site traffic.
         <a href="/privacy.html" class="text-info">Learn more</a>.
       </p>
-      <button id="accept-cookies" class="btn btn-outline-light me-2">Accept</button>
-      <button id="decline-cookies" class="btn btn-outline-secondary">Decline</button>
+      <button id="accept-cookies" class="btn btn-outline-light me-2">
+        Accept
+      </button>
+      <button id="decline-cookies" class="btn btn-outline-secondary">
+        Decline
+      </button>
     </div>
     <h1>Tracheal Intubation Geometry Simulation in 2D</h1>
     <div
@@ -49,11 +56,26 @@
         <div class="col-md-7">
           <div class="canvas-wrapper position-relative">
             <div class="canvas-controls position-absolute top-0 start-0 m-2">
-              <button id="showHelp" class="btn btn-light btn-sm me-2" title="Toggle Help">
+              <button
+                id="showHelp"
+                class="btn btn-outline-secondary btn-sm me-2"
+                title="Toggle Help"
+              >
                 <i class="fas fa-question-circle"></i>
               </button>
-              <button id="showLabels" class="btn btn-light btn-sm" title="Toggle Labels">
+              <button
+                id="showLabels"
+                class="btn btn-outline-secondary btn-sm me-2"
+                title="Toggle Labels"
+              >
                 <i class="fas fa-tags"></i>
+              </button>
+              <button
+                id="resetButton"
+                class="btn btn-outline-danger btn-sm"
+                title="Reset to Defaults"
+              >
+                <i class="fas fa-undo"></i>
               </button>
             </div>
             <canvas id="canvas" width="1500" height="1500"></canvas>
@@ -309,19 +331,6 @@
             </div>
           </div>
           <h2>Appearance</h2>
-
-          <div class="d-flex justify-content-center mt-4">
-            <button id="resetButton" class="btn btn-outline-danger me-2">
-              Reset to Defaults
-            </button>
-            <button id="saveButton" class="btn btn-outline-success me-2">
-              Save Configuration
-            </button>
-            <button id="loadButton" class="btn btn-secondary">
-              Load Configuration
-            </button>
-          </div>
-
           <div class="mt-4 text-center">
             <h3>Preset Configurations</h3>
             <div class="d-flex justify-content-center flex-wrap gap-2">
@@ -347,6 +356,14 @@
                 Optimal Technique
               </button>
             </div>
+          </div>
+          <div class="d-flex justify-content-center mt-4">
+            <button id="saveButton" class="btn btn-outline-success me-2">
+              Save Configuration
+            </button>
+            <button id="loadButton" class="btn btn-secondary">
+              Load Configuration
+            </button>
           </div>
         </div>
       </div>
