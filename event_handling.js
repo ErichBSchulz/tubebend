@@ -15,7 +15,7 @@ export function onTouchStart(event, ctx, redraw) {
 
 export function onTouchMove(event, redraw) {
   event.preventDefault();
-  if (!draggingObject) return;
+  if (!isDraggingObject()()) return;
   onMouseMove(touchEventToMouseEvent(event.touches[0]), redraw);
 }
 
