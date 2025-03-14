@@ -64,10 +64,6 @@ setScale(scale);
 // URL parameters for configuration
 const urlParams = new URLSearchParams(window.location.search);
 
-// Interaction state
-let draggingObject = false;
-let dragStart = { x: 0, y: 0 };
-
 /**
  * Initialize the application
  * Sets up event listeners and initial state

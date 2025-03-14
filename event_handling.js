@@ -1,9 +1,12 @@
 import { e, ev, touchEventToMouseEvent } from "./utils.js";
 import { updateValues } from "./ui.js";
 import { rescale, distanceBetween } from "./utils.js";
-
-let draggingObject = false;
-let dragStart = { x: 0, y: 0 };
+import {
+  isDraggingObject,
+  setDraggingObject,
+  getDragStart,
+  setDragStart,
+} from "./state.js";
 
 export function onTouchStart(event, ctx, redraw) {
   event.preventDefault();
@@ -22,7 +25,7 @@ export function onTouchEnd(event) {
 }
 
 export function onMouseUp() {
-  draggingObject = false;
+  setDraggingObject(false);
 }
 
 export function getMousePos(canvas, event) {
@@ -37,19 +40,20 @@ export function onMouseDown(event, ctx, redraw) {
   const p = getMousePos(canvas, event);
   const o = closestObject(p, ctx);
   if (o) {
-    draggingObject = o;
-    dragStart = p;
+    setDraggingObject(o);
+    setDragStart(p);
   }
 }
 
 export function onMouseMove(event, redraw) {
-  if (!draggingObject) return;
+  if (!isDraggingObject()) return;
   const p = getMousePos(canvas, event);
+  const dragStart = getDragStart();
   const dx = p.x - dragStart.x;
   const dy = p.y - dragStart.y;
-  dragStart = p;
+  setDragStart(p);
 
-  switch (draggingObject) {
+  switch (isDraggingObject()) {
     case "lowerIncisor":
       e("lowerIncisorX").value = ev("lowerIncisorX") + dx / 5;
       e("lowerIncisorY").value = ev("lowerIncisorY") + dy / 5;
