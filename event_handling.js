@@ -8,23 +8,42 @@ import {
   setDragStart,
 } from "./state.js";
 
+function debugLog(message) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("debug")) {
+    const debugElement = document.getElementById("debug");
+    if (debugElement) {
+      const logMessage = document.createElement("div");
+      logMessage.textContent = message;
+      debugElement.preChild(logMessage);
+    }
+  }
+}
+
 export function onTouchStart(event, ctx, redraw) {
   event.preventDefault();
+  debugLog("onTouchStart triggered");
   onMouseDown(touchEventToMouseEvent(event.touches[0]), ctx, redraw);
 }
 
 export function onTouchMove(event, redraw) {
   event.preventDefault();
-  if (!isDraggingObject()()) return;
+  debugLog("onTouchMove triggered");
+  if (!isDraggingObject()) {
+    debugLog("isDraggingObject() returned false");
+    return;
+  }
   onMouseMove(touchEventToMouseEvent(event.touches[0]), redraw);
 }
 
 export function onTouchEnd(event) {
   event.preventDefault();
+  debugLog("onTouchEnd triggered");
   onMouseUp();
 }
 
 export function onMouseUp() {
+  debugLog("onMouseUp triggered");
   setDraggingObject(false);
 }
 
@@ -37,9 +56,11 @@ export function getMousePos(canvas, event) {
 }
 
 export function onMouseDown(event, ctx, redraw) {
+  debugLog("onMouseDown triggered");
   const p = getMousePos(canvas, event);
   const o = closestObject(p, ctx);
   if (o) {
+    debugLog(`Dragging object: ${o}`);
     setDraggingObject(o);
     setDragStart(p);
   }
@@ -47,6 +68,7 @@ export function onMouseDown(event, ctx, redraw) {
 
 export function onMouseMove(event, redraw) {
   if (!isDraggingObject()) return;
+  debugLog("onMouseMove triggered");
   const p = getMousePos(canvas, event);
   const dragStart = getDragStart();
   const dx = p.x - dragStart.x;
