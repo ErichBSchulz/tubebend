@@ -248,3 +248,26 @@ export function showNotification(message, type = "success", duration = 3000) {
     notification.style.display = "none";
   }, duration);
 }
+
+const urlParams = new URLSearchParams(window.location.search);
+const debug = urlParams.get("debug");
+
+// Add debug div to the DOM
+const debugDiv = document.createElement("div");
+debugDiv.id = "debug";
+debugDiv.style.position = "fixed";
+debugDiv.style.top = "0";
+debugDiv.style.left = "0";
+debugDiv.style.backgroundColor = "white";
+debugDiv.style.padding = "10px";
+debugDiv.style.border = "1px solid black";
+document.body.appendChild(debugDiv);
+
+export function log(message) {
+  if (debug) {
+    const debugDiv = document.getElementById("debug");
+    if (debugDiv) {
+      debugDiv.innerHTML = message + "<br>" + debugDiv.innerHTML;
+    }
+  }
+}

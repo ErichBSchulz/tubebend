@@ -1,5 +1,5 @@
 import { e, ev, touchEventToMouseEvent } from "./utils.js";
-import { updateValues } from "./ui.js";
+import { updateValues, log } from "./ui.js";
 import { rescale, distanceBetween } from "./utils.js";
 import {
   isDraggingObject,
@@ -9,26 +9,31 @@ import {
 } from "./state.js";
 
 export function onTouchStart(event, ctx, redraw) {
+  log("onTouchStart");
   event.preventDefault();
   onMouseDown(touchEventToMouseEvent(event.touches[0]), ctx, redraw);
 }
 
 export function onTouchMove(event, redraw) {
+  log("onTouchMove");
   event.preventDefault();
   if (!draggingObject) return;
   onMouseMove(touchEventToMouseEvent(event.touches[0]), redraw);
 }
 
 export function onTouchEnd(event) {
+  log("onTouchEnd");
   event.preventDefault();
   onMouseUp();
 }
 
 export function onMouseUp() {
+  log("onMouseUp");
   setDraggingObject(false);
 }
 
 export function getMousePos(canvas, event) {
+  log("getMousePos");
   const rect = canvas.getBoundingClientRect();
   return {
     x: (event.clientX - rect.left) * (canvas.width / rect.width),
@@ -37,6 +42,7 @@ export function getMousePos(canvas, event) {
 }
 
 export function onMouseDown(event, ctx, redraw) {
+  log("onMouseDown");
   const p = getMousePos(canvas, event);
   const o = closestObject(p, ctx);
   if (o) {
@@ -46,6 +52,7 @@ export function onMouseDown(event, ctx, redraw) {
 }
 
 export function onMouseMove(event, redraw) {
+  log("onMouseMove");
   if (!isDraggingObject()) return;
   const p = getMousePos(canvas, event);
   const dragStart = getDragStart();
