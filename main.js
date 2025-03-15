@@ -1,15 +1,4 @@
-import {
-  e,
-  ev,
-  evd,
-  toRadians,
-  toDegrees,
-  midpoint,
-  distanceBetween,
-  calculateBearing,
-  arcRadians,
-  translate,
-} from "./utils.js";
+import { e, translate } from "./utils.js";
 import {
   readParams,
   updateValues,
@@ -38,18 +27,8 @@ import { setScale } from "./state.js";
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// Adjust canvas size for mobile devices
-function adjustCanvasForMobile() {
-  if (window.innerWidth <= 768) {
-    canvas.width = window.innerWidth * 0.9;
-    canvas.height = window.innerWidth * 0.9;
-  }
-}
-
 // Call on page load and resize
-adjustCanvasForMobile(); // Call on page load and resize
 window.addEventListener("resize", function () {
-  adjustCanvasForMobile();
   redraw();
 });
 
@@ -133,16 +112,21 @@ function init() {
   }
 
   function toggleFullscreen() {
-    const canvasWrapper = document.querySelector(".canvas-wrapper");
-    const isFullscreen = canvasWrapper.classList.contains("fullscreen");
+    const canvasWrapper = document.getElementById("canvas-wrapper");
+    const fullscreenButton = e("fullscreenButton");
 
-    if (isFullscreen) {
+    if (canvasWrapper.classList.contains("fullscreen")) {
+      // Exit fullscreen
       canvasWrapper.classList.remove("fullscreen");
-      document.body.style.overflow = "auto";
+      fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
+      fullscreenButton.title = "Enter Fullscreen";
     } else {
+      // Enter fullscreen
       canvasWrapper.classList.add("fullscreen");
-      document.body.style.overflow = "hidden";
+      fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
+      fullscreenButton.title = "Exit Fullscreen";
     }
+    redraw();
   }
 
   // Add preset button functionality

@@ -251,6 +251,9 @@ export function showNotification(message, type = "success", duration = 3000) {
 
 const urlParams = new URLSearchParams(window.location.search);
 const debug = urlParams.get("debug");
+if (debug) {
+  log("debubbing");
+}
 
 // Add debug div to the DOM
 const debugDiv = document.createElement("div");
@@ -262,6 +265,19 @@ debugDiv.style.backgroundColor = "white";
 debugDiv.style.padding = "10px";
 debugDiv.style.border = "1px solid black";
 document.body.appendChild(debugDiv);
+/*
+function log(message) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("debug")) {
+    const debugElement = document.getElementById("debug");
+    if (debugElement) {
+      const logMessage = document.createElement("div");
+      logMessage.textContent = message;
+      debugElement.preChild(logMessage);
+    }
+  }
+}
+*/
 
 export function log(message, object) {
   if (debug !== null && debug !== "") {

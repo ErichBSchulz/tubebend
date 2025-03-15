@@ -17,24 +17,30 @@ export const touchEventToMouseEvent = (touch) => ({
 export function onTouchStart(event, ctx, redraw) {
   log("onTouchStart", event);
   event.preventDefault();
+  log("onTouchStart triggered");
   onMouseDown(touchEventToMouseEvent(event.touches[0]), ctx, redraw);
 }
 
 export function onTouchMove(event, redraw) {
   log("onTouchMove", event);
   event.preventDefault();
-  if (!draggingObject) return;
+  log("onTouchMove triggered");
+  if (!isDraggingObject()) {
+    log("isDraggingObject() returned false");
+    return;
+  }
   onMouseMove(touchEventToMouseEvent(event.touches[0]), redraw);
 }
 
 export function onTouchEnd(event) {
   log("onTouchEnd", event);
   event.preventDefault();
+  log("onTouchEnd triggered");
   onMouseUp();
 }
 
 export function onMouseUp() {
-  log("onMouseUp");
+  log("onMouseUp triggered");
   setDraggingObject(false);
 }
 
@@ -48,12 +54,13 @@ export function getMousePos(canvas, event) {
 }
 
 export function onMouseDown(event, ctx, redraw) {
-  log("onMouseDown", event);
+  log("onMouseDown triggered");
   const p = getMousePos(canvas, event);
   log(`p: ${p.x},${p.x}`);
   const o = closestObject(p, ctx);
   log("closestObject", o);
   if (o) {
+    log(`Dragging object: ${o}`);
     setDraggingObject(o);
     setDragStart(p);
   }
@@ -62,6 +69,7 @@ export function onMouseDown(event, ctx, redraw) {
 export function onMouseMove(event, redraw) {
   log("onMouseMove", event);
   if (!isDraggingObject()) return;
+  log("onMouseMove triggered");
   const p = getMousePos(canvas, event);
   const dragStart = getDragStart();
   const dx = p.x - dragStart.x;
