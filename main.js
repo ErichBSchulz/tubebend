@@ -152,6 +152,17 @@ function redraw() {
   const { appearance, airwayParams } = readParams();
   const state = calculateGeometry(airwayParams);
   draw(state, appearance, ctx);
+
+  const canvasButtons = document.querySelector(".canvas-buttons");
+  if (canvasButtons) {
+    if (window.innerWidth <= 768) {
+      canvasButtons.classList.add("d-flex", "flex-row", "flex-wrap");
+      canvasButtons.classList.remove("position-absolute"); // Ensure it's not absolutely positioned
+    } else {
+      canvasButtons.classList.remove("d-flex", "flex-row", "flex-wrap");
+      canvasButtons.classList.add("position-absolute"); // Restore absolute positioning
+    }
+  }
 }
 
 // cartesian translation
