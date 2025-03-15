@@ -125,6 +125,9 @@ function init() {
       canvasWrapper.classList.add("fullscreen");
       fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
       fullscreenButton.title = "Exit Fullscreen";
+      const size = Math.min(window.innerWidth, window.innerHeight);
+      canvasWrapper.style.width = `${size}px`;
+      canvasWrapper.style.height = `${size}px`;
     }
     redraw();
   }
