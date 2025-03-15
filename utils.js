@@ -8,12 +8,6 @@ export const evd = (id) => toRadians(ev(id));
 export const toRadians = (degrees) => (degrees * Math.PI) / 180;
 export const toDegrees = (radians) => (radians / Math.PI) * 180;
 
-// Event conversion
-export const touchEventToMouseEvent = (touch) => ({
-  clientX: touch.clientX,
-  clientY: touch.clientY,
-});
-
 // Cartesian geometry functions
 export function translate({ x, y, angle, distance }) {
   return {

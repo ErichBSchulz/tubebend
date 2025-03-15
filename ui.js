@@ -263,11 +263,15 @@ debugDiv.style.padding = "10px";
 debugDiv.style.border = "1px solid black";
 document.body.appendChild(debugDiv);
 
-export function log(message) {
-  if (debug) {
+export function log(message, object) {
+  if (debug !== null && debug !== "") {
     const debugDiv = document.getElementById("debug");
     if (debugDiv) {
-      debugDiv.innerHTML = message + "<br>" + debugDiv.innerHTML;
+      let output = `${message}<br>`;
+      if (object) {
+        output += `${JSON.stringify(object, null, 2)}<br>`;
+      }
+      debugDiv.innerHTML = output + debugDiv.innerHTML;
     }
   }
 }

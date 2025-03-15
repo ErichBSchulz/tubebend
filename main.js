@@ -8,7 +8,6 @@ import {
   distanceBetween,
   calculateBearing,
   arcRadians,
-  touchEventToMouseEvent,
   translate,
 } from "./utils.js";
 import {
