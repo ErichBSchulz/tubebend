@@ -74,6 +74,7 @@ export function onMouseMove(event, redraw) {
   const dragStart = getDragStart();
   const dx = p.x - dragStart.x;
   const dy = p.y - dragStart.y;
+  log("mousemove", { x: dx, y: dy });
   setDragStart(p);
 
   switch (isDraggingObject()) {
