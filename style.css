@@ -10,12 +10,6 @@ body {
   aspect-ratio: 1/1;
   position: relative;
 }
-#canvas-buttons {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-}
 
 /* Slider styling */
 .slider-container {

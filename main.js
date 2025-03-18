@@ -68,7 +68,7 @@ function init() {
     showNotification(
       "Tap and drag to interact with the simulation",
       "info",
-      5000,
+      3000,
     );
   }
 
@@ -153,14 +153,38 @@ function redraw() {
   const { appearance, airwayParams } = readParams();
   const state = calculateGeometry(airwayParams);
   draw(state, appearance, ctx);
+
   const canvasButtons = document.getElementById("canvas-buttons");
-  if (canvasButtons) {
+  const canvasWrapper = document.getElementById("canvas-wrapper");
+
+  if (canvasButtons && canvasWrapper) {
     if (window.innerWidth <= 768) {
-      canvasButtons.classList.add("d-flex", "flex-row", "flex-wrap");
-      canvasButtons.classList.remove("position-absolute"); // Ensure it's not absolutely positioned
+      // Mobile layout - buttons above canvas
+      canvasButtons.classList.remove("position-absolute", "top-0", "start-0");
+      canvasButtons.classList.add(
+        "d-flex",
+        "flex-row",
+        "flex-wrap",
+        "gap-2",
+        "mb-2",
+      );
+      canvasWrapper.insertBefore(canvasButtons, canvasWrapper.firstChild);
     } else {
-      canvasButtons.classList.remove("d-flex", "flex-row", "flex-wrap");
-      canvasButtons.classList.add("position-absolute"); // Restore absolute positioning
+      // Desktop layout - buttons overlay canvas
+      canvasButtons.classList.remove(
+        "d-flex",
+        "flex-row",
+        "flex-wrap",
+        "gap-2",
+        "mb-2",
+      );
+      canvasButtons.classList.add(
+        "position-absolute",
+        "top-0",
+        "start-0",
+        "m-2",
+      );
+      canvasWrapper.appendChild(canvasButtons);
     }
   }
 }
