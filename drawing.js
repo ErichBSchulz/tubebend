@@ -1,4 +1,10 @@
-import { scalePointList, quickScalePoint, rescale, midpoint } from "./utils.js";
+import {
+  scalePointList,
+  quickScalePoint,
+  rescale,
+  midpoint,
+  translate,
+} from "./utils.js";
 
 export function draw(state, appearance, ctx) {
   ctx.geometry = state;
@@ -15,8 +21,6 @@ export function draw(state, appearance, ctx) {
     thyroid: state.glottis.start,
     pronathism: 100,
     bladeTip: state.bladeTip,
-    bladeRadius: state.blade.radius,
-    bladeCentre: state.bladeCentre,
   };
   drawPatientProfile(profile, ctx);
 
@@ -42,9 +46,26 @@ export function draw(state, appearance, ctx) {
     ctx,
   );
   // blade
-  drawArc({ ...state.blade, style: "metal" }, ctx);
-
+  const blade = state.blade;
+  drawArc({ ...blade, style: "metal" }, ctx);
   drawDot({ ...state.bladeTip, style: "gray" }, ctx);
+  // handle
+  const handleStart = translate({
+    x: blade.x,
+    y: blade.y,
+    angle: blade.startAngle + 0.08,
+    distance: blade.radius,
+  });
+  const handleEnd = translate({
+    x: handleStart.x,
+    y: handleStart.y,
+    angle: Math.PI + blade.startAngle + 0.3,
+    distance: blade.radius,
+  });
+  // drawDot(handleStart, ctx);
+  // drawDot(handleEnd, ctx);
+  drawBlade({ start: handleStart, end: handleEnd }, ctx);
+
   // glottis
   drawGlottis(state.glottis, ctx);
   // tube
@@ -219,6 +240,24 @@ export function drawGlottis(params, ctx) {
   );
   gradient.addColorStop(0, "#ff8888");
   gradient.addColorStop(1, "#ff3333");
+  ctx.beginPath();
+  ctx.moveTo(p.start.x, p.start.y);
+  ctx.lineTo(p.end.x, p.end.y);
+  ctx.strokeStyle = gradient;
+  ctx.lineWidth = p.lineWidth;
+  ctx.stroke();
+}
+
+export function drawBlade(params, ctx) {
+  const p = rescale({ lineWidth: 20, ...params });
+  const gradient = ctx.createLinearGradient(
+    p.start.x,
+    p.start.y,
+    p.end.x,
+    p.end.y,
+  );
+  gradient.addColorStop(0, "#AAAAAA");
+  gradient.addColorStop(1, "#888888");
   ctx.beginPath();
   ctx.moveTo(p.start.x, p.start.y);
   ctx.lineTo(p.end.x, p.end.y);

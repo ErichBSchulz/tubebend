@@ -377,7 +377,6 @@ export function redraw() {
   const { appearance, airwayParams } = readParams();
   const state = calculateGeometry(airwayParams);
   draw(state, appearance, ctx);
-  console.log("state", state);
 
   const canvasButtons = document.getElementById("canvas-buttons");
   const canvasWrapper = document.getElementById("canvas-wrapper");
