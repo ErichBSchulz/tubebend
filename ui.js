@@ -17,53 +17,45 @@ import {
 } from "./state.js";
 import { defaultGeometry, presets } from "./geometryData.js";
 
-export const sliders = [
-  "tubeAngle",
-  "tubeRadius",
-  "tubeOD",
-  "glotticPlaneX",
-  "tubeLength",
-  "bladeLength",
-  "bladeThickness",
-  "bladeInsertion",
-  "bladeRadius",
-  "bladeAngle",
-  "lowerIncisorX",
-  "lowerIncisorY",
-  "fiducialStartAngle",
-  "fiducialEndAngle",
-  "fiducialThickness",
-  "fiducialX",
-  "fiducialY",
-];
+export const sliderConfig = {
+  tubeAngle: { isDegrees: true },
+  tubeRadius: { isDegrees: false },
+  tubeOD: { isDegrees: false },
+  glotticPlaneX: { isDegrees: false },
+  tubeLength: { isDegrees: false },
+  bladeLength: { isDegrees: false },
+  bladeThickness: { isDegrees: false },
+  bladeInsertion: { isDegrees: false },
+  bladeRadius: { isDegrees: false },
+  bladeAngle: { isDegrees: true },
+  lowerIncisorX: { isDegrees: false },
+  lowerIncisorY: { isDegrees: false },
+  fiducialStartAngle: { isDegrees: true },
+  fiducialEndAngle: { isDegrees: true },
+  fiducialThickness: { isDegrees: false },
+  fiducialX: { isDegrees: false },
+  fiducialY: { isDegrees: false },
+};
+
+export const sliders = Object.keys(sliderConfig);
 
 export function readParams() {
+  const airwayParams = {
+    upperIncisorX: 300,
+    upperIncisorY: 200,
+  };
+
+  // Populate slider values
+  for (const [param, config] of Object.entries(sliderConfig)) {
+    airwayParams[param] = config.isDegrees ? evd(param) : ev(param);
+  }
+
   return {
     appearance: {
       showLabels: getShowLabels(),
       showHelp: getShowHelp(),
     },
-    airwayParams: {
-      upperIncisorX: 300,
-      upperIncisorY: 200,
-      lowerIncisorX: ev("lowerIncisorX"),
-      lowerIncisorY: ev("lowerIncisorY"),
-      bladeLength: ev("bladeLength"),
-      bladeThickness: ev("bladeThickness"),
-      bladeInsertion: ev("bladeInsertion"),
-      bladeRadius: ev("bladeRadius"),
-      bladeAngle: evd("bladeAngle"),
-      tubeLength: ev("tubeLength"),
-      tubeRadius: ev("tubeRadius"),
-      tubeOD: ev("tubeOD"),
-      tubeAngle: evd("tubeAngle"),
-      glotticPlaneX: ev("glotticPlaneX"),
-      fiducialStartAngle: evd("fiducialStartAngle"),
-      fiducialEndAngle: evd("fiducialEndAngle"),
-      fiducialThickness: ev("fiducialThickness"),
-      fiducialX: ev("fiducialX"),
-      fiducialY: ev("fiducialY"),
-    },
+    airwayParams,
   };
 }
 
