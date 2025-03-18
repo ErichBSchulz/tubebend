@@ -77,6 +77,7 @@ function init() {
 
   // Fullscreen button functionality
   const fullscreenButton = e("fullscreenButton");
+  console.log("fullscreenButton", fullscreenButton);
   fullscreenButton.addEventListener("click", toggleFullscreen);
 
   // Initialize toggle buttons
@@ -96,20 +97,11 @@ function init() {
     });
   });
 
-  const resetButton = e("resetButton");
-  if (resetButton) {
-    resetButton.addEventListener("click", () => resetToDefaults(redraw));
-  }
+  e("resetButton").addEventListener("click", () => resetToDefaults(redraw));
 
-  const saveButton = e("saveButton");
-  if (saveButton) {
-    saveButton.addEventListener("click", () => saveConfiguration(redraw));
-  }
+  e("saveButton").addEventListener("click", () => saveConfiguration(redraw));
 
-  const loadButton = e("loadButton");
-  if (loadButton) {
-    loadButton.addEventListener("click", () => loadConfiguration(redraw));
-  }
+  e("loadButton").addEventListener("click", () => loadConfiguration(redraw));
 
   function toggleFullscreen() {
     const canvas = document.getElementById("canvas-wrapper");
