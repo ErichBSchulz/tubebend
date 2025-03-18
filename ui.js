@@ -255,30 +255,6 @@ if (debug) {
   log("debubbing");
 }
 
-// Add debug div to the DOM
-const debugDiv = document.createElement("div");
-debugDiv.id = "debug";
-debugDiv.style.position = "fixed";
-debugDiv.style.top = "0";
-debugDiv.style.left = "0";
-debugDiv.style.backgroundColor = "white";
-debugDiv.style.padding = "10px";
-debugDiv.style.border = "1px solid black";
-document.body.appendChild(debugDiv);
-/*
-function log(message) {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("debug")) {
-    const debugElement = document.getElementById("debug");
-    if (debugElement) {
-      const logMessage = document.createElement("div");
-      logMessage.textContent = message;
-      debugElement.preChild(logMessage);
-    }
-  }
-}
-*/
-
 export function log(message, object) {
   if (debug !== null && debug !== "") {
     const debugDiv = document.getElementById("debug");
