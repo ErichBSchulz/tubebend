@@ -5,10 +5,30 @@ body {
 }
 #canvas {
   width: 100%;
-  max-width: 1500px;
   height: auto;
   aspect-ratio: 1/1;
   position: relative;
+}
+
+#canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  #canvas {
+    max-width: 100%;
+    max-height: calc(100vh - 200px); /* Account for buttons and spacing */
+  }
+
+  #canvas-buttons {
+    position: static;
+    margin-bottom: 1rem;
+  }
 }
 
 /* Slider styling */

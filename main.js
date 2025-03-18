@@ -77,7 +77,6 @@ function init() {
 
   // Fullscreen button functionality
   const fullscreenButton = e("fullscreenButton");
-  console.log("fullscreenButton", fullscreenButton);
   fullscreenButton.addEventListener("click", toggleFullscreen);
 
   // Initialize toggle buttons
@@ -105,7 +104,6 @@ function init() {
 
   function toggleFullscreen() {
     const canvas = document.getElementById("canvas-wrapper");
-    console.log("canvas", canvas);
     const heading = document.getElementById("heading");
     const controls = document.getElementById("tigsControls");
     const fullscreenButton = e("fullscreenButton");
@@ -153,9 +151,24 @@ function redraw() {
   const { appearance, airwayParams } = readParams();
   const state = calculateGeometry(airwayParams);
   draw(state, appearance, ctx);
+  console.log("state", state);
 
   const canvasButtons = document.getElementById("canvas-buttons");
   const canvasWrapper = document.getElementById("canvas-wrapper");
+
+  console.log(
+    "window.innerWidth > window.innerHeight",
+    window.innerWidth > window.innerHeight,
+    window.innerWidth,
+    window.innerHeight,
+  );
+  if (window.innerWidth > window.innerHeight) {
+    canvasWrapper.height = "100vh";
+    canvasWrapper.width = "";
+  } else {
+    canvasWrapper.width = "100vw";
+    canvasWrapper.height = "";
+  }
 
   if (canvasButtons && canvasWrapper) {
     if (window.innerWidth <= 768) {
