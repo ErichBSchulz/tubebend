@@ -368,15 +368,7 @@ export function drawArc(params, ctx) {
 }
 
 export function drawPatientProfile(params, ctx) {
-  const {
-    upperIncisor,
-    lowerIncisor,
-    thyroid,
-    pronathism,
-    bladeTip,
-    bladeRadius,
-    bladeCentre,
-  } = params;
+  const { upperIncisor, lowerIncisor, thyroid, pronathism, bladeTip } = params;
 
   const upperSection = [];
 
@@ -504,6 +496,11 @@ export function drawPatientProfile(params, ctx) {
     x: lowerIncisor.x - 40,
     y: lowerIncisor.y - 20 - pronathism * 0.1,
   };
+  lowerSection.push({
+    name: "dimple",
+    x: gnathio.x + 19,
+    y: gnathio.y + 6,
+  });
   lowerSection.push(gnathio);
   lowerSection.push({
     name: "menton",
