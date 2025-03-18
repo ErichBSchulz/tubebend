@@ -375,7 +375,7 @@ export function drawPatientProfile(params, ctx) {
   const subnasale = {
     name: "subnasale",
     x: upperIncisor.x + 30,
-    y: upperIncisor.y - 20,
+    y: upperIncisor.y - 18,
   };
 
   upperSection.push({
@@ -396,7 +396,7 @@ export function drawPatientProfile(params, ctx) {
   });
   upperSection.push({
     name: "pronasale",
-    x: subnasale.x + 15,
+    x: subnasale.x + 19,
     y: subnasale.y - 30,
   });
   upperSection.push({
@@ -456,13 +456,8 @@ export function drawPatientProfile(params, ctx) {
   var lowerSection = [];
   const lowerLip = {
     name: "lowerLip",
-    x: lowerIncisor.x + 5,
-    y: lowerIncisor.y - 24,
-  };
-  const sublabiale = {
-    name: "lowerLip",
-    x: lowerIncisor.x + 5,
-    y: lowerIncisor.y - 24,
+    x: lowerIncisor.x,
+    y: lowerIncisor.y - 15,
   };
   lowerSection.push({
     name: "lowerLip reflextion2",
@@ -481,20 +476,20 @@ export function drawPatientProfile(params, ctx) {
   });
   lowerSection.push({
     name: "inner lowerLip",
-    x: lowerLip.x,
-    y: lowerLip.y + 16,
+    x: lowerLip.x - 5,
+    y: lowerLip.y + 10,
   });
   lowerSection.push(lowerLip);
-  lowerSection.push({
-    name: "bottom of bottom lip",
-    x: sublabiale.x + 1,
-    y: sublabiale.y - 1,
-  });
+  const sublabiale = {
+    name: "sublabiale",
+    x: lowerLip.x - 5,
+    y: lowerLip.y - 5,
+  };
   lowerSection.push(sublabiale);
   const gnathio = {
     name: "gnathio",
     x: lowerIncisor.x - 40,
-    y: lowerIncisor.y - 20 - pronathism * 0.1,
+    y: lowerIncisor.y - 15 - pronathism * 0.1,
   };
   lowerSection.push({
     name: "dimple",
@@ -556,6 +551,7 @@ export function drawCurve(points, ctx) {
         text: `${point.name} ${i}`,
         alignment: "left",
         color: "blue",
+        fontsize: 3,
       };
       label(curveLabel, ctx);
       drawDot(point, ctx);
