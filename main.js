@@ -112,22 +112,31 @@ function init() {
   }
 
   function toggleFullscreen() {
-    const canvasWrapper = document.getElementById("canvas-wrapper");
+    const canvas = document.getElementById("canvas-wrapper");
+    console.log("canvas", canvas);
+    const heading = document.getElementById("heading");
+    const controls = document.getElementById("tigsControls");
     const fullscreenButton = e("fullscreenButton");
 
-    if (canvasWrapper.classList.contains("fullscreen")) {
+    if (canvas.classList.contains("fullscreen")) {
       // Exit fullscreen
-      canvasWrapper.classList.remove("fullscreen");
+      heading.classList.remove("d-none");
+      controls.classList.remove("d-none");
+      canvas.classList.add("col-lg-8");
+      canvas.classList.remove("fullscreen");
       fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
       fullscreenButton.title = "Enter Fullscreen";
     } else {
       // Enter fullscreen
-      canvasWrapper.classList.add("fullscreen");
+      heading.classList.add("d-none");
+      controls.classList.add("d-none");
+      canvas.classList.add("fullscreen");
+      canvas.classList.remove("col-lg-8");
       fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
       fullscreenButton.title = "Exit Fullscreen";
-      const size = Math.min(window.innerWidth, window.innerHeight);
-      canvasWrapper.style.width = `${size}px`;
-      canvasWrapper.style.height = `${size}px`;
+      // const size = Math.min(window.innerWidth, window.innerHeight);
+      // canvas.style.width = `${size}px`;
+      // canvas.style.height = `${size}px`;
     }
     redraw();
   }
@@ -152,8 +161,7 @@ function redraw() {
   const { appearance, airwayParams } = readParams();
   const state = calculateGeometry(airwayParams);
   draw(state, appearance, ctx);
-
-  const canvasButtons = document.querySelector(".canvas-buttons");
+  const canvasButtons = document.getElementById("canvas-buttons");
   if (canvasButtons) {
     if (window.innerWidth <= 768) {
       canvasButtons.classList.add("d-flex", "flex-row", "flex-wrap");

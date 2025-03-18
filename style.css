@@ -17,25 +17,6 @@ body {
   z-index: 1;
 }
 
-/* Fullscreen styles */
-#canvas-wrapper.fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1000;
-  background: white;
-  padding: 0;
-  margin: 0;
-}
-
-#canvas-wrapper.fullscreen #canvas {
-  width: 100%;
-  max-width: none;
-  aspect-ratio: 1/1;
-}
-
 /* Slider styling */
 .slider-container {
   margin-bottom: 1rem;
